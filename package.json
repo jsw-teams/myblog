@@ -1,0 +1,32 @@
+{
+  "name": "blog-js-gripe",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "node src/build.mjs clean",
+    "assets": "node src/assets.mjs",
+    "build": "node src/build.mjs build",
+    "serve": "node src/build.mjs serve",
+    "check": "node src/build.mjs check",
+    "predeploy": "npm run build && npm run check",
+    "deploy": "wrangler pages deploy public --project-name blog-js-gripe --branch main",
+    "predeploy:production": "npm run build && npm run check",
+    "deploy:production": "wrangler pages deploy public --project-name blog-js-gripe --branch main"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.3",
+    "feed": "^4.2.2",
+    "gray-matter": "^4.0.3",
+    "html-minifier-terser": "^7.2.0",
+    "markdown-it": "^14.1.0",
+    "markdown-it-anchor": "^9.2.0",
+    "sharp": "^0.34.1"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "wrangler": "^4.85.0"
+  }
+}

@@ -1,0 +1,14 @@
+node_modules/
+public/
+.cache/
+.npm-cache/
+.wrangler/
+.publish-myblog/
+.env
+.env.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+serve.log
+serve.err.log

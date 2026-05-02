@@ -1,0 +1,533 @@
+import { formatDate, htmlLang, localeLabel, LOCALES, t } from "./i18n.mjs";
+
+export function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function escapeJson(value) {
+  return JSON.stringify(value).replaceAll("</", "<\\/");
+}
+
+export function absoluteUrl(site, urlPath) {
+  return new URL(urlPath, site.siteUrl).href;
+}
+
+function renderAttributes(attrs = {}) {
+  return Object.entries(attrs)
+    .filter(([, value]) => value !== false && value != null)
+    .map(([key, value]) => value === true ? ` ${key}` : ` ${key}="${escapeHtml(value)}"`)
+    .join("");
+}
+
+function renderAlternateLinks(site, alternates = []) {
+  return alternates
+    .map((item) => `<link rel="alternate" hreflang="${escapeHtml(item.hreflang)}" href="${escapeHtml(absoluteUrl(site, item.url))}">`)
+    .join("");
+}
+
+function renderJsonLd(items = []) {
+  const flat = items.flat().filter(Boolean);
+  if (!flat.length) return "";
+  return `<script type="application/ld+json">${escapeJson(flat.length === 1 ? flat[0] : flat)}</script>`;
+}
+
+function renderNav(site, locale, current) {
+  const navItems = [
+    ["home", `/${locale}/`],
+    ["archive", `/${locale}/archive/`],
+    ["categories", `/${locale}/categories/`],
+    ["tags", `/${locale}/tags/`],
+    ["about", `/${locale}/about/`]
+  ];
+  const searchCurrentAttr = current === "search" ? ' aria-current="page"' : "";
+  const localeLinks = LOCALES.map((entryLocale) => {
+    const currentAttr = entryLocale === locale ? ' aria-current="page"' : "";
+    return `<a href="/${entryLocale}/" data-locale-choice="${entryLocale}"${currentAttr}>${escapeHtml(localeLabel(entryLocale))}</a>`;
+  }).join("");
+
+  return `<header class="site-header">
+    <a class="brand" href="/${locale}/" data-locale-choice="${locale}">
+      <span class="brand-mark" aria-hidden="true">JS</span>
+      <span>${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</span>
+    </a>
+    <nav class="site-nav" aria-label="${escapeHtml(t(locale, "home"))}">
+      ${navItems.map(([key, href]) => {
+        const currentAttr = current === key ? ' aria-current="page"' : "";
+        return `<a href="${href}"${currentAttr}>${escapeHtml(t(locale, key))}</a>`;
+      }).join("")}
+    </nav>
+    <nav class="utility-nav" aria-label="${escapeHtml(t(locale, "search"))}">
+      <a class="search-action" href="/${locale}/search/"${searchCurrentAttr}><span aria-hidden="true">⌕</span><span>${escapeHtml(t(locale, "search"))}</span></a>
+    </nav>
+    <nav class="language-nav" aria-label="${escapeHtml(t(locale, "languageSwitch"))}">
+      ${localeLinks}
+    </nav>
+  </header>`;
+}
+
+function renderFooter(site, locale) {
+  return `<footer class="site-footer">
+    <p>&copy; ${new Date().getUTCFullYear()} ${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</p>
+    <p><a href="/${locale}/feed.xml">${escapeHtml(t(locale, "feed"))}</a> <span aria-hidden="true">/</span> <a href="/sitemap/">${escapeHtml(t(locale, "sitemap"))}</a></p>
+  </footer>`;
+}
+
+export function baseJsonLd(site, locale) {
+  const siteName = site.siteName[locale] ?? site.siteName["zh-CN"];
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: siteName,
+      url: site.siteUrl,
+      inLanguage: locale
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      name: siteName,
+      url: absoluteUrl(site, `/${locale}/`),
+      description: site.description[locale] ?? site.description["zh-CN"],
+      inLanguage: locale
+    }
+  ];
+}
+
+export function breadcrumbJsonLd(site, items) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(site, item.url)
+    }))
+  };
+}
+
+export function renderLayout({
+  site,
+  locale,
+  title,
+  description,
+  url,
+  current = "",
+  main,
+  alternates = [],
+  jsonLd = [],
+  ogType = "website",
+  ogImage = "/assets/og-default.png",
+  bodyAttrs = {}
+}) {
+  const siteName = site.siteName[locale] ?? site.siteName["zh-CN"];
+  const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
+  const canonical = absoluteUrl(site, url);
+  const imageUrl = absoluteUrl(site, ogImage);
+  return `<!doctype html>
+<html lang="${escapeHtml(htmlLang(locale))}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${escapeHtml(fullTitle)}</title>
+  <meta name="description" content="${escapeHtml(description)}">
+  <link rel="canonical" href="${escapeHtml(canonical)}">
+  ${renderAlternateLinks(site, alternates)}
+  <link rel="icon" href="/assets/mascot-laptop.png" type="image/png">
+  <link rel="alternate icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon-32x32.png" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="alternate" type="application/rss+xml" title="${escapeHtml(siteName)}" href="/${locale}/feed.xml">
+  <meta property="og:title" content="${escapeHtml(fullTitle)}">
+  <meta property="og:description" content="${escapeHtml(description)}">
+  <meta property="og:type" content="${escapeHtml(ogType)}">
+  <meta property="og:url" content="${escapeHtml(canonical)}">
+  <meta property="og:image" content="${escapeHtml(imageUrl)}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escapeHtml(fullTitle)}">
+  <meta name="twitter:description" content="${escapeHtml(description)}">
+  <meta name="twitter:image" content="${escapeHtml(imageUrl)}">
+  <link rel="stylesheet" href="/assets/site.css">
+  ${renderJsonLd(jsonLd)}
+</head>
+<body${renderAttributes(bodyAttrs)}>
+  <a class="skip-link" href="#main">${escapeHtml(t(locale, "skip"))}</a>
+  ${renderNav(site, locale, current)}
+  ${main}
+  ${renderFooter(site, locale)}
+  <script src="/assets/client.js" defer></script>
+</body>
+</html>`;
+}
+
+export function renderLanguageAvailability(locale, translations) {
+  if (!translations.length) return "";
+  const links = translations.map((entry) => {
+    const current = entry.locale === locale ? ' aria-current="page"' : "";
+    return `<a href="${entry.url}" data-locale-choice="${entry.locale}"${current}>${escapeHtml(localeLabel(entry.locale))}</a>`;
+  }).join(" <span aria-hidden=\"true\">|</span> ");
+  return `<nav class="article-languages" aria-label="${escapeHtml(t(locale, "availableLanguages"))}">
+    <span>${escapeHtml(t(locale, "availableLanguages"))}:</span>
+    ${links}
+  </nav>`;
+}
+
+export function renderPostCard(post, locale) {
+  const tags = post.tags.map((tag) => `<a href="${post.tagUrls[tag]}">${escapeHtml(tag)}</a>`).join("");
+  return `<article class="post-card">
+    <h3><a href="${post.url}">${escapeHtml(post.title)}</a></h3>
+    <p class="post-card-meta">${escapeHtml(formatDate(post.date, locale))} · <a href="${post.categoryUrl}">${escapeHtml(post.category)}</a></p>
+    <p>${escapeHtml(post.description)}</p>
+    <div class="tag-row">${tags}</div>
+  </article>`;
+}
+
+function renderTermLinks(terms, emptyText) {
+  if (!terms.length) return `<p class="empty">${escapeHtml(emptyText)}</p>`;
+  return `<ul class="term-grid">
+    ${terms.map((term) => `<li><a href="${term.url}"><span>${escapeHtml(term.name)}</span><strong>${term.count}</strong></a></li>`).join("")}
+  </ul>`;
+}
+
+function renderPostList(posts, locale) {
+  if (!posts.length) return `<p class="empty">${escapeHtml(t(locale, "noPosts"))}</p>`;
+  return `<div class="post-list">${posts.map((post) => renderPostCard(post, locale)).join("")}</div>`;
+}
+
+export function renderHomePage({ site, locale, posts }) {
+  const description = site.description[locale] ?? site.description["zh-CN"];
+  const main = `<main id="main" class="page-main home-main">
+    <section class="home-hero" aria-labelledby="home-title">
+      <div>
+        <h1 id="home-title">${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</h1>
+        <p class="lead">${escapeHtml(t(locale, "siteIntro"))}</p>
+      </div>
+      <img class="hero-mascot pixel-art" src="/assets/mascot-laptop.png" alt="" width="280" height="301">
+    </section>
+    <section class="home-section" aria-labelledby="latest-posts">
+      <div class="section-heading">
+        <h2 id="latest-posts">${escapeHtml(t(locale, "latestPosts"))}</h2>
+      </div>
+      ${renderPostList(posts, locale)}
+    </section>
+  </main>`;
+  return renderLayout({
+    site,
+    locale,
+    title: site.siteName[locale] ?? site.siteName["zh-CN"],
+    description,
+    url: `/${locale}/`,
+    current: "home",
+    main,
+    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/` })).concat({ hreflang: "x-default", url: "/" }),
+    jsonLd: baseJsonLd(site, locale)
+  });
+}
+
+export function renderRootPage({ site }) {
+  const locale = "zh-CN";
+  const description = "选择语言入口开始阅读。選擇語言入口開始閱讀。 Choose a language to start reading.";
+  const languageButtons = LOCALES.map((entryLocale, index) => {
+    const className = index === 0 ? "button-link" : "button-link button-link-secondary";
+    return `<a class="${className}" href="/${entryLocale}/" data-locale-choice="${entryLocale}">${escapeHtml(localeLabel(entryLocale))}</a>`;
+  }).join("");
+  const main = `<main id="main" class="page-main root-picker">
+    <section class="language-choice" aria-labelledby="root-title">
+      <img src="/assets/mascot-reading.png" alt="" width="230" height="345">
+      <div>
+        <h1 id="root-title">${escapeHtml(site.siteName["zh-CN"])} / ${escapeHtml(site.siteName.en)}</h1>
+        <p class="lead">${escapeHtml(description)}</p>
+        <div class="language-choice-links">
+          ${languageButtons}
+        </div>
+      </div>
+    </section>
+  </main>`;
+  return renderLayout({
+    site,
+    locale,
+    title: `${site.siteName["zh-CN"]} / ${site.siteName.en}`,
+    description,
+    url: "/",
+    current: "",
+    main,
+    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/` })).concat({ hreflang: "x-default", url: "/" }),
+    jsonLd: baseJsonLd(site, locale),
+    bodyAttrs: { "data-root-language-picker": "true" }
+  });
+}
+
+export function renderPostPage({ site, locale, post, translations, previousPost, nextPost }) {
+  const languageBlock = renderLanguageAvailability(locale, translations);
+  const meta = [
+    `${t(locale, "published")}: ${formatDate(post.date, locale)}`,
+    `${t(locale, "updated")}: ${formatDate(post.updated, locale)}`,
+    `${t(locale, "category")}: <a href="${post.categoryUrl}">${escapeHtml(post.category)}</a>`
+  ].join(" · ");
+  const tagLinks = post.tags.map((tag) => `<a href="${post.tagUrls[tag]}">${escapeHtml(tag)}</a>`).join("");
+  const articleJson = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    dateModified: post.updated,
+    inLanguage: locale,
+    author: {
+      "@type": "Person",
+      name: site.author?.[locale] ?? site.author?.["zh-CN"] ?? site.siteName[locale]
+    },
+    mainEntityOfPage: absoluteUrl(site, post.url),
+    image: absoluteUrl(site, post.ogImage),
+    keywords: post.tags
+  };
+  const breadcrumb = breadcrumbJsonLd(site, [
+    { name: t(locale, "home"), url: `/${locale}/` },
+    { name: t(locale, "archive"), url: `/${locale}/archive/` },
+    { name: post.title, url: post.url }
+  ]);
+  const main = `<main id="main" class="page-main article-main">
+    <article class="article-shell">
+      <header class="article-header">
+        <h1>${escapeHtml(post.title)}</h1>
+        <p class="lead">${escapeHtml(post.description)}</p>
+        ${languageBlock}
+        <p class="article-meta">${meta}</p>
+        <div class="tag-row" aria-label="${escapeHtml(t(locale, "taggedWith"))}">${tagLinks}</div>
+      </header>
+      <div class="prose">
+        ${post.html}
+      </div>
+      <footer class="article-footer">
+        <div class="article-end">
+          <img src="/assets/mascot-happy.png" alt="" width="130" height="174">
+          <span>${escapeHtml(t(locale, "articleEnd"))}</span>
+        </div>
+        <nav class="post-neighbors" aria-label="${escapeHtml(t(locale, "archive"))}">
+          ${nextPost ? `<a href="${nextPost.url}"><span>${escapeHtml(t(locale, "newerPost"))}</span><strong>${escapeHtml(nextPost.title)}</strong></a>` : "<span></span>"}
+          ${previousPost ? `<a href="${previousPost.url}"><span>${escapeHtml(t(locale, "olderPost"))}</span><strong>${escapeHtml(previousPost.title)}</strong></a>` : "<span></span>"}
+        </nav>
+        <p><a class="button-link button-link-secondary" href="/${locale}/">${escapeHtml(t(locale, "backHome"))}</a></p>
+      </footer>
+    </article>
+  </main>`;
+  const alternates = translations
+    .map((entry) => ({ hreflang: entry.locale, url: entry.url }))
+    .concat({ hreflang: "x-default", url: translations.find((entry) => entry.locale === "zh-CN")?.url ?? translations[0].url });
+  return renderLayout({
+    site,
+    locale,
+    title: post.title,
+    description: post.description,
+    url: post.url,
+    current: "archive",
+    main,
+    alternates,
+    jsonLd: [baseJsonLd(site, locale), articleJson, breadcrumb],
+    ogType: "article",
+    ogImage: post.ogImage
+  });
+}
+
+export function renderTermIndexPage({ site, locale, titleKey, descriptionKey, terms, url, current }) {
+  const main = `<main id="main" class="page-main list-main">
+    <header class="page-heading">
+      <h1>${escapeHtml(t(locale, titleKey))}</h1>
+      <p class="lead">${escapeHtml(t(locale, descriptionKey))}</p>
+    </header>
+    ${renderTermLinks(terms, t(locale, "noPosts"))}
+  </main>`;
+  return renderLayout({
+    site,
+    locale,
+    title: t(locale, titleKey),
+    description: t(locale, descriptionKey),
+    url,
+    current,
+    main,
+    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/${current}/` })).concat({ hreflang: "x-default", url: `/zh-CN/${current}/` }),
+    jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
+      { name: t(locale, "home"), url: `/${locale}/` },
+      { name: t(locale, titleKey), url }
+    ])]
+  });
+}
+
+export function renderSearchPage({ site, locale }) {
+  const main = `<main id="main" class="page-main list-main">
+    <header class="page-heading">
+      <h1>${escapeHtml(t(locale, "search"))}</h1>
+      <p class="lead">${escapeHtml(t(locale, "searchDescription"))}</p>
+    </header>
+    <section class="search-panel" data-search-root data-search-locale="${escapeHtml(locale)}" data-search-empty="${escapeHtml(t(locale, "searchEmpty"))}" data-search-no-results="${escapeHtml(t(locale, "searchNoResults"))}" data-search-loading="${escapeHtml(t(locale, "searchLoading"))}" data-search-error="${escapeHtml(t(locale, "searchError"))}" data-search-results-label="${escapeHtml(t(locale, "searchResultsCount"))}">
+      <form class="search-form" data-search-form role="search">
+        <label class="visually-hidden" for="search-input">${escapeHtml(t(locale, "search"))}</label>
+        <input id="search-input" class="search-input" data-search-input type="search" name="q" autocomplete="off" placeholder="${escapeHtml(t(locale, "searchPlaceholder"))}">
+      </form>
+      <p class="search-status empty" data-search-status aria-live="polite">${escapeHtml(t(locale, "searchLoading"))}</p>
+      <div class="search-results" data-search-results></div>
+    </section>
+  </main>`;
+  return renderLayout({
+    site,
+    locale,
+    title: t(locale, "search"),
+    description: t(locale, "searchDescription"),
+    url: `/${locale}/search/`,
+    current: "search",
+    main,
+    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/search/` })).concat({ hreflang: "x-default", url: "/zh-CN/search/" }),
+    jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
+      { name: t(locale, "home"), url: `/${locale}/` },
+      { name: t(locale, "search"), url: `/${locale}/search/` }
+    ])]
+  });
+}
+
+export function renderTermPage({ site, locale, title, description, posts, url, current, parentKey }) {
+  const main = `<main id="main" class="page-main list-main">
+    <header class="page-heading">
+      <h1>${escapeHtml(title)}</h1>
+      <p class="lead">${escapeHtml(description)}</p>
+    </header>
+    ${renderPostList(posts, locale)}
+  </main>`;
+  return renderLayout({
+    site,
+    locale,
+    title,
+    description,
+    url,
+    current,
+    main,
+    jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
+      { name: t(locale, "home"), url: `/${locale}/` },
+      { name: t(locale, parentKey), url: `/${locale}/${current}/` },
+      { name: title, url }
+    ])]
+  });
+}
+
+export function renderArchivePage({ site, locale, groups }) {
+  const main = `<main id="main" class="page-main list-main">
+    <header class="page-heading">
+      <h1>${escapeHtml(t(locale, "archive"))}</h1>
+      <p class="lead">${escapeHtml(t(locale, "archiveDescription"))}</p>
+    </header>
+    <div class="archive-list">
+      ${groups.map((group) => `<section aria-labelledby="year-${group.year}">
+        <h2 id="year-${group.year}">${escapeHtml(group.year)}</h2>
+        <ul>
+          ${group.posts.map((post) => `<li><time datetime="${escapeHtml(post.date)}">${escapeHtml(formatDate(post.date, locale))}</time><a href="${post.url}">${escapeHtml(post.title)}</a></li>`).join("")}
+        </ul>
+      </section>`).join("")}
+    </div>
+  </main>`;
+  return renderLayout({
+    site,
+    locale,
+    title: t(locale, "archive"),
+    description: t(locale, "archiveDescription"),
+    url: `/${locale}/archive/`,
+    current: "archive",
+    main,
+    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/archive/` })).concat({ hreflang: "x-default", url: "/zh-CN/archive/" }),
+    jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
+      { name: t(locale, "home"), url: `/${locale}/` },
+      { name: t(locale, "archive"), url: `/${locale}/archive/` }
+    ])]
+  });
+}
+
+export function renderAboutPage({ site, locale, page, translations }) {
+  const languageBlock = renderLanguageAvailability(locale, translations);
+  const main = `<main id="main" class="page-main article-main">
+    <article class="article-shell">
+      <header class="article-header">
+        <h1>${escapeHtml(page.title)}</h1>
+        <p class="lead">${escapeHtml(page.description)}</p>
+        ${languageBlock}
+      </header>
+      <div class="prose">${page.html}</div>
+    </article>
+  </main>`;
+  const alternates = translations
+    .map((entry) => ({ hreflang: entry.locale, url: entry.url }))
+    .concat({ hreflang: "x-default", url: translations.find((entry) => entry.locale === "zh-CN")?.url ?? translations[0].url });
+  return renderLayout({
+    site,
+    locale,
+    title: page.title,
+    description: page.description,
+    url: page.url,
+    current: "about",
+    main,
+    alternates,
+    jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
+      { name: t(locale, "home"), url: `/${locale}/` },
+      { name: page.title, url: page.url }
+    ])]
+  });
+}
+
+export function renderNotFoundPage({ site }) {
+  const locale = "zh-CN";
+  const description = "页面不存在。頁面不存在。 This page was not found.";
+  const main = `<main id="main" class="page-main not-found-main">
+    <section class="not-found-panel" data-i18n-panel="zh-CN" aria-labelledby="not-found-zh">
+      <img src="/assets/mascot-404.png" alt="" width="300" height="450">
+      <div>
+        <h1 id="not-found-zh">404：页面不存在</h1>
+        <p class="lead">这个页面可能已经移动，或从未存在。</p>
+        <div class="hero-links">
+          <a class="button-link" href="/zh-CN/">返回首页</a>
+          <a class="button-link button-link-secondary" href="/zh-CN/archive/">查看归档</a>
+          <a href="/zh-TW/" data-locale-choice="zh-TW">繁體中文</a>
+          <a href="/en/" data-locale-choice="en">English</a>
+        </div>
+      </div>
+    </section>
+    <section class="not-found-panel" data-i18n-panel="zh-TW" aria-labelledby="not-found-zh-tw">
+      <img src="/assets/mascot-404.png" alt="" width="300" height="450">
+      <div>
+        <h1 id="not-found-zh-tw">404：頁面不存在</h1>
+        <p class="lead">這個頁面可能已經移動，或從未存在。</p>
+        <div class="hero-links">
+          <a class="button-link" href="/zh-TW/">返回首頁</a>
+          <a class="button-link button-link-secondary" href="/zh-TW/archive/">查看歸檔</a>
+          <a href="/zh-CN/" data-locale-choice="zh-CN">简体中文</a>
+          <a href="/en/" data-locale-choice="en">English</a>
+        </div>
+      </div>
+    </section>
+    <section class="not-found-panel" data-i18n-panel="en" aria-labelledby="not-found-en">
+      <img src="/assets/mascot-404.png" alt="" width="300" height="450">
+      <div>
+        <h1 id="not-found-en">404: Page not found</h1>
+        <p class="lead">This page may have moved, or it may never have existed.</p>
+        <div class="hero-links">
+          <a class="button-link" href="/en/">Back home</a>
+          <a class="button-link button-link-secondary" href="/en/archive/">View archive</a>
+          <a href="/zh-CN/" data-locale-choice="zh-CN">简体中文</a>
+          <a href="/zh-TW/" data-locale-choice="zh-TW">繁體中文</a>
+        </div>
+      </div>
+    </section>
+  </main>`;
+  return renderLayout({
+    site,
+    locale,
+    title: "404",
+    description,
+    url: "/404.html",
+    main,
+    jsonLd: baseJsonLd(site, locale),
+    bodyAttrs: { "data-not-found": "true" }
+  });
+}
