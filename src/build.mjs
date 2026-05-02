@@ -416,6 +416,7 @@ function escapeXml(value) {
 
 async function writeSitemap(site) {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${generatedPages.map((page) => `  <url>
     <loc>${escapeXml(absoluteUrl(site, page.url))}</loc>
@@ -425,6 +426,123 @@ ${(page.alternates ?? []).map((alt) => `    <xhtml:link rel="alternate" hreflang
 </urlset>
 `;
   await writeFileEnsured(path.join(publicDir, "sitemap.xml"), xml);
+}
+
+async function writeSitemapStylesheet(site) {
+  const xsl = `<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:sm="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <xsl:output method="html" encoding="UTF-8" indent="yes" />
+  <xsl:template match="/">
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Sitemap | ${escapeXml(site.siteUrl)}</title>
+        <style>
+          :root {
+            color-scheme: light;
+            --bg: #f7f2e9;
+            --panel: #fffdf8;
+            --ink: #1f1a16;
+            --muted: #6c6258;
+            --line: #ddd2c4;
+            --accent: #2f6f68;
+          }
+          * {
+            box-sizing: border-box;
+          }
+          body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font: 16px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          }
+          main {
+            width: min(1120px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 48px 0;
+          }
+          h1 {
+            margin: 0;
+            font-size: 32px;
+            line-height: 1.15;
+          }
+          p {
+            margin: 10px 0 28px;
+            color: var(--muted);
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--panel);
+            border: 1px solid var(--line);
+          }
+          th,
+          td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+          }
+          th {
+            background: #eee4d7;
+            color: var(--muted);
+            font-size: 13px;
+            text-transform: uppercase;
+          }
+          tr:last-child td {
+            border-bottom: 0;
+          }
+          a {
+            color: var(--accent);
+            overflow-wrap: anywhere;
+          }
+          .date {
+            white-space: nowrap;
+          }
+          .alternates {
+            color: var(--muted);
+            font-size: 14px;
+          }
+        </style>
+      </head>
+      <body>
+        <main>
+          <h1>Sitemap</h1>
+          <p><xsl:value-of select="count(sm:urlset/sm:url)" /> URLs published for crawlers.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>URL</th>
+                <th>Last modified</th>
+                <th>Alternate languages</th>
+              </tr>
+            </thead>
+            <tbody>
+              <xsl:for-each select="sm:urlset/sm:url">
+                <tr>
+                  <td><a href="{sm:loc}"><xsl:value-of select="sm:loc" /></a></td>
+                  <td class="date"><xsl:value-of select="sm:lastmod" /></td>
+                  <td class="alternates">
+                    <xsl:for-each select="xhtml:link">
+                      <xsl:value-of select="@hreflang" />
+                      <xsl:if test="position() != last()">, </xsl:if>
+                    </xsl:for-each>
+                  </td>
+                </tr>
+              </xsl:for-each>
+            </tbody>
+          </table>
+        </main>
+      </body>
+    </html>
+  </xsl:template>
+</xsl:stylesheet>
+`;
+  await writeFileEnsured(path.join(publicDir, "sitemap.xsl"), xsl);
 }
 
 async function writeRobots(site) {
@@ -491,6 +609,10 @@ async function writeCloudflareFiles() {
   Content-Type: application/xml; charset=utf-8
   X-Content-Type-Options: nosniff
   Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+/sitemap.xsl
+  Content-Type: text/xsl; charset=utf-8
+  X-Content-Type-Options: nosniff
 
 /markdown/*
   Content-Type: text/markdown; charset=utf-8
@@ -659,13 +781,14 @@ async function build() {
   await writeHtml("/404.html", renderNotFoundPage({ site }), { sitemap: false });
   await writeFeeds(site, posts);
   await writeSitemap(site);
+  await writeSitemapStylesheet(site);
   await writeRobots(site);
   await writeAgentFiles(site, posts);
   await writeCloudflareFiles();
 }
 
 async function check() {
-  const required = ["index.html", "404.html", "sitemap.xml", "robots.txt", "_headers", "llms.txt"];
+  const required = ["index.html", "404.html", "sitemap.xml", "sitemap.xsl", "robots.txt", "_headers", "llms.txt"];
   const missing = [];
   for (const file of required) {
     if (!fsSync.existsSync(path.join(publicDir, file))) missing.push(file);
@@ -675,6 +798,9 @@ async function check() {
   const sitemap = await fs.readFile(path.join(publicDir, "sitemap.xml"), "utf8");
   if (!sitemap.startsWith('<?xml version="1.0" encoding="UTF-8"?>\n')) {
     throw new Error("sitemap.xml must start with an XML declaration");
+  }
+  if (!sitemap.includes('<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>')) {
+    throw new Error("sitemap.xml must link to sitemap.xsl for browser readability");
   }
   if (!/<urlset\b[^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/.test(sitemap)) {
     throw new Error("sitemap.xml is missing the sitemap urlset namespace");
@@ -686,6 +812,9 @@ async function check() {
   const headers = await fs.readFile(path.join(publicDir, "_headers"), "utf8");
   if (!hasHeaderBlock(headers, "/sitemap.xml", /^\s*Content-Type:\s*application\/xml;\s*charset=utf-8\s*$/im)) {
     throw new Error("_headers must serve /sitemap.xml as application/xml");
+  }
+  if (!hasHeaderBlock(headers, "/sitemap.xsl", /^\s*Content-Type:\s*text\/xsl;\s*charset=utf-8\s*$/im)) {
+    throw new Error("_headers must serve /sitemap.xsl as text/xsl");
   }
 
   const redirects = await fs.readFile(path.join(publicDir, "_redirects"), "utf8");
