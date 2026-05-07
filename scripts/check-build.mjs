@@ -1,0 +1,70 @@
+#!/usr/bin/env node
+import fs from "node:fs/promises";
+import fsSync from "node:fs";
+import path from "node:path";
+import fg from "fast-glob";
+
+const rootDir = path.resolve(new URL("..", import.meta.url).pathname);
+const publicDir = path.join(rootDir, "public");
+const publicAssetsDir = path.join(publicDir, "assets");
+const locales = ["zh-CN", "zh-TW", "en"];
+
+function hasHeaderBlock(headers, pathPattern, headerPattern) {
+  const blockPattern = new RegExp(`(?:^|\\n)${pathPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\n(?<body>(?:\\s+[^\\n]+\\n?)+)`, "m");
+  const body = headers.match(blockPattern)?.groups?.body ?? "";
+  return headerPattern.test(body);
+}
+
+const required = ["index.html", "404.html", "sitemap.xml", "robots.txt", "_headers", "llms.txt"];
+const missing = [];
+for (const file of required) {
+  if (!fsSync.existsSync(path.join(publicDir, file))) missing.push(file);
+}
+if (missing.length) throw new Error(`Missing required public files: ${missing.join(", ")}`);
+
+const sitemap = await fs.readFile(path.join(publicDir, "sitemap.xml"), "utf8");
+if (!sitemap.startsWith("<?xml")) {
+  throw new Error("sitemap.xml must start with an XML declaration");
+}
+if (sitemap.includes("<?xml-stylesheet")) {
+  throw new Error("sitemap.xml must not rely on XSLT processing instructions");
+}
+if (!/<urlset\b[^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/.test(sitemap)) {
+  throw new Error("sitemap.xml is missing the sitemap urlset namespace");
+}
+if (!/<url>\s*<loc>https:\/\/blog\.js\.gripe\//.test(sitemap)) {
+  throw new Error("sitemap.xml does not contain absolute site URLs");
+}
+
+const headers = await fs.readFile(path.join(publicDir, "_headers"), "utf8");
+if (!hasHeaderBlock(headers, "/sitemap.xml", /^\s*Content-Type:\s*application\/xml;\s*charset=utf-8\s*$/im)) {
+  throw new Error("_headers must serve /sitemap.xml as application/xml");
+}
+
+const redirects = await fs.readFile(path.join(publicDir, "_redirects"), "utf8");
+if (/\/\*\s+\/index\.html\s+200/.test(redirects)) {
+  throw new Error("_redirects contains a SPA fallback");
+}
+
+const leakTerms = ["README", "部署说明", "技术栈", "Cloudflare Pages 构建"];
+const htmlFiles = await fg("**/*.html", { cwd: publicDir, onlyFiles: true });
+for (const file of htmlFiles) {
+  const html = await fs.readFile(path.join(publicDir, file), "utf8");
+  for (const term of leakTerms) {
+    if (html.includes(term)) throw new Error(`${file} contains internal term: ${term}`);
+  }
+  if (!/<title>[^<]+<\/title>/i.test(html)) throw new Error(`${file} is missing title`);
+  if (!/<meta[^>]+name=["']description["'][^>]*>/i.test(html)) throw new Error(`${file} is missing description`);
+  if (!/<main\b/i.test(html)) throw new Error(`${file} is missing main`);
+}
+
+for (const locale of locales) {
+  const searchPage = path.join(publicDir, locale, "search", "index.html");
+  const searchIndex = path.join(publicAssetsDir, `search-index.${locale}.json`);
+  if (!fsSync.existsSync(searchPage)) throw new Error(`Missing search page for ${locale}`);
+  if (!fsSync.existsSync(searchIndex)) throw new Error(`Missing search index for ${locale}`);
+  const entries = JSON.parse(await fs.readFile(searchIndex, "utf8"));
+  if (!Array.isArray(entries)) throw new Error(`Search index for ${locale} must be an array`);
+}
+
+console.log(`Checked ${htmlFiles.length} HTML files and required static outputs.`);

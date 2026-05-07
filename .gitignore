@@ -1,6 +1,12 @@
 node_modules/
 public/
+.astro/
 .cache/
+static/assets/
+static/apple-touch-icon.png
+static/favicon-32x32.png
+static/favicon.ico
+static/site.webmanifest
 .npm-cache/
 .wrangler/
 .publish-myblog/

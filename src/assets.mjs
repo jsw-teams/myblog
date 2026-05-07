@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
-const publicDir = path.join(rootDir, "public");
+const publicDir = path.join(rootDir, "static");
 const assetsDir = path.join(publicDir, "assets");
 const sourceDir = path.join(rootDir, "source-assets");
 const cacheDir = path.join(rootDir, ".cache");
@@ -206,6 +206,11 @@ async function writeManifest() {
   );
 }
 
+async function copyBaseFiles() {
+  await fs.copyFile(path.join(rootDir, "src", "styles.css"), path.join(assetsDir, "site.css"));
+  await fs.copyFile(path.join(rootDir, "src", "client.js"), path.join(assetsDir, "client.js"));
+}
+
 async function writeOgImage() {
   const mascot = await (await transparentCrop("daily", cropConfig.daily.crops.reading))
     .resize({ width: 390 })
@@ -248,6 +253,7 @@ export async function generateAssets() {
   await ensureDir(publicDir);
   await ensureDir(assetsDir);
   await ensureDir(process.env.FONTCONFIG_CACHE);
+  await copyBaseFiles();
 
   await writeCrop("error", cropConfig.error.crops.notFound, "mascot-404.png", 520);
   await writeCrop("daily", cropConfig.daily.crops.reading, "mascot-reading.png", 420);

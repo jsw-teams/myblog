@@ -1,0 +1,23 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+/markdown/*
+  Content-Type: text/markdown; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+/llms-full.txt
+  Content-Type: text/plain; charset=utf-8
+  Content-Signal: ai-train=no, search=yes, ai-input=yes

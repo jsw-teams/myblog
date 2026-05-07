@@ -4,17 +4,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "clean": "node src/build.mjs clean",
     "assets": "node src/assets.mjs",
-    "build": "node src/build.mjs build",
-    "serve": "node src/build.mjs serve",
-    "check": "node src/build.mjs check",
+    "prebuild": "node src/assets.mjs",
+    "build": "astro build",
+    "postbuild": "node scripts/finalize-astro-build.mjs",
+    "serve": "astro preview --host 127.0.0.1",
+    "check": "node scripts/check-build.mjs",
     "predeploy": "npm run build && npm run check",
     "deploy": "wrangler pages deploy public --project-name blog-js-gripe --branch main",
     "predeploy:production": "npm run build && npm run check",
     "deploy:production": "wrangler pages deploy public --project-name blog-js-gripe --branch main"
   },
   "dependencies": {
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.2",
+    "astro": "^6.2.1",
     "fast-glob": "^3.3.3",
     "feed": "^4.2.2",
     "gray-matter": "^4.0.3",
@@ -27,6 +31,7 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "typescript": "^5.9.3",
     "wrangler": "^4.85.0"
   }
 }
