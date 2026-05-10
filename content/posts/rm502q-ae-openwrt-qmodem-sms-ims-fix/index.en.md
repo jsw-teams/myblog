@@ -4,7 +4,7 @@ description: "A real troubleshooting note: QModem showed no incoming SMS, and th
 date: "2026-04-29"
 updated: "2026-04-29"
 translationKey: "rm502q-ae-openwrt-qmodem-sms-ims-fix"
-tags: ["OpenWrt", "QModem", "Quectel", "RM502Q-AE", "5G SA", "IMS", "SMS", "AT Commands"]
+tags: ["OpenWrt", "QModem", "IMS", "SMS"]
 category: "Troubleshooting"
 draft: false
 cover: ""

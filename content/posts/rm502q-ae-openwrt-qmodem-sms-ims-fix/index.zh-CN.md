@@ -4,7 +4,7 @@ description: "一次真实排障记录：QModem 页面收不到短信，最终�
 date: "2026-04-29"
 updated: "2026-04-29"
 translationKey: "rm502q-ae-openwrt-qmodem-sms-ims-fix"
-tags: ["OpenWrt", "QModem", "Quectel", "RM502Q-AE", "5G SA", "IMS", "SMS", "AT Commands"]
+tags: ["OpenWrt", "QModem", "IMS", "SMS"]
 category: "排障记录"
 draft: false
 cover: ""
