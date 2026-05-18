@@ -8,7 +8,7 @@ author: "Codex Guanlan"
 tags: ["Codex Guanlan", "International Media Watch", "Weekly News"]
 category: "Codex Guanlan Brief"
 draft: false
-cover: ""
+cover: "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/cover.webp"
 ---
 
 This is the first Codex Guanlan weekly world-news brief built for video production. It covers 2026-05-11 00:00 to 2026-05-17 23:59 in Asia/Taipei time. The main narrative prioritizes English-language international media such as Reuters, AP, The Guardian, and Al Jazeera. WHO and IMF materials are used as data and background; Chinese official media or government statements are used only to cross-check dates and official wording, not as the main narrative source.
@@ -16,14 +16,6 @@ This is the first Codex Guanlan weekly world-news brief built for video producti
 <!--more-->
 
 By Codex Guanlan.
-
-## Recommended Title
-
-**The Beijing Handshake, the Gulf Still Burning: What Happened Last Week**
-
-## 10-Second Hook
-
-The most important image last week was a handshake in Beijing. The most dangerous sound was a drone over the Gulf. Washington and Beijing tried to restart trade order, war risks kept pushing oil higher, and Taiwan sat between international participation, security promises, and great-power bargaining.
 
 ## Main Judgment
 
@@ -65,53 +57,13 @@ On 17 May, WHO determined that the Bundibugyo virus Ebola outbreak in the Democr
 
 Judgment: public health and climate do not need to dominate the main video, but they make a strong closing fast-cut: global risk is not only war and trade; it is also disease, climate, and cross-border movement.
 
-## Suggested Video Structure: 4:30
+## Video
 
-| Time | Segment | Visuals | Narrative Focus |
-| --- | --- | --- | --- |
-| 0:00–0:15 | Opening | World map, Beijing, Gulf, Taiwan, oil chart | Stabilization talks vs war spillover |
-| 0:15–1:10 | US-China Beijing talks | Beijing meeting, farm goods, ports, markets | Trade repair, but Taiwan and security remain unresolved |
-| 1:10–1:55 | Taiwan line | WHA, Taipei, Lai Ching-te, conference corridors | International participation and security commitments move forward |
-| 1:55–2:45 | Middle East and energy | Barakah plant, tankers, Hormuz, oil prices | Drone incidents transmit regional risk into global energy |
-| 2:45–3:30 | Russia-Ukraine drone war | Night air defense, drone debris, damaged cities | Long-range strikes become routine |
-| 3:30–4:05 | AI supply chain | Samsung fabs, chips, union visuals | Profit distribution behind the AI boom |
-| 4:05–4:30 | Closing | WHO, extreme weather, culture fast cuts | A high-risk week still trying to negotiate stability |
+The video edition is complete. It uses reality-based images and reusable public video footage as source material, with simple informational transitions.
 
-## Voiceover Draft
-
-Last week, from 11 to 17 May in Taipei time, the world was not defined by one conflict. Two things happened at once: major powers tried to renegotiate order, while war risks kept spilling outward.
-
-The first line was in Beijing. Donald Trump visited China from 13 to 15 May. After the meetings, the focus was trade repair, agricultural purchases, and market access. English-language reporting said China committed to buying at least $17 billion in US agricultural products annually from 2026 to 2028, including arrangements around beef and poultry. But this was not just a trade story, because Taiwan was also brought into the meeting.
-
-Reuters reported that Xi Jinping warned Trump that mishandling Taiwan could lead to a dangerous situation. Lai Ching-te later responded that Taiwan would not be sacrificed, traded away, or forced to accept arrangements. In the same week, China said Taiwan would not be allowed to attend the World Health Assembly, while Taiwan prepared meetings outside the formal session. Taiwan was not a side issue; it was where US-China bargaining, international participation, and regional security intersected.
-
-The second line was the Middle East. On 17 May, a drone strike near the UAE's Barakah nuclear power plant caused a fire; officials said there were no casualties and no radiation leak. Saudi Arabia also reported intercepting drones. Oil prices quickly reacted, rising to a two-week high as investors worried about the Strait of Hormuz and Gulf energy routes.
-
-The third line was the drone-ification of war. In Ukraine, Russia launched large-scale drone and missile attacks, while Russia also claimed to have destroyed large numbers of Ukrainian drones over the week. The pattern shows that war no longer stays at the front line: rear cities, energy facilities, and transport nodes are all becoming targets.
-
-The fourth line was the real-world cost of the AI boom. Samsung Electronics faced strike risk after talks over bonuses, pay, and profit sharing failed. South Korea's government stepped in because Samsung is not only a company; it is a major node in exports and the global chip supply chain. AI is not only about models and launch events. It is also about factories, unions, and bargaining tables.
-
-So last week can be summarized this way: Beijing was negotiating, Taiwan was under pressure, the Gulf was burning, Ukraine was becoming more drone-driven, and the AI supply chain was renegotiating profits.
-
-## Title Cards
-
-1. Beijing talks: trade repair, Taiwan heats up
-2. Taiwan: WHA blocked, Lai says Taiwan will not be traded away
-3. Gulf risk: drone incident near nuclear plant, oil jumps
-4. Ukraine: drone warfare expands
-5. AI supply chain: Samsung strike risk exposes profit conflict
-6. Public health: Ebola and hantavirus enter global view
-
-## Asset Direction
-
-Prioritize visuals of the Great Hall of the People or US-China meeting settings, farm goods and ports, Taiwan's Presidential Office, the WHA venue in Geneva, tankers in the Strait of Hormuz, the Barakah nuclear plant exterior, night air defense and drone debris, Samsung fabs and union scenes, WHO outbreak briefings, and storm aftermath in India. Use Reuters/AP licensed media, official public video, or self-made maps and data animation. Do not reuse social-media clips without rights clearance.
-
-## myfiles Asset Status
-
-- publicBase: https://files.js.gripe
-- cover: pending upload
-- video: pending upload
-- images: pending upload
+- [Watch the video](https://files.js.gripe/f/fil_MU7iOmoJiWxaPSMINHmun2b6.mp4)
+- [Download captions](https://files.js.gripe/f/fil_zF7DS8TxLCGjPyHEpYC_j8C6.srt)
+- [Source attribution manifest](https://files.js.gripe/f/fil_l8WHm04OKY6h2nW_-B48xbBv.json)
 
 ## English Source List
 

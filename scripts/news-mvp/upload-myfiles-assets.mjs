@@ -40,6 +40,10 @@ function classifyAsset(filePath, publicUrl) {
   const name = path.basename(filePath).toLowerCase();
   if (name.startsWith("cover.")) return ["cover", publicUrl];
   if (name === "weekly-world-news.mp4" || name.startsWith("weekly-world-news.")) return ["video", publicUrl];
+  if (name.endsWith(".srt")) return ["captions", publicUrl];
+  if (name.endsWith(".csv") || name.endsWith(".json") || name.endsWith(".md") || name.endsWith(".txt")) {
+    return ["attachment", publicUrl];
+  }
   return ["image", publicUrl];
 }
 
@@ -83,7 +87,11 @@ async function main() {
 
   const items = await uploadFiles({ uploadURL, sessionCookie, files });
   const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
-  const next = { ...(manifest[week] || {}), images: [...(manifest[week]?.images || [])] };
+  const next = {
+    ...(manifest[week] || {}),
+    images: [...(manifest[week]?.images || [])],
+    attachments: [...(manifest[week]?.attachments || [])],
+  };
 
   for (const item of items) {
     if (!item.ok || !item.file?.publicUrl) continue;
@@ -91,6 +99,8 @@ async function main() {
     const [kind, url] = classifyAsset(sourcePath, item.file.publicUrl);
     if (kind === "cover") next.cover = url;
     if (kind === "video") next.video = url;
+    if (kind === "captions") next.captions = url;
+    if (kind === "attachment" && !next.attachments.includes(url)) next.attachments.push(url);
     if (kind === "image" && !next.images.includes(url)) next.images.push(url);
   }
 
