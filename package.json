@@ -8,6 +8,7 @@
     "prebuild": "node src/assets.mjs",
     "build": "astro build",
     "news:mvp": "node scripts/news-mvp/generate-weekly-news.mjs",
+    "news:mvp:upload-assets": "node scripts/news-mvp/upload-myfiles-assets.mjs",
     "postbuild": "node scripts/finalize-astro-build.mjs",
     "serve": "astro preview --host 127.0.0.1",
     "check": "node scripts/check-build.mjs",
