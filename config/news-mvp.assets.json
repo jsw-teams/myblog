@@ -1,7 +1,7 @@
 {
   "2026-05-11_2026-05-17": {
     "cover": "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/cover.webp",
-    "video": "https://files.js.gripe/f/fil_MU7iOmoJiWxaPSMINHmun2b6.mp4",
+    "video": "https://files.js.gripe/f/fil_-v-tCFscWRk55wHhNDEJ3pvH.mp4",
     "images": [
       "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/un-security-council.webp",
       "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/global-shipping.webp",
@@ -9,8 +9,10 @@
     ],
     "attachments": [
       "https://files.js.gripe/f/fil_l8WHm04OKY6h2nW_-B48xbBv.json",
-      "https://files.js.gripe/f/fil_ljNt_KNDey3nKrho3A5FbU5W.csv"
+      "https://files.js.gripe/f/fil_ljNt_KNDey3nKrho3A5FbU5W.csv",
+      "https://files.js.gripe/f/fil_x5CPuXBFZsmb1xyJvKwTFE15.json",
+      "https://files.js.gripe/f/fil_ugOxO-bXvvUn74ccOOJTDWJQ.csv"
     ],
-    "captions": "https://files.js.gripe/f/fil_zF7DS8TxLCGjPyHEpYC_j8C6.srt"
+    "captions": "https://files.js.gripe/f/fil_WNJTj6m5pwMAI0cZEXgxVQvl.srt"
   }
 }

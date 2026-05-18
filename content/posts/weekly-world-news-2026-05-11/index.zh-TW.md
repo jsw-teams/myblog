@@ -53,9 +53,9 @@ WHO 5 月 17 日宣布，剛果民主共和國和烏干達的 Bundibugyo 病毒�
 
 本期影片版已完成，採用現實圖片與可復用公開影片作為底稿，並加入簡潔的信息轉場。
 
-- [觀看影片](https://files.js.gripe/f/fil_MU7iOmoJiWxaPSMINHmun2b6.mp4)
-- [下載字幕](https://files.js.gripe/f/fil_zF7DS8TxLCGjPyHEpYC_j8C6.srt)
-- [素材來源清單](https://files.js.gripe/f/fil_l8WHm04OKY6h2nW_-B48xbBv.json)
+- [觀看影片](https://files.js.gripe/f/fil_-v-tCFscWRk55wHhNDEJ3pvH.mp4)
+- [下載字幕](https://files.js.gripe/f/fil_WNJTj6m5pwMAI0cZEXgxVQvl.srt)
+- [素材來源清單](https://files.js.gripe/f/fil_x5CPuXBFZsmb1xyJvKwTFE15.json)
 
 ## 英文來源列表
 
