@@ -207,11 +207,15 @@ function renderMediaPlayer(post, locale) {
   const downloadLink = media.download ? `<a href="${escapeHtml(media.download)}">${escapeHtml(media.downloadLabel || "Download video")}</a>` : "";
   const captionsLink = captions[0]?.download ? `<a href="${escapeHtml(captions[0].download)}">${escapeHtml(captions[0].downloadLabel || "Download captions")}</a>` : "";
   const links = [downloadLink, captionsLink, transcriptLink].filter(Boolean).join("");
-  return `<section class="article-media" aria-labelledby="article-media-title">
-    <div class="article-media-heading">
-      <h2 id="article-media-title">${escapeHtml(title)}</h2>
+  const heading = media.title || media.description
+    ? `<div class="article-media-heading">
+      ${media.title ? `<h2 id="article-media-title">${escapeHtml(title)}</h2>` : ""}
       ${media.description ? `<p>${escapeHtml(media.description)}</p>` : ""}
-    </div>
+    </div>`
+    : "";
+  const sectionLabel = media.title ? ' aria-labelledby="article-media-title"' : ` aria-label="${escapeHtml(title)}"`;
+  return `<section class="article-media"${sectionLabel}>
+    ${heading}
     <video class="article-video" controls playsinline preload="metadata"${poster ? ` poster="${escapeHtml(poster)}"` : ""}>
       <source src="${escapeHtml(media.video)}" type="${escapeHtml(sourceType)}">
       ${captionTracks}
