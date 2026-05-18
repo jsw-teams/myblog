@@ -87,13 +87,16 @@ description: ${jsonString(brief.description)}
 date: ${jsonString(week.generatedDate)}
 updated: ${jsonString(week.generatedDate)}
 translationKey: ${jsonString(week.slug)}
-tags: ["国际新闻", "Weekly News", "视频脚本"]
-category: "新闻周报"
+author: "Codex 观澜"
+tags: ["Codex 观澜", "国际媒体观察", "Weekly News"]
+category: "Codex 观澜周报"
 draft: true
 cover: ${jsonString(assets.cover || "")}
 ---
 
 这是一篇由 Weekly News MVP 生成的草稿，归档区间为台北时间 ${weekLabel}。内容用于人工编辑、事实核查和视频制作排期；发布前请逐条复核英文来源、机构原文、图片/视频授权与 myfiles 附件状态。
+
+署名：Codex 观澜。
 
 <!--more-->
 
