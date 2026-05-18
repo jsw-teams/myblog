@@ -416,7 +416,8 @@ async function muxSegmentAudio({ visualPath, audioPath, outputPath }) {
     "-c:v", "copy",
     "-c:a", "aac",
     "-b:a", "128k",
-    "-af", "loudnorm=I=-16:LRA=11:TP=-1.5,apad",
+    "-ar", "48000",
+    "-af", "loudnorm=I=-18:LRA=11:TP=-2.0,volume=-1dB,apad",
     "-shortest",
     outputPath,
   ], { cwd: outDir, maxBuffer: 1024 * 1024 * 8 });
@@ -435,38 +436,9 @@ async function exists(filePath) {
 async function prepareSceneAudio(scene, index) {
   const number = String(index + 1).padStart(2, "0");
   const textPath = path.join(audioDir, `scene-${number}.txt`);
-  const workerPath = path.join(audioDir, `scene-${number}.workerai.mp3`);
   const localPath = path.join(audioDir, `scene-${number}.wav`);
   const text = scene.voiceover.join("\n\n");
   await fs.writeFile(textPath, text, "utf8");
-
-  if (await exists(workerPath)) {
-    try {
-      await auditAudio(workerPath, textPath, number);
-      scene.audioPath = workerPath;
-      scene.dur = Math.max(8, Math.round((await mediaDuration(workerPath) + 0.6) * 10) / 10);
-      return;
-    } catch (error) {
-      console.warn(`Existing Workers AI TTS failed audit for scene ${number}: ${error.message}`);
-    }
-  }
-
-  if (process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN || process.env.WORKERS_AI_API_TOKEN || await exists(path.join(rootDir, ".env.local"))) {
-    try {
-      await execFileAsync("node", [
-        path.join(rootDir, "scripts/news-mvp/workerai-tts.mjs"),
-        `--input=${textPath}`,
-        `--output=${workerPath}`,
-        "--lang=ZH",
-      ], { cwd: rootDir, maxBuffer: 1024 * 1024 * 4 });
-      await auditAudio(workerPath, textPath, number);
-      scene.audioPath = workerPath;
-      scene.dur = Math.max(8, Math.round((await mediaDuration(workerPath) + 0.6) * 10) / 10);
-      return;
-    } catch (error) {
-      console.warn(`Workers AI TTS failed audit for scene ${number}: ${error.message}`);
-    }
-  }
 
   const edgeEndpoint = process.env.NEWS_TTS_ENDPOINT || process.env.EDGE_WORKER_TTS_ENDPOINT || "";
   if (edgeEndpoint) {

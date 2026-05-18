@@ -37,3 +37,15 @@ MYFILES_PUBLIC_BASE=https://files.js.gripe npm run news:mvp:upload-assets -- --w
 The upload helper updates `config/news-mvp.assets.json` with returned public URLs.
 If anonymous upload is disabled, pass a browser session cookie with
 `MYFILES_SESSION_COOKIE`.
+
+## Text to speech
+
+The video renderer uses the OpenAI-compatible `/v1/audio/speech` endpoint exposed
+by `wangwangit/tts` or a self-hosted compatible Worker. WorkerAI TTS is not used.
+
+```bash
+NEWS_TTS_ENDPOINT=https://tts.wangwangit.com \
+NEWS_TTS_VOICE=zh-CN-YunyangNeural \
+NEWS_TTS_STYLE=newscast \
+npm run news:mvp:tts -- --input=voiceover.txt --output=voiceover.mp3
+```

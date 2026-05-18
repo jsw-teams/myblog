@@ -188,6 +188,38 @@ export function renderPostCard(post, locale) {
   </article>`;
 }
 
+function renderMediaPlayer(post, locale) {
+  const media = post.media;
+  if (!media || !media.video) return "";
+  const title = media.title || post.title;
+  const poster = media.poster || post.cover || post.ogImage;
+  const captions = Array.isArray(media.captions) ? media.captions : [];
+  const captionTracks = captions
+    .filter((track) => track?.src)
+    .map((track, index) => {
+      const lang = track.lang || locale;
+      const label = track.label || localeLabel(lang);
+      return `<track kind="subtitles" src="${escapeHtml(track.src)}" srclang="${escapeHtml(lang)}" label="${escapeHtml(label)}"${track.default === true || index === 0 ? " default" : ""}>`;
+    })
+    .join("");
+  const sourceType = media.type || "video/mp4";
+  const transcriptLink = media.transcript ? `<a href="${escapeHtml(media.transcript)}">${escapeHtml(media.transcriptLabel || "Transcript")}</a>` : "";
+  const downloadLink = media.download ? `<a href="${escapeHtml(media.download)}">${escapeHtml(media.downloadLabel || "Download video")}</a>` : "";
+  const captionsLink = captions[0]?.download ? `<a href="${escapeHtml(captions[0].download)}">${escapeHtml(captions[0].downloadLabel || "Download captions")}</a>` : "";
+  const links = [downloadLink, captionsLink, transcriptLink].filter(Boolean).join("");
+  return `<section class="article-media" aria-labelledby="article-media-title">
+    <div class="article-media-heading">
+      <h2 id="article-media-title">${escapeHtml(title)}</h2>
+      ${media.description ? `<p>${escapeHtml(media.description)}</p>` : ""}
+    </div>
+    <video class="article-video" controls playsinline preload="metadata"${poster ? ` poster="${escapeHtml(poster)}"` : ""}>
+      <source src="${escapeHtml(media.video)}" type="${escapeHtml(sourceType)}">
+      ${captionTracks}
+    </video>
+    ${links ? `<nav class="article-media-links" aria-label="Media links">${links}</nav>` : ""}
+  </section>`;
+}
+
 function renderTermLinks(terms, emptyText) {
   if (!terms.length) return `<p class="empty">${escapeHtml(emptyText)}</p>`;
   return `<ul class="term-grid">
@@ -287,6 +319,17 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
     image: absoluteUrl(site, post.ogImage),
     keywords: post.tags
   };
+  const videoJson = post.media?.video ? {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: post.media.title || post.title,
+    description: post.media.description || post.description,
+    uploadDate: post.date,
+    thumbnailUrl: post.media.poster ? absoluteUrl(site, post.media.poster) : absoluteUrl(site, post.ogImage),
+    contentUrl: absoluteUrl(site, post.media.video),
+    embedUrl: post.media.embed ? absoluteUrl(site, post.media.embed) : undefined,
+    inLanguage: locale
+  } : null;
   const breadcrumb = breadcrumbJsonLd(site, [
     { name: t(locale, "home"), url: `/${locale}/` },
     { name: t(locale, "archive"), url: `/${locale}/archive/` },
@@ -301,6 +344,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
         <p class="article-meta">${meta}</p>
         <div class="tag-row" aria-label="${escapeHtml(t(locale, "taggedWith"))}">${tagLinks}</div>
       </header>
+      ${renderMediaPlayer(post, locale)}
       <div class="prose">
         ${post.html}
       </div>
@@ -329,7 +373,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
     current: "archive",
     main,
     alternates,
-    jsonLd: [baseJsonLd(site, locale), articleJson, breadcrumb],
+    jsonLd: [baseJsonLd(site, locale), articleJson, videoJson, breadcrumb],
     ogType: "article",
     ogImage: post.ogImage
   });

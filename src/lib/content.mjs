@@ -179,6 +179,7 @@ export async function loadPosts() {
     const updated = normalizeDate(parsed.data.updated, date);
     const description = plainSummary(parsed.content, parsed.data.description);
     const cover = parsed.data.cover ? copyContentAsset(String(parsed.data.cover), baseDir, contentKey) : "";
+    const media = parsed.data.media && typeof parsed.data.media === "object" ? parsed.data.media : null;
     posts.push({
       slug,
       locale,
@@ -192,6 +193,7 @@ export async function loadPosts() {
       tags: Array.isArray(parsed.data.tags) ? parsed.data.tags.map(String) : [],
       category: parsed.data.category ? String(parsed.data.category) : "Notes",
       cover,
+      media,
       ogImage: cover || "/assets/og-default.png",
       markdownBody: parsed.content.replace(moreMarker, "").trim(),
       html: renderMarkdown(parsed.content, baseDir, contentKey),
