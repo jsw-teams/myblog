@@ -118,7 +118,7 @@ async function main() {
   const inputPath = argValue("input");
   const outputPath = path.resolve(argValue("output") || "narration.mp3");
   const model = argValue("model") || process.env.WORKERS_AI_TTS_MODEL || "@cf/myshell-ai/melotts";
-  const lang = argValue("lang") || process.env.WORKERS_AI_TTS_LANG || "zh";
+  const lang = argValue("lang") || process.env.WORKERS_AI_TTS_LANG || "ZH";
   const speaker = argValue("speaker") || process.env.WORKERS_AI_TTS_SPEAKER || "";
   const accountId = envValue("CLOUDFLARE_ACCOUNT_ID", "CF_ACCOUNT_ID", "WORKERS_AI_ACCOUNT_ID") || defaultAccountId;
   const token = envValue("CLOUDFLARE_API_TOKEN", "CF_API_TOKEN", "WORKERS_AI_API_TOKEN");

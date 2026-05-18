@@ -441,9 +441,14 @@ async function prepareSceneAudio(scene, index) {
   await fs.writeFile(textPath, text, "utf8");
 
   if (await exists(workerPath)) {
-    scene.audioPath = workerPath;
-    scene.dur = Math.max(8, Math.round((await mediaDuration(workerPath) + 0.6) * 10) / 10);
-    return;
+    try {
+      await auditAudio(workerPath, textPath, number);
+      scene.audioPath = workerPath;
+      scene.dur = Math.max(8, Math.round((await mediaDuration(workerPath) + 0.6) * 10) / 10);
+      return;
+    } catch (error) {
+      console.warn(`Existing Workers AI TTS failed audit for scene ${number}: ${error.message}`);
+    }
   }
 
   if (process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN || process.env.WORKERS_AI_API_TOKEN || await exists(path.join(rootDir, ".env.local"))) {
@@ -452,13 +457,42 @@ async function prepareSceneAudio(scene, index) {
         path.join(rootDir, "scripts/news-mvp/workerai-tts.mjs"),
         `--input=${textPath}`,
         `--output=${workerPath}`,
-        "--lang=zh",
+        "--lang=ZH",
       ], { cwd: rootDir, maxBuffer: 1024 * 1024 * 4 });
+      await auditAudio(workerPath, textPath, number);
       scene.audioPath = workerPath;
       scene.dur = Math.max(8, Math.round((await mediaDuration(workerPath) + 0.6) * 10) / 10);
       return;
     } catch (error) {
-      console.warn(`Workers AI TTS failed for scene ${number}, falling back locally: ${error.message}`);
+      console.warn(`Workers AI TTS failed audit for scene ${number}: ${error.message}`);
+    }
+  }
+
+  const edgeEndpoint = process.env.NEWS_TTS_ENDPOINT || process.env.EDGE_WORKER_TTS_ENDPOINT || "";
+  if (edgeEndpoint) {
+    const edgePath = path.join(audioDir, `scene-${number}.edge.mp3`);
+    if (await exists(edgePath)) {
+      try {
+        await auditAudio(edgePath, textPath, number);
+        scene.audioPath = edgePath;
+        scene.dur = Math.max(8, Math.round((await mediaDuration(edgePath) + 0.6) * 10) / 10);
+        return;
+      } catch (error) {
+        console.warn(`Existing Edge Worker TTS failed audit for scene ${number}: ${error.message}`);
+      }
+    }
+    try {
+      await execFileAsync("node", [
+        path.join(rootDir, "scripts/news-mvp/edge-worker-tts.mjs"),
+        `--input=${textPath}`,
+        `--output=${edgePath}`,
+      ], { cwd: rootDir, maxBuffer: 1024 * 1024 * 4 });
+      await auditAudio(edgePath, textPath, number);
+      scene.audioPath = edgePath;
+      scene.dur = Math.max(8, Math.round((await mediaDuration(edgePath) + 0.6) * 10) / 10);
+      return;
+    } catch (error) {
+      console.warn(`Edge Worker TTS failed audit for scene ${number}: ${error.message}`);
     }
   }
 
@@ -469,8 +503,18 @@ async function prepareSceneAudio(scene, index) {
     "-w", localPath,
     "-f", textPath,
   ], { maxBuffer: 1024 * 1024 * 2 });
+  await auditAudio(localPath, textPath, number);
   scene.audioPath = localPath;
   scene.dur = Math.max(8, Math.round((await mediaDuration(localPath) + 0.6) * 10) / 10);
+}
+
+async function auditAudio(audioPath, textPath, number) {
+  await execFileAsync("node", [
+    path.join(rootDir, "scripts/news-mvp/audit-audio-transcript.mjs"),
+    `--audio=${audioPath}`,
+    `--text=${textPath}`,
+    `--transcript=${path.join(audioDir, `scene-${number}.transcript.txt`)}`,
+  ], { cwd: rootDir, maxBuffer: 1024 * 1024 * 4 });
 }
 
 async function main() {
