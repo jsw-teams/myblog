@@ -86,7 +86,7 @@ codex
 或：
 
 ```text
-请根据 README 的规范，为新增文章生成 zh-CN、zh-TW、en 三个版本，并在完成后运行 npm run build 和 npm run check。
+请根据项目说明文档的规范，为新增文章生成 zh-CN、zh-TW、en 三个版本，并在完成后运行 npm run build 和 npm run check。
 ```
 
 ## 为 Codex 提供清晰边界
@@ -179,7 +179,7 @@ Codex 更适合做结构清楚、验证路径明确的任务，例如：
 - 总结最近一次 diff；
 - 为提交生成 commit message；
 - 排查构建错误；
-- 补充 README 或部署说明；
+- 补充项目说明文档或部署文档；
 - 对小范围脚本做重构。
 
 不建议一开始就让 Codex 改动过大的范围，例如同时修改构建系统、部署脚本、站点主题和文章内容。大任务应该拆成多个小任务，每个任务都能独立验证。
@@ -190,7 +190,7 @@ Codex 更适合做结构清楚、验证路径明确的任务，例如：
 
 ```text
 你正在 /home/deploy/projects/blog.js.gripe 工作区。
-请读取 README.md 和 content/posts 的现有结构。
+请读取项目说明文档和 content/posts 的现有结构。
 目标：新增一篇关于 {主题} 的文章。
 要求：
 1. 路径为 content/posts/{slug}/index.zh-CN.md、index.zh-TW.md、index.en.md；

@@ -86,7 +86,7 @@ Inspect the content/posts structure of this Astro static blog and tell me which 
 Or:
 
 ```text
-Based on the README convention, generate zh-CN, zh-TW, and en versions of the new article, then run npm run build and npm run check.
+Based on the project documentation convention, generate zh-CN, zh-TW, and en versions of the new article, then run npm run build and npm run check.
 ```
 
 ## Give Codex clear boundaries
@@ -179,7 +179,7 @@ Codex works best on tasks with clear structure and verification steps, such as:
 - summarizing the latest diff;
 - drafting commit messages;
 - troubleshooting build errors;
-- updating README or deployment notes;
+- updating project documentation or deployment notes;
 - refactoring small scripts.
 
 Avoid starting with overly broad tasks such as changing the build system, deployment scripts, site theme, and article content all at once. Large work should be split into small tasks that can each be verified independently.
@@ -190,7 +190,7 @@ This prompt works well when adding multilingual blog posts in a remote project:
 
 ```text
 You are working in /home/deploy/projects/blog.js.gripe.
-Read README.md and the existing content/posts structure.
+Read the project documentation and the existing content/posts structure.
 Goal: add an article about {topic}.
 Requirements:
 1. Use these paths: content/posts/{slug}/index.zh-CN.md, index.zh-TW.md, index.en.md.
