@@ -61,9 +61,9 @@ Judgment: public health and climate do not need to dominate the main video, but 
 
 The video edition is complete. It uses reality-based images and reusable public video footage as source material, with simple informational transitions.
 
-- [Watch the video](https://files.js.gripe/f/fil_MU7iOmoJiWxaPSMINHmun2b6.mp4)
-- [Download captions](https://files.js.gripe/f/fil_zF7DS8TxLCGjPyHEpYC_j8C6.srt)
-- [Source attribution manifest](https://files.js.gripe/f/fil_l8WHm04OKY6h2nW_-B48xbBv.json)
+- [Watch the video](https://files.js.gripe/f/fil_-v-tCFscWRk55wHhNDEJ3pvH.mp4)
+- [Download captions](https://files.js.gripe/f/fil_WNJTj6m5pwMAI0cZEXgxVQvl.srt)
+- [Source attribution manifest](https://files.js.gripe/f/fil_x5CPuXBFZsmb1xyJvKwTFE15.json)
 
 ## English Source List
 

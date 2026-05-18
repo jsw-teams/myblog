@@ -11,6 +11,7 @@ const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../.
 const outDir = path.join(rootDir, "myfiles-assets/2026-05-11_2026-05-17");
 const framesDir = path.join(outDir, "frames");
 const segmentsDir = path.join(outDir, "segments");
+const audioDir = path.join(outDir, "audio");
 const realDir = path.join(outDir, "real");
 const videoDir = path.join(outDir, "video");
 const width = 1920;
@@ -21,11 +22,16 @@ const scenes = [
   {
     dur: 12,
     image: "great-hall.jpg",
+    video: "hormuz-irgc.webm",
+    videoSourceId: "hormuz-irgc",
     sourceId: "great-hall",
     kicker: "Codex 观澜｜台北时间 2026-05-11 至 2026-05-17",
     title: "北京握手，霍尔木兹仍在燃烧",
     body: "稳定谈判撞上战争外溢：中美试图修复贸易，中东与俄乌风险继续扩散。",
     notes: ["北京会晤", "能源通道", "台海压力"],
+    voiceover: [
+      "上周，按台北时间五月十一日到十七日来看，世界的关键词不是单一冲突，而是两个方向同时发生：一边是大国试图重新谈判秩序，另一边是战争风险继续外溢。",
+    ],
   },
   {
     dur: 34,
@@ -35,6 +41,9 @@ const scenes = [
     title: "贸易修复，但台湾议题升温",
     body: "中美谈农业采购和市场准入；台湾议题同时进入会晤阴影，安全承诺与国际参与被推到前台。",
     notes: ["贸易修复", "市场准入", "台湾议题"],
+    voiceover: [
+      "开场先看北京。特朗普五月十三日到十五日访华，中美会晤后，双方把重点放在贸易修复、农业采购和市场准入。英文报道显示，中国承诺二零二六到二零二八年每年至少购买一百七十亿美元美国农产品，并推进牛肉、禽类等市场准入安排。",
+    ],
   },
   {
     dur: 30,
@@ -44,6 +53,10 @@ const scenes = [
     title: "WHA 受阻，不被交易的回应",
     body: "台湾不是边缘议题，而是中美谈判、国际组织参与与区域安全之间的交叉点。",
     notes: ["WHA", "台北回应", "国际参与"],
+    voiceover: [
+      "但这不是一个单纯的贸易新闻。因为台湾议题也被带入这场会晤。路透报道，习近平在会晤中警告特朗普，台湾问题若处理不当可能走向危险局面。随后，赖清德在五月十七日回应称，台湾不会被牺牲、交易或被迫接受安排。",
+      "同一周，中国也表示不会允许台湾参加世界卫生大会，台湾则准备在正式会议外进行国际会晤。换句话说，台湾不是上周的边缘议题，而是中美谈判、国际组织参与与区域安全之间的交叉点。",
+    ],
   },
   {
     dur: 32,
@@ -55,6 +68,10 @@ const scenes = [
     title: "无人机把风险传导到油价",
     body: "巴拉卡核电站周边事件与沙特拦截无人机，让霍尔木兹、油轮与核设施安全进入同一张风险图。",
     notes: ["Barakah", "无人机", "霍尔木兹"],
+    voiceover: [
+      "第二条主线在中东。五月十七日，阿联酋巴拉卡核电站周边遭无人机袭击并引发火情，官方称没有人员伤亡，也没有辐射外泄；沙特同日也通报拦截无人机。市场反应很快，油价升至两周高位，因为投资者担心霍尔木兹海峡与海湾能源通道继续受到冲击。",
+      "这条新闻的关键，不只是核电站有没有受损，而是无人机、能源通道、核设施周边安全和油价预期被绑在一起。它说明地区战事可以很快传导到全球能源市场，也会让海湾航线、保险和供应链重新定价。",
+    ],
   },
   {
     dur: 31,
@@ -64,6 +81,10 @@ const scenes = [
     title: "无人机化、远程化、后方化",
     body: "战争不再只发生在前线；后方城市、能源设施和交通节点都在被纳入打击范围。",
     notes: ["远程打击", "城市后方", "防空压力"],
+    voiceover: [
+      "第三条主线，是战争越来越无人机化。俄乌战场上，俄罗斯称过去一周击落大量乌克兰无人机，莫斯科遭遇一年多来最大规模袭击之一；乌克兰方面也遭到俄罗斯大规模无人机和导弹攻击。",
+      "这个趋势说明，战争不再只发生在前线。后方城市、能源设施、交通节点和心理安全，都在被纳入打击范围。无人机降低了远程打击门槛，也让战争在地理上变宽，在时间上变得更日常。",
+    ],
   },
   {
     dur: 27,
@@ -73,6 +94,10 @@ const scenes = [
     title: "三星罢工风险暴露利润分配矛盾",
     body: "AI 热潮不只在模型发布会，也在芯片工厂、工会谈判和供应链利润表里。",
     notes: ["芯片工厂", "劳资谈判", "AI 利润"],
+    voiceover: [
+      "第四条主线，是 AI 热潮背后的现实成本。三星电子因为奖金、薪资和 AI 芯片繁荣下的利润分配问题，面临大规模罢工风险。韩国政府介入，是因为三星不仅是一家公司，它还是韩国出口和全球芯片供应链的重要节点。",
+      "AI 的故事，不只发生在模型和发布会上，也发生在工厂、工会和供应链谈判桌上。当芯片利润上升，工人、公司、政府和客户之间都会重新谈判谁获得收益，谁承担中断风险。",
+    ],
   },
   {
     dur: 24,
@@ -82,15 +107,23 @@ const scenes = [
     title: "埃博拉、汉坦病毒、极端天气",
     body: "全球风险不只来自战争和贸易，也来自疾病、气候和跨境流动。",
     notes: ["公共健康", "跨境流动", "极端天气"],
+    voiceover: [
+      "最后，公共健康和气候也在提醒世界风险没有暂停。WHO 将刚果和乌干达的埃博拉疫情列为国际关注的突发公共卫生事件；同周，南美邮轮相关的安第斯汉坦病毒感染也受到关注。印度北方邦则遭遇强风暴，造成严重伤亡。",
+    ],
   },
   {
     dur: 18,
     image: "hormuz.jpg",
+    video: "hormuz-irgc.webm",
+    videoSourceId: "hormuz-irgc",
     sourceId: "hormuz",
     kicker: "收束",
     title: "高风险，但仍在谈判的一周",
     body: "北京在谈判，台海在承压，海湾在燃烧，俄乌在无人机化，AI 供应链在重新分配利润。",
     notes: ["谈判", "外溢", "再分配"],
+    voiceover: [
+      "所以，上周的世界可以这样总结：北京在谈判，台海在承压，海湾在燃烧，俄乌在无人机化，AI 供应链在重新分配利润。表面上是几条新闻，背后其实是同一个问题：全球秩序正在尝试恢复稳定，但风险正在从战场、能源、科技和公共卫生同时扩散。这里是 Codex 观澜，我们下周继续交叉阅读世界。",
+    ],
   },
 ];
 
@@ -145,27 +178,9 @@ const attributions = {
   },
 };
 
-const captions = [
-  [1, 0, 7, "上周最重要的画面，是北京的握手。"],
-  [2, 7, 13, "最危险的声音，是海湾上空的无人机。"],
-  [3, 13, 20, "中美试图重启贸易秩序，战争风险继续外溢。"],
-  [4, 20, 28, "第一条主线在北京：贸易修复，但台湾议题升温。"],
-  [5, 28, 36, "英文报道显示，农业采购和市场准入成为会晤重点。"],
-  [6, 36, 45, "但这不是单纯的农产品新闻，台湾也在同一张谈判桌旁边。"],
-  [7, 45, 54, "台湾不是边缘议题，而是国际参与、安全承诺与大国谈判的交叉点。"],
-  [8, 54, 64, "WHA 受阻、台北回应与会外外交，让这条线更贴近台湾读者。"],
-  [9, 64, 74, "第二条主线在中东：无人机事件把战争风险传导到油价。"],
-  [10, 74, 84, "巴拉卡核电站周边、霍尔木兹海峡和油轮航线，被放进同一张风险图。"],
-  [11, 84, 94, "第三条主线，是俄乌战争继续无人机化。"],
-  [12, 94, 105, "战争不再只发生在前线，后方城市、能源设施和交通节点都被纳入打击范围。"],
-  [13, 105, 116, "第四条主线，是 AI 热潮背后的现实成本。"],
-  [14, 116, 128, "三星罢工风险提醒我们，AI 不只在模型发布会，也在工厂和工会谈判桌上。"],
-  [15, 128, 140, "最后，公共健康和气候也在提醒世界：风险没有暂停。"],
-  [16, 140, 153, "埃博拉、汉坦病毒和极端天气，构成主线之外的快讯层。"],
-  [17, 153, 166, "所以，上周的世界是：北京在谈判，台海在承压，海湾在燃烧。"],
-  [18, 166, 180, "俄乌在无人机化，AI 供应链在重新分配利润。"],
-  [19, 180, 198, "这里是 Codex 观澜。我们下周继续交叉阅读世界。"],
-];
+function voiceoverText() {
+  return scenes.flatMap((scene) => scene.voiceover).join("\n\n");
+}
 
 function esc(value) {
   return String(value)
@@ -246,10 +261,74 @@ function ts(seconds) {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")},${String(ms).padStart(3, "0")}`;
 }
 
+function splitSubtitleText(text, maxChars = 18) {
+  const sentences = text
+    .replaceAll("\n", "")
+    .split(/(?<=[。；？！])/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const items = [];
+  for (const sentence of sentences) {
+    let current = "";
+    for (const char of sentence) {
+      current += char;
+      if ((current.length >= 10 && /[，。；：、]/.test(char)) || current.length >= maxChars) {
+        items.push(current.trim());
+        current = "";
+      }
+    }
+    if (current.trim()) items.push(current.trim());
+  }
+  return items;
+}
+
+function captionEntries() {
+  const entries = [];
+  let cursor = 0;
+  for (const scene of scenes) {
+    const subtitles = splitSubtitleText(scene.voiceover.join(""));
+    const weights = subtitles.map((item) => Math.max(8, item.length));
+    const totalWeight = weights.reduce((sum, item) => sum + item, 0) || 1;
+    let localCursor = cursor;
+    subtitles.forEach((text, index) => {
+      const dur = index === subtitles.length - 1
+        ? cursor + scene.dur - localCursor
+        : scene.dur * (weights[index] / totalWeight);
+      const start = localCursor;
+      const end = Math.min(cursor + scene.dur, localCursor + Math.max(1.8, dur));
+      entries.push([entries.length + 1, start, end, text]);
+      localCursor = end;
+    });
+    cursor += scene.dur;
+  }
+  return entries;
+}
+
 function srt() {
-  return captions
+  return captionEntries()
     .map(([idx, start, end, text]) => `${idx}\n${ts(start)} --> ${ts(end)}\n${text}\n`)
     .join("\n");
+}
+
+async function mediaDuration(filePath) {
+  const { stdout } = await execFileAsync("ffprobe", [
+    "-v", "error",
+    "-show_entries", "format=duration",
+    "-of", "default=nk=1:nw=1",
+    filePath,
+  ]);
+  return Number(stdout.trim());
+}
+
+function fitSceneDurations(targetDuration) {
+  const totalChars = scenes.reduce((sum, scene) => sum + scene.voiceover.join("").length, 0);
+  const total = Math.max(90, targetDuration);
+  for (const scene of scenes) {
+    const ratio = scene.voiceover.join("").length / totalChars;
+    scene.dur = Math.max(8, Math.round(total * ratio * 10) / 10);
+  }
+  const diff = total - scenes.reduce((sum, scene) => sum + scene.dur, 0);
+  scenes[scenes.length - 1].dur = Math.max(8, Math.round((scenes[scenes.length - 1].dur + diff) * 10) / 10);
 }
 
 function concatList() {
@@ -280,12 +359,14 @@ async function makeOverlay(scene, index) {
 async function renderSegment(scene, index) {
   const number = String(index + 1).padStart(2, "0");
   const segmentPath = path.join(segmentsDir, `scene-${number}.mp4`);
+  const visualPath = path.join(segmentsDir, `scene-${number}.visual.mp4`);
   const fadeOutStart = Math.max(0, scene.dur - 0.35).toFixed(2);
   if (scene.video) {
     const overlayPath = path.join(framesDir, `overlay-${number}.png`);
     await fs.writeFile(overlayPath, await makeOverlay(scene, index));
     await execFileAsync("ffmpeg", [
       "-y",
+      "-v", "error",
       "-stream_loop", "-1",
       "-ss", "4",
       "-t", String(scene.dur),
@@ -300,13 +381,14 @@ async function renderSegment(scene, index) {
       "-preset", "ultrafast",
       "-tune", "zerolatency",
       "-pix_fmt", "yuv420p",
-      segmentPath,
+      visualPath,
     ], { cwd: outDir, maxBuffer: 1024 * 1024 * 8 });
-    return segmentPath;
+    return muxSegmentAudio({ visualPath, audioPath: scene.audioPath, outputPath: segmentPath });
   }
 
   await execFileAsync("ffmpeg", [
     "-y",
+    "-v", "error",
     "-loop", "1",
     "-t", String(scene.dur),
     "-i", path.join(framesDir, `scene-${number}.webp`),
@@ -316,15 +398,94 @@ async function renderSegment(scene, index) {
     "-preset", "ultrafast",
     "-tune", "stillimage",
     "-pix_fmt", "yuv420p",
-    segmentPath,
+    visualPath,
   ], { cwd: outDir, maxBuffer: 1024 * 1024 * 8 });
-  return segmentPath;
+  return muxSegmentAudio({ visualPath, audioPath: scene.audioPath, outputPath: segmentPath });
+}
+
+async function muxSegmentAudio({ visualPath, audioPath, outputPath }) {
+  if (!audioPath) {
+    await fs.copyFile(visualPath, outputPath);
+    return outputPath;
+  }
+  await execFileAsync("ffmpeg", [
+    "-y",
+    "-v", "error",
+    "-i", visualPath,
+    "-i", audioPath,
+    "-c:v", "copy",
+    "-c:a", "aac",
+    "-b:a", "128k",
+    "-af", "loudnorm=I=-16:LRA=11:TP=-1.5,apad",
+    "-shortest",
+    outputPath,
+  ], { cwd: outDir, maxBuffer: 1024 * 1024 * 8 });
+  return outputPath;
+}
+
+async function exists(filePath) {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function prepareSceneAudio(scene, index) {
+  const number = String(index + 1).padStart(2, "0");
+  const textPath = path.join(audioDir, `scene-${number}.txt`);
+  const workerPath = path.join(audioDir, `scene-${number}.workerai.mp3`);
+  const localPath = path.join(audioDir, `scene-${number}.wav`);
+  const text = scene.voiceover.join("\n\n");
+  await fs.writeFile(textPath, text, "utf8");
+
+  if (await exists(workerPath)) {
+    scene.audioPath = workerPath;
+    scene.dur = Math.max(8, Math.round((await mediaDuration(workerPath) + 0.6) * 10) / 10);
+    return;
+  }
+
+  if (process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN || process.env.WORKERS_AI_API_TOKEN || await exists(path.join(rootDir, ".env.local"))) {
+    try {
+      await execFileAsync("node", [
+        path.join(rootDir, "scripts/news-mvp/workerai-tts.mjs"),
+        `--input=${textPath}`,
+        `--output=${workerPath}`,
+        "--lang=zh",
+      ], { cwd: rootDir, maxBuffer: 1024 * 1024 * 4 });
+      scene.audioPath = workerPath;
+      scene.dur = Math.max(8, Math.round((await mediaDuration(workerPath) + 0.6) * 10) / 10);
+      return;
+    } catch (error) {
+      console.warn(`Workers AI TTS failed for scene ${number}, falling back locally: ${error.message}`);
+    }
+  }
+
+  await execFileAsync("espeak-ng", [
+    "-v", "zh",
+    "-s", "155",
+    "-p", "35",
+    "-w", localPath,
+    "-f", textPath,
+  ], { maxBuffer: 1024 * 1024 * 2 });
+  scene.audioPath = localPath;
+  scene.dur = Math.max(8, Math.round((await mediaDuration(localPath) + 0.6) * 10) / 10);
 }
 
 async function main() {
   await fs.mkdir(framesDir, { recursive: true });
   await fs.mkdir(segmentsDir, { recursive: true });
+  await fs.mkdir(audioDir, { recursive: true });
   await fs.rm(path.join(outDir, "generated-cover.png"), { force: true });
+  const final = path.join(outDir, "weekly-world-news.mp4");
+  const voiceover = voiceoverText();
+  await fs.writeFile(path.join(outDir, "voiceover_zh.md"), voiceover, "utf8");
+  await fs.writeFile(path.join(outDir, "voiceover_zh.txt"), voiceover, "utf8");
+  for (let i = 0; i < scenes.length; i++) {
+    await prepareSceneAudio(scenes[i], i);
+  }
+
   for (let i = 0; i < scenes.length; i++) {
     const image = await makeFrame(scenes[i], i);
     await fs.writeFile(path.join(framesDir, `scene-${String(i + 1).padStart(2, "0")}.webp`), image);
@@ -334,9 +495,6 @@ async function main() {
   }
   await fs.copyFile(path.join(framesDir, "scene-01.webp"), path.join(outDir, "cover.webp"));
   await fs.writeFile(path.join(outDir, "captions.srt"), srt(), "utf8");
-  const voiceoverText = captions.map(([, , , text]) => text).join("\n\n");
-  await fs.writeFile(path.join(outDir, "voiceover_zh.md"), voiceoverText, "utf8");
-  await fs.writeFile(path.join(outDir, "voiceover_zh.txt"), voiceoverText, "utf8");
   await fs.writeFile(path.join(outDir, "ATTRIBUTION.json"), JSON.stringify(attributions, null, 2), "utf8");
   await fs.writeFile(path.join(outDir, "shotlist.csv"), [
     "timecode_start,timecode_end,segment,visual_keywords,caption_zh,source_type,license_note",
@@ -357,6 +515,7 @@ async function main() {
   const silent = path.join(outDir, "silent.mp4");
   await execFileAsync("ffmpeg", [
     "-y",
+    "-v", "error",
     "-f", "concat",
     "-safe", "0",
     "-i", path.join(outDir, "frames.txt"),
@@ -365,34 +524,11 @@ async function main() {
     silent,
   ], { cwd: outDir, maxBuffer: 1024 * 1024 * 8 });
 
-  const final = path.join(outDir, "weekly-world-news.mp4");
-  const narration = path.join(outDir, "narration.wav");
-  let audioInput = "anullsrc=channel_layout=stereo:sample_rate=48000";
-  let useLavfiAudio = true;
-  try {
-    await execFileAsync("espeak-ng", [
-      "-v", "zh",
-      "-s", "155",
-      "-p", "35",
-      "-w", narration,
-      "-f", path.join(outDir, "voiceover_zh.txt"),
-    ], { maxBuffer: 1024 * 1024 * 2 });
-    audioInput = narration;
-    useLavfiAudio = false;
-  } catch {
-    // Leave a silent audio bed if local TTS is unavailable.
-  }
-
   await execFileAsync("ffmpeg", [
     "-y",
+    "-v", "error",
     "-i", silent,
-    ...(useLavfiAudio ? ["-f", "lavfi"] : []),
-    "-i", audioInput,
-    "-c:v", "copy",
-    "-c:a", "aac",
-    "-b:a", "128k",
-    "-af", useLavfiAudio ? "apad" : "loudnorm=I=-16:LRA=11:TP=-1.5,apad",
-    "-shortest",
+    "-c", "copy",
     final,
   ], { cwd: outDir, maxBuffer: 1024 * 1024 * 8 });
 

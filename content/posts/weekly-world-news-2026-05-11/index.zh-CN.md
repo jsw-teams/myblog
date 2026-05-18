@@ -61,9 +61,9 @@ WHO 5 月 17 日宣布，刚果民主共和国和乌干达的 Bundibugyo 病毒�
 
 本期视频版已完成，采用现实图片与可复用公开视频作为底稿，并加入简洁的信息转场。
 
-- [观看视频](https://files.js.gripe/f/fil_MU7iOmoJiWxaPSMINHmun2b6.mp4)
-- [下载字幕](https://files.js.gripe/f/fil_zF7DS8TxLCGjPyHEpYC_j8C6.srt)
-- [素材来源清单](https://files.js.gripe/f/fil_l8WHm04OKY6h2nW_-B48xbBv.json)
+- [观看视频](https://files.js.gripe/f/fil_-v-tCFscWRk55wHhNDEJ3pvH.mp4)
+- [下载字幕](https://files.js.gripe/f/fil_WNJTj6m5pwMAI0cZEXgxVQvl.srt)
+- [素材来源清单](https://files.js.gripe/f/fil_x5CPuXBFZsmb1xyJvKwTFE15.json)
 
 ## 英文来源列表
 
