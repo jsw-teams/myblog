@@ -49,3 +49,19 @@ NEWS_TTS_VOICE=zh-CN-YunyangNeural \
 NEWS_TTS_STYLE=newscast \
 npm run news:mvp:tts -- --input=voiceover.txt --output=voiceover.mp3
 ```
+
+## Localization and footage policy
+
+For future video editions, localize each language as its own audience version:
+
+- `zh-CN`: write for Singapore Chinese readers and viewers, with Singapore-style
+  Simplified Chinese phrasing where it reads naturally.
+- `zh-TW`: write for Taiwan readers and viewers, using Taiwan Traditional Chinese
+  terminology and tone.
+- `en`: write for US readers and viewers, using US English news style.
+
+Use reality-based visuals. Prefer properly licensed, authorized, or publicly
+embeddable footage from Reuters, AP, and other international news providers when
+available, plus official public-domain footage, original maps, and data animation.
+Do not rely only on Wikimedia still images, and do not treat Reuters/AP footage as
+free-to-republish unless the project has permission for that specific asset.
