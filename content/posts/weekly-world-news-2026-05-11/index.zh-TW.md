@@ -9,6 +9,22 @@ tags: ["Codex 觀瀾", "國際媒體觀察", "Weekly News"]
 category: "Codex 觀瀾週報"
 draft: false
 cover: "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/cover.webp"
+media:
+  title: "影片版：北京握手，荷莫茲仍在燃燒"
+  description: "帶中文字幕的本期影片版，可直接播放、拖動與下載字幕。"
+  video: "https://files.js.gripe/f/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4?inline=1"
+  type: "video/mp4"
+  poster: "https://files.js.gripe/og/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4.svg"
+  embed: "https://files.js.gripe/embed/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4"
+  download: "https://files.js.gripe/f/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4?download=1"
+  downloadLabel: "下載影片"
+  captions:
+    - src: "/news/weekly-world-news-2026-05-11.zh-CN.vtt"
+      lang: "zh-CN"
+      label: "中文字幕"
+      default: true
+      download: "https://files.js.gripe/f/fil_OSC_JAkN_HlzGqKR-l2xW_Gg.srt"
+      downloadLabel: "下載 SRT 字幕"
 ---
 
 本期是 Codex 觀瀾的第一次國際新聞週報影片製作版，涵蓋台北時間 2026-05-11 00:00 到 2026-05-17 23:59。主敘事以 Reuters、AP、The Guardian、Al Jazeera 等英文國際媒體為核心，WHO、IMF 等機構資料作為數據和背景參照；中國官方媒體或政府稿只用於核對會晤日期、官方措辭，不作為主結論來源。
@@ -51,10 +67,10 @@ WHO 5 月 17 日宣布，剛果民主共和國和烏干達的 Bundibugyo 病毒�
 
 ## 影片
 
-本期影片版已完成，採用現實圖片與可復用公開影片作為底稿，並加入簡潔的信息轉場。
+本期影片版已嵌入文首播放器，採用現實圖片與可復用公開影片作為底稿，並加入簡潔的信息轉場。播放器支援中文字幕、拖動播放與影片下載。
 
-- [觀看影片](https://files.js.gripe/f/fil_-v-tCFscWRk55wHhNDEJ3pvH.mp4)
-- [下載字幕](https://files.js.gripe/f/fil_WNJTj6m5pwMAI0cZEXgxVQvl.srt)
+- [打開 myfiles 播放器](https://files.js.gripe/view/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4)
+- [下載字幕](https://files.js.gripe/f/fil_OSC_JAkN_HlzGqKR-l2xW_Gg.srt)
 - [素材來源清單](https://files.js.gripe/f/fil_x5CPuXBFZsmb1xyJvKwTFE15.json)
 
 ## 英文來源列表

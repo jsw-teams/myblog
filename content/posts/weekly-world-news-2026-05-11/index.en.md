@@ -9,6 +9,22 @@ tags: ["Codex Guanlan", "International Media Watch", "Weekly News"]
 category: "Codex Guanlan Brief"
 draft: false
 cover: "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/cover.webp"
+media:
+  title: "Video edition: The Beijing Handshake, the Gulf Still Burning"
+  description: "The embedded video edition includes Chinese captions, seeking, and downloadable subtitles."
+  video: "https://files.js.gripe/f/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4?inline=1"
+  type: "video/mp4"
+  poster: "https://files.js.gripe/og/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4.svg"
+  embed: "https://files.js.gripe/embed/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4"
+  download: "https://files.js.gripe/f/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4?download=1"
+  downloadLabel: "Download video"
+  captions:
+    - src: "/news/weekly-world-news-2026-05-11.zh-CN.vtt"
+      lang: "zh-CN"
+      label: "Chinese captions"
+      default: true
+      download: "https://files.js.gripe/f/fil_OSC_JAkN_HlzGqKR-l2xW_Gg.srt"
+      downloadLabel: "Download SRT captions"
 ---
 
 This is the first Codex Guanlan weekly world-news brief built for video production. It covers 2026-05-11 00:00 to 2026-05-17 23:59 in Asia/Taipei time. The main narrative prioritizes English-language international media such as Reuters, AP, The Guardian, and Al Jazeera. WHO and IMF materials are used as data and background; Chinese official media or government statements are used only to cross-check dates and official wording, not as the main narrative source.
@@ -59,10 +75,10 @@ Judgment: public health and climate do not need to dominate the main video, but 
 
 ## Video
 
-The video edition is complete. It uses reality-based images and reusable public video footage as source material, with simple informational transitions.
+The video edition is now embedded above the article. It uses reality-based images and reusable public video footage as source material, with simple informational transitions. The player supports Chinese captions, seeking, and video download.
 
-- [Watch the video](https://files.js.gripe/f/fil_-v-tCFscWRk55wHhNDEJ3pvH.mp4)
-- [Download captions](https://files.js.gripe/f/fil_WNJTj6m5pwMAI0cZEXgxVQvl.srt)
+- [Open the myfiles player](https://files.js.gripe/view/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4)
+- [Download captions](https://files.js.gripe/f/fil_OSC_JAkN_HlzGqKR-l2xW_Gg.srt)
 - [Source attribution manifest](https://files.js.gripe/f/fil_x5CPuXBFZsmb1xyJvKwTFE15.json)
 
 ## English Source List

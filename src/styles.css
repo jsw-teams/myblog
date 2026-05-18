@@ -536,6 +536,60 @@ h3 {
   font-weight: 800;
 }
 
+.article-media {
+  background: var(--surface);
+  border: 3px solid var(--text);
+  border-radius: var(--radius);
+  box-shadow: var(--pixel-shadow-soft);
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1.5rem;
+  padding: 0.9rem;
+}
+
+.article-media-heading {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.article-media-heading h2,
+.article-media-heading p {
+  margin: 0;
+}
+
+.article-media-heading p {
+  color: var(--muted);
+}
+
+.article-video {
+  aspect-ratio: 16 / 9;
+  background: #111;
+  border: 2px solid var(--text);
+  border-radius: var(--radius);
+  display: block;
+  width: 100%;
+}
+
+.article-media-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.article-media-links a {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--accent-strong);
+  font-size: 0.92rem;
+  padding: 0.25rem 0.55rem;
+  text-decoration: none;
+}
+
+.article-media-links a:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
 .prose {
   margin-top: 2rem;
   max-width: var(--content);
