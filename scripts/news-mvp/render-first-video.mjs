@@ -8,7 +8,9 @@ import sharp from "sharp";
 
 const execFileAsync = promisify(execFile);
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const baseOutDir = path.join(rootDir, "myfiles-assets/2026-05-11_2026-05-17");
+const weekKey = "2026-05-11_2026-05-17";
+const videoWorkspaceRoot = process.env.NEWS_MVP_VIDEO_WORKSPACE_ROOT || "/opt/codex_mark_vedio";
+const baseOutDir = path.resolve(process.env.NEWS_MVP_VIDEO_WORKSPACE || path.join(videoWorkspaceRoot, weekKey));
 let outDir = baseOutDir;
 let framesDir = path.join(outDir, "frames");
 let segmentsDir = path.join(outDir, "segments");
@@ -18,11 +20,34 @@ const videoDir = path.join(baseOutDir, "video");
 const width = 1920;
 const height = 1080;
 const fontFamily = "Droid Sans Fallback";
+const defaultTtsEndpoint = "https://tts.wangwangit.com";
+
+async function loadLocalEnv() {
+  const envPath = path.join(rootDir, ".env.local");
+  try {
+    const text = await fs.readFile(envPath, "utf8");
+    for (const line of text.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const index = trimmed.indexOf("=");
+      if (index === -1) continue;
+      const key = trimmed.slice(0, index);
+      const value = trimmed.slice(index + 1);
+      if (!process.env[key]) process.env[key] = value;
+    }
+  } catch {
+    // Local env is optional.
+  }
+}
 
 function argValue(name) {
   const prefix = `--${name}=`;
   const item = process.argv.slice(2).find((arg) => arg.startsWith(prefix));
   return item ? item.slice(prefix.length) : "";
+}
+
+function argFlag(name) {
+  return process.argv.slice(2).includes(`--${name}`);
 }
 
 const baseScenes = [
@@ -140,6 +165,8 @@ const localeProfiles = {
     voice: "zh-CN-YunyangNeural",
     espeak: "zh",
     footer: "Codex 观澜 · Weekly News",
+    articleTitle: "北京握手，霍尔木兹仍在燃烧：上周世界发生了什么",
+    coverKicker: "简体中文语音版",
     voiceoverFile: "voiceover_zh-CN.md",
     srtFile: "captions.zh-CN.srt",
     vttFile: "weekly-world-news-2026-05-11.zh-CN.vtt",
@@ -151,6 +178,8 @@ const localeProfiles = {
     voice: "zh-TW-YunJheNeural",
     espeak: "zh",
     footer: "Codex 觀瀾 · Weekly News",
+    articleTitle: "北京握手，荷莫茲仍在燃燒：上週世界發生了什麼",
+    coverKicker: "繁體中文語音版",
     voiceoverFile: "voiceover_zh-TW.md",
     srtFile: "captions.zh-TW.srt",
     vttFile: "weekly-world-news-2026-05-11.zh-TW.vtt",
@@ -227,6 +256,8 @@ const localeProfiles = {
     voice: "en-US-GuyNeural",
     espeak: "en-us",
     footer: "Codex Guanlan · Weekly News",
+    articleTitle: "The Beijing Handshake, the Gulf Still Burning: What Happened Last Week",
+    coverKicker: "English voice edition",
     voiceoverFile: "voiceover_en.md",
     srtFile: "captions.en.srt",
     vttFile: "weekly-world-news-2026-05-11.en.vtt",
@@ -357,21 +388,33 @@ const attributions = {
 const footageSourcingTargets = [
   {
     provider: "Reuters",
-    priority: "preferred_if_licensed",
+    priority: "licensed_or_embeddable_if_available",
     use: "US-China Beijing talks, Taiwan/WHA diplomacy, Gulf energy and oil-market footage, Samsung labour and semiconductor footage.",
-    note: "Use only through a valid license, subscription, or explicit embed/republication permission.",
+    note: "Use only through a valid license, subscription, or explicit embed/republication permission shown by the provider.",
   },
   {
     provider: "AP",
-    priority: "preferred_if_licensed",
+    priority: "licensed_or_embeddable_if_available",
     use: "Ukraine drone-war aftermath, China-US trade/agriculture visuals, public-health explainers, and breaking-news footage packages.",
-    note: "Use only through a valid license, subscription, or explicit embed/republication permission.",
+    note: "Use only through a valid license, subscription, or explicit embed/republication permission shown by the provider.",
   },
   {
-    provider: "Official/public-domain sources",
-    priority: "fallback_or_context",
-    use: "Government briefings, public-domain military or health footage, maps, and data animation inputs.",
-    note: "Verify reuse terms per asset before publishing.",
+    provider: "UN / WHO / IMF / World Bank media libraries",
+    priority: "preferred_public_media",
+    use: "Public-health, humanitarian, economic, and institution-room visuals when the source page marks reuse or embed terms.",
+    note: "Capture the source URL and reuse statement with each downloaded or embedded asset.",
+  },
+  {
+    provider: "Government and official public-domain media",
+    priority: "preferred_public_domain",
+    use: "US DoD, NASA, NOAA, CDC, EU, national ministries, public briefings, maps, b-roll, and data visuals.",
+    note: "Prefer assets explicitly marked public domain, open license, or press/media reuse.",
+  },
+  {
+    provider: "Public broadcasters and international public-media desks",
+    priority: "case_by_case_public_or_embeddable",
+    use: "Openly licensed, embeddable, or press-use video from public broadcasters and international public-media organizations.",
+    note: "Do not assume reuse; keep only assets whose page labels permit publication or embedding.",
   },
   {
     provider: "Wikimedia Commons",
@@ -452,6 +495,29 @@ function overlaySvg(scene, index) {
       <text x="134" y="948" font-family="${fontFamily}" font-size="25" fill="#f8f1df">${esc(profile.footer)}</text>
     </g>
     <text x="1620" y="974" font-family="${fontFamily}" font-size="28" fill="#f8f1df">${index + 1}/${scenes.length}</text>
+  </svg>`;
+}
+
+function coverSvg() {
+  const titleLines = wrapText(profile.articleTitle, profile.suffix === "en" ? 24 : 14);
+  const title = titleLines.map((line, index) =>
+    `<text x="132" y="${418 + index * 94}" font-family="${fontFamily}" font-size="${profile.suffix === "en" ? 70 : 78}" font-weight="700" fill="#fbfbf5">${esc(line)}</text>`
+  ).join("");
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="cover-v" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0.76"/>
+        <stop offset="0.58" stop-color="#000" stop-opacity="0.38"/>
+        <stop offset="1" stop-color="#000" stop-opacity="0.72"/>
+      </linearGradient>
+    </defs>
+    <rect width="1920" height="1080" fill="url(#cover-v)"/>
+    <rect x="94" y="138" width="560" height="58" rx="4" fill="#f8df7e" opacity="0.96"/>
+    <text x="124" y="176" font-family="${fontFamily}" font-size="28" fill="#151515">${esc(profile.coverKicker)}</text>
+    ${title}
+    <rect x="128" y="860" width="650" height="60" rx="5" fill="#101820" opacity="0.9"/>
+    <text x="156" y="899" font-family="${fontFamily}" font-size="27" fill="#f8f1df">${esc(profile.footer)}</text>
+    <text x="132" y="794" font-family="${fontFamily}" font-size="30" fill="#fff2bc">2026-05-11 / 2026-05-17</text>
   </svg>`;
 }
 
@@ -572,12 +638,25 @@ async function makeOverlay(scene, index) {
   return sharp(Buffer.from(overlaySvg(scene, index))).png().toBuffer();
 }
 
+async function makeCover() {
+  const basePath = path.join(realDir, scenes[0].image);
+  const overlay = await sharp(Buffer.from(coverSvg())).png().toBuffer();
+  return sharp(basePath)
+    .rotate()
+    .resize(width, height, { fit: "cover", position: "attention" })
+    .modulate({ brightness: 0.72, saturation: 0.9 })
+    .blur(0.3)
+    .composite([{ input: overlay, blend: "over" }])
+    .webp({ quality: 92 })
+    .toBuffer();
+}
+
 async function renderSegment(scene, index) {
   const number = String(index + 1).padStart(2, "0");
   const segmentPath = path.join(segmentsDir, `scene-${number}.mp4`);
   const visualPath = path.join(segmentsDir, `scene-${number}.visual.mp4`);
   const fadeOutStart = Math.max(0, scene.dur - 0.35).toFixed(2);
-  if (await exists(segmentPath)) {
+  if (!argFlag("force-video") && !argFlag("force-audio") && await exists(segmentPath)) {
     const existingDuration = await mediaDuration(segmentPath).catch(() => 0);
     if (existingDuration >= scene.dur - 0.25) {
       console.log(`Reusing ${path.relative(rootDir, segmentPath)}`);
@@ -662,13 +741,14 @@ async function prepareSceneAudio(scene, index) {
   const number = String(index + 1).padStart(2, "0");
   const textPath = path.join(audioDir, `scene-${number}.txt`);
   const localPath = path.join(audioDir, `scene-${number}.wav`);
+  const forceAudio = argFlag("force-audio") || process.env.NEWS_TTS_FORCE === "1";
   const text = scene.voiceover.join("\n\n");
   await fs.writeFile(textPath, text, "utf8");
 
-  const edgeEndpoint = process.env.NEWS_TTS_ENDPOINT || process.env.EDGE_WORKER_TTS_ENDPOINT || "";
+  const edgeEndpoint = argValue("tts-endpoint") || process.env.NEWS_TTS_ENDPOINT || process.env.EDGE_WORKER_TTS_ENDPOINT || defaultTtsEndpoint;
   if (edgeEndpoint) {
     const edgePath = path.join(audioDir, `scene-${number}.edge.mp3`);
-    if (await exists(edgePath)) {
+    if (!forceAudio && await exists(edgePath)) {
       try {
         await auditAudio(edgePath, textPath, number);
         scene.audioPath = edgePath;
@@ -684,6 +764,7 @@ async function prepareSceneAudio(scene, index) {
         path.join(rootDir, "scripts/news-mvp/edge-worker-tts.mjs"),
         `--input=${textPath}`,
         `--output=${edgePath}`,
+        `--endpoint=${edgeEndpoint}`,
         `--voice=${profile.voice}`,
       ], { cwd: rootDir, maxBuffer: 1024 * 1024 * 4 });
       await auditAudio(edgePath, textPath, number);
@@ -692,6 +773,9 @@ async function prepareSceneAudio(scene, index) {
       return;
     } catch (error) {
       console.warn(`Edge Worker TTS failed audit for scene ${number}: ${error.message}`);
+      if (!argFlag("allow-local-tts") && process.env.NEWS_TTS_ALLOW_LOCAL !== "1") {
+        throw new Error(`Online Edge/Azure TTS is required for scene ${number}. Re-run with --allow-local-tts only for temporary drafts.`);
+      }
     }
   }
 
@@ -730,6 +814,7 @@ async function auditAudio(audioPath, textPath, number) {
 }
 
 async function main() {
+  await loadLocalEnv();
   const locale = argValue("locale") || process.env.NEWS_MVP_LOCALE || "zh-CN";
   profile = localeProfiles[locale];
   if (!profile) throw new Error(`Unsupported locale: ${locale}`);
@@ -752,14 +837,14 @@ async function main() {
 
   for (let i = 0; i < scenes.length; i++) {
     const framePath = path.join(framesDir, `scene-${String(i + 1).padStart(2, "0")}.webp`);
-    if (await exists(framePath)) continue;
+    if (!argFlag("force-frames") && await exists(framePath)) continue;
     const image = await makeFrame(scenes[i], i);
     await fs.writeFile(framePath, image);
   }
   for (let i = 0; i < scenes.length; i++) {
     await renderSegment(scenes[i], i);
   }
-  await fs.copyFile(path.join(framesDir, "scene-01.webp"), path.join(outDir, "cover.webp"));
+  await fs.writeFile(path.join(outDir, "cover.webp"), await makeCover());
   await fs.writeFile(path.join(outDir, profile.srtFile), srt(), "utf8");
   const vttText = vtt();
   await fs.writeFile(path.join(outDir, profile.vttFile), vttText, "utf8");

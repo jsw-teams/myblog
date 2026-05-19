@@ -33,7 +33,7 @@ function argValue(name) {
 function splitText(text, maxChars) {
   const chunks = [];
   let current = "";
-  for (const sentence of text.split(/(?<=[。！？；\n])/).map((item) => item.trim()).filter(Boolean)) {
+  for (const sentence of text.split(/(?<=[。！？；.!?;\n])\s*/).map((item) => item.trim()).filter(Boolean)) {
     if (!current) {
       current = sentence;
     } else if (current.length + sentence.length <= maxChars) {
@@ -96,7 +96,7 @@ async function main() {
   await loadLocalEnv();
   const inputPath = argValue("input");
   const outputPath = path.resolve(argValue("output") || "narration.edge.mp3");
-  const endpoint = argValue("endpoint") || process.env.NEWS_TTS_ENDPOINT || process.env.EDGE_WORKER_TTS_ENDPOINT;
+  const endpoint = argValue("endpoint") || process.env.NEWS_TTS_ENDPOINT || process.env.EDGE_WORKER_TTS_ENDPOINT || "https://tts.wangwangit.com";
   const voice = argValue("voice") || process.env.NEWS_TTS_VOICE || "zh-CN-YunyangNeural";
   const speed = argValue("speed") || process.env.NEWS_TTS_SPEED || "0.94";
   const pitch = argValue("pitch") || process.env.NEWS_TTS_PITCH || "0";

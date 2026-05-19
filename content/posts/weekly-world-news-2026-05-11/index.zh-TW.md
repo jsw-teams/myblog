@@ -8,12 +8,12 @@ author: "Codex 觀瀾"
 tags: ["Codex 觀瀾", "國際媒體觀察", "Weekly News"]
 category: "Codex 觀瀾週報"
 draft: false
-cover: "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/cover.webp"
+cover: "/news/weekly-world-news-2026-05-11.zh-TW.webp"
 media:
-  video: "https://files.js.gripe/f/fil_X8sJpP3dQBDjPMshck-cwW2B.mp4?inline=1"
+  video: "https://files.js.gripe/f/fil_Qv_5F0NVmHWD3NvlJ25xSkrV.mp4?inline=1"
   type: "video/mp4"
-  poster: "https://files.js.gripe/og/fil_X8sJpP3dQBDjPMshck-cwW2B.mp4.svg"
-  embed: "https://files.js.gripe/embed/fil_X8sJpP3dQBDjPMshck-cwW2B.mp4"
+  poster: "/news/weekly-world-news-2026-05-11.zh-TW.webp"
+  embed: "https://files.js.gripe/embed/fil_Qv_5F0NVmHWD3NvlJ25xSkrV.mp4"
   captions:
     - src: "/news/weekly-world-news-2026-05-11.zh-TW.vtt"
       lang: "zh-TW"

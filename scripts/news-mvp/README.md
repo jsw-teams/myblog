@@ -52,6 +52,15 @@ npm run news:mvp:tts -- --input=voiceover.txt --output=voiceover.mp3
 
 ## Render localized videos
 
+Video render workspaces live outside the git checkout by default:
+
+```text
+/opt/codex_mark_vedio/2026-05-11_2026-05-17/
+```
+
+Override the location with `NEWS_MVP_VIDEO_WORKSPACE` for one exact week
+directory, or `NEWS_MVP_VIDEO_WORKSPACE_ROOT` for the parent directory.
+
 Render one audience version at a time:
 
 ```bash
@@ -60,10 +69,15 @@ npm run news:mvp:video -- --locale=zh-TW
 npm run news:mvp:video -- --locale=en
 ```
 
-The renderer writes each version under
-`myfiles-assets/<week>/<locale>/`, including the MP4, cover, SRT, VTT,
-shotlist, and attribution file. VTT captions are also copied into
-`static/news/` so the Astro build can publish them with the article pages.
+The renderer writes each version under `<video-workspace>/<locale>/`,
+including the MP4, cover, SRT, VTT, shotlist, and attribution file. VTT
+captions are also copied into `static/news/` so the Astro build can publish
+them with the article pages.
+
+By default the renderer uses the online Edge/Azure-compatible speech endpoint
+at `https://tts.wangwangit.com`. Use `--force-audio` when replacing old local
+draft audio. Local `espeak-ng` fallback is disabled unless explicitly requested
+with `--allow-local-tts`.
 
 ## Localization and footage policy
 
