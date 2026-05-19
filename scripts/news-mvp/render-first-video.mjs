@@ -8,17 +8,24 @@ import sharp from "sharp";
 
 const execFileAsync = promisify(execFile);
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const outDir = path.join(rootDir, "myfiles-assets/2026-05-11_2026-05-17");
-const framesDir = path.join(outDir, "frames");
-const segmentsDir = path.join(outDir, "segments");
-const audioDir = path.join(outDir, "audio");
-const realDir = path.join(outDir, "real");
-const videoDir = path.join(outDir, "video");
+const baseOutDir = path.join(rootDir, "myfiles-assets/2026-05-11_2026-05-17");
+let outDir = baseOutDir;
+let framesDir = path.join(outDir, "frames");
+let segmentsDir = path.join(outDir, "segments");
+let audioDir = path.join(outDir, "audio");
+const realDir = path.join(baseOutDir, "real");
+const videoDir = path.join(baseOutDir, "video");
 const width = 1920;
 const height = 1080;
 const fontFamily = "Droid Sans Fallback";
 
-const scenes = [
+function argValue(name) {
+  const prefix = `--${name}=`;
+  const item = process.argv.slice(2).find((arg) => arg.startsWith(prefix));
+  return item ? item.slice(prefix.length) : "";
+}
+
+const baseScenes = [
   {
     dur: 12,
     image: "great-hall.jpg",
@@ -127,6 +134,175 @@ const scenes = [
   },
 ];
 
+const localeProfiles = {
+  "zh-CN": {
+    suffix: "zh-CN",
+    voice: "zh-CN-YunyangNeural",
+    espeak: "zh",
+    footer: "Codex 观澜 · Weekly News",
+    voiceoverFile: "voiceover_zh-CN.md",
+    srtFile: "captions.zh-CN.srt",
+    vttFile: "weekly-world-news-2026-05-11.zh-CN.vtt",
+    videoFile: "weekly-world-news.zh-CN.mp4",
+    scenes: baseScenes.map((scene) => ({ ...scene, voiceover: [...scene.voiceover], notes: [...scene.notes] })),
+  },
+  "zh-TW": {
+    suffix: "zh-TW",
+    voice: "zh-TW-YunJheNeural",
+    espeak: "zh",
+    footer: "Codex 觀瀾 · Weekly News",
+    voiceoverFile: "voiceover_zh-TW.md",
+    srtFile: "captions.zh-TW.srt",
+    vttFile: "weekly-world-news-2026-05-11.zh-TW.vtt",
+    videoFile: "weekly-world-news.zh-TW.mp4",
+    scenes: [
+      {
+        ...baseScenes[0],
+        kicker: "Codex 觀瀾｜台北時間 2026-05-11 至 2026-05-17",
+        title: "北京握手，荷莫茲仍在燃燒",
+        body: "穩定談判撞上戰爭外溢：中美試圖修補貿易，中東與俄烏風險持續擴散。",
+        notes: ["北京會晤", "能源通道", "台海壓力"],
+        voiceover: ["上週，按台北時間五月十一日到十七日來看，世界的關鍵字不是單一衝突，而是兩個方向同時發生：一邊是大國試圖重新談判秩序，另一邊是戰爭風險持續外溢。"],
+      },
+      {
+        ...baseScenes[1],
+        kicker: "主線一｜北京會晤",
+        title: "貿易修補，但台灣議題升溫",
+        body: "中美談農業採購和市場准入；台灣議題同時進入會晤陰影，安全承諾與國際參與被推到前台。",
+        notes: ["貿易修補", "市場准入", "台灣議題"],
+        voiceover: ["開場先看北京。特朗普五月十三日到十五日訪華，中美會晤後，雙方把重點放在貿易修補、農業採購和市場准入。英文報導顯示，中國承諾二零二六到二零二八年每年至少購買一百七十億美元美國農產品，並推進牛肉、禽類等市場准入安排。"],
+      },
+      {
+        ...baseScenes[2],
+        kicker: "主線二｜台灣",
+        title: "WHA 受阻，不被交易的回應",
+        body: "台灣不是邊緣議題，而是中美談判、國際組織參與與區域安全之間的交會點。",
+        notes: ["WHA", "台北回應", "國際參與"],
+        voiceover: ["但這不是一則單純的貿易新聞。因為台灣議題也被帶進這場會晤。路透報導，習近平在會晤中警告特朗普，台灣問題若處理不當可能走向危險局面。隨後，賴清德在五月十七日回應稱，台灣不會被犧牲、交易或被迫接受安排。", "同一週，中國也表示不會允許台灣參加世界衛生大會，台灣則準備在正式會議外進行國際會晤。換句話說，台灣不是上週的邊緣議題，而是中美談判、國際組織參與與區域安全之間的交會點。"],
+      },
+      {
+        ...baseScenes[3],
+        kicker: "主線三｜中東能源",
+        title: "無人機把風險傳導到油價",
+        body: "巴拉卡核電廠周邊事件與沙烏地攔截無人機，讓荷莫茲、油輪與核設施安全進入同一張風險圖。",
+        notes: ["Barakah", "無人機", "荷莫茲"],
+        voiceover: ["第二條主線在中東。五月十七日，阿聯巴拉卡核電廠周邊遭無人機襲擊並引發火勢，官方稱沒有傷亡，也沒有輻射外洩；沙烏地同日也通報攔截無人機。市場反應很快，油價升至兩週高位，因為投資者擔心荷莫茲海峽與海灣能源通道繼續受到衝擊。", "這條新聞的關鍵，不只是核電廠有沒有受損，而是無人機、能源通道、核設施周邊安全和油價預期被綁在一起。它說明地區戰事可以很快傳導到全球能源市場，也會讓海灣航線、保險和供應鏈重新定價。"],
+      },
+      {
+        ...baseScenes[4],
+        kicker: "主線四｜俄烏戰場",
+        title: "無人機化、遠程化、後方化",
+        body: "戰爭不再只發生在前線；後方城市、能源設施和交通節點都被納入打擊範圍。",
+        notes: ["遠程打擊", "城市後方", "防空壓力"],
+        voiceover: ["第三條主線，是戰爭越來越無人機化。俄烏戰場上，俄羅斯稱過去一週擊落大量烏克蘭無人機，莫斯科遭遇一年多來最大規模襲擊之一；烏克蘭方面也遭到俄羅斯大規模無人機和飛彈攻擊。", "這個趨勢說明，戰爭不再只發生在前線。後方城市、能源設施、交通節點和心理安全，都被納入打擊範圍。無人機降低了遠程打擊門檻，也讓戰爭在地理上變寬，在時間上變得更日常。"],
+      },
+      {
+        ...baseScenes[5],
+        kicker: "主線五｜AI 供應鏈",
+        title: "三星罷工風險暴露利潤分配矛盾",
+        body: "AI 熱潮不只在模型發表會，也在晶片工廠、工會談判和供應鏈利潤表裡。",
+        notes: ["晶片工廠", "勞資談判", "AI 利潤"],
+        voiceover: ["第四條主線，是 AI 熱潮背後的現實成本。三星電子因為獎金、薪資和 AI 晶片繁榮下的利潤分配問題，面臨大規模罷工風險。韓國政府介入，是因為三星不僅是一家公司，它還是韓國出口和全球晶片供應鏈的重要節點。", "AI 的故事，不只發生在模型和發表會上，也發生在工廠、工會和供應鏈談判桌上。當晶片利潤上升，工人、公司、政府和客戶之間都會重新談判誰獲得收益，誰承擔中斷風險。"],
+      },
+      {
+        ...baseScenes[6],
+        kicker: "主線六｜公共健康",
+        title: "伊波拉、漢他病毒、極端天氣",
+        body: "全球風險不只來自戰爭和貿易，也來自疾病、氣候和跨境流動。",
+        notes: ["公共健康", "跨境流動", "極端天氣"],
+        voiceover: ["最後，公共健康和氣候也在提醒世界風險沒有暫停。WHO 將剛果和烏干達的伊波拉疫情列為國際關注的突發公共衛生事件；同週，南美郵輪相關的安地斯漢他病毒感染也受到關注。印度北方邦則遭遇強風暴，造成嚴重傷亡。"],
+      },
+      {
+        ...baseScenes[7],
+        kicker: "收束",
+        title: "高風險，但仍在談判的一週",
+        body: "北京在談判，台海在承壓，海灣在燃燒，俄烏在無人機化，AI 供應鏈在重新分配利潤。",
+        notes: ["談判", "外溢", "再分配"],
+        voiceover: ["所以，上週的世界可以這樣總結：北京在談判，台海在承壓，海灣在燃燒，俄烏在無人機化，AI 供應鏈在重新分配利潤。表面上是幾條新聞，背後其實是同一個問題：全球秩序正在嘗試恢復穩定，但風險正在從戰場、能源、科技和公共衛生同時擴散。這裡是 Codex 觀瀾，我們下週繼續交叉閱讀世界。"],
+      },
+    ],
+  },
+  en: {
+    suffix: "en",
+    voice: "en-US-GuyNeural",
+    espeak: "en-us",
+    footer: "Codex Guanlan · Weekly News",
+    voiceoverFile: "voiceover_en.md",
+    srtFile: "captions.en.srt",
+    vttFile: "weekly-world-news-2026-05-11.en.vtt",
+    videoFile: "weekly-world-news.en.mp4",
+    scenes: [
+      {
+        ...baseScenes[0],
+        kicker: "Codex Guanlan | May 11-17, 2026, Taipei time",
+        title: "The Beijing Handshake, the Gulf Still Burning",
+        body: "Stabilization talks collided with war spillover: US-China trade repair, Gulf risk, and Ukraine's drone war.",
+        notes: ["Beijing talks", "Energy routes", "Taiwan pressure"],
+        voiceover: ["Last week, measured from May eleventh to seventeenth in Taipei time, the world was not defined by one event. Two forces moved at once: major powers tried to renegotiate order, while war risk kept spilling outward."],
+      },
+      {
+        ...baseScenes[1],
+        kicker: "Line one | Beijing talks",
+        title: "Trade repair, but Taiwan heats up",
+        body: "Washington and Beijing discussed farm purchases and market access, while Taiwan stayed inside the strategic shadow of the meeting.",
+        notes: ["Trade repair", "Market access", "Taiwan"],
+        voiceover: ["Start in Beijing. Donald Trump visited China from May thirteenth to fifteenth. After the talks, both sides emphasized trade repair, agricultural purchases, and market access. English-language reports said China committed to buying at least seventeen billion dollars in US farm products annually from twenty twenty-six to twenty twenty-eight, while moving on access for beef and poultry."],
+      },
+      {
+        ...baseScenes[2],
+        kicker: "Line two | Taiwan",
+        title: "WHA blocked, no bargain over Taiwan",
+        body: "Taiwan sat at the intersection of US-China talks, international participation, and regional security commitments.",
+        notes: ["WHA", "Taipei response", "International access"],
+        voiceover: ["But this was not just a trade story. Taiwan was pulled into the same diplomatic frame. Reuters reported that Xi Jinping warned Trump that mishandling Taiwan could lead to a dangerous place. On May seventeenth, Lai Ching-te answered that Taiwan would not be sacrificed, traded away, or forced to accept an arrangement.", "In the same week, China said it would not allow Taiwan to attend the World Health Assembly, while Taiwan prepared meetings outside the formal session. In other words, Taiwan was not a side issue. It was where great-power bargaining, international organizations, and regional security overlapped."],
+      },
+      {
+        ...baseScenes[3],
+        kicker: "Line three | Gulf energy",
+        title: "Drones transmit risk into oil",
+        body: "The Barakah incident and Saudi drone interceptions tied Hormuz, tankers, and nuclear-site security into one risk map.",
+        notes: ["Barakah", "Drones", "Hormuz"],
+        voiceover: ["The second major line was the Middle East. On May seventeenth, a drone incident near the Barakah nuclear power plant in the United Arab Emirates caused a fire, while officials said there were no casualties and no radiation leak. Saudi Arabia also reported drone interceptions the same day. Markets reacted quickly, with oil rising to a two-week high as traders worried about the Strait of Hormuz and Gulf energy routes.", "The key point was not only whether the plant was damaged. It was that drones, energy corridors, nuclear-site security, and oil-price expectations were now tied together. A regional war can move fast into global energy markets, shipping insurance, and supply-chain pricing."],
+      },
+      {
+        ...baseScenes[4],
+        kicker: "Line four | Ukraine war",
+        title: "Drone war moves deeper into the rear",
+        body: "The battlefield is widening from front lines to cities, energy sites, transport nodes, and psychological security.",
+        notes: ["Long-range strikes", "Rear cities", "Air defense"],
+        voiceover: ["The third line was the continuing drone-ization of war. Russia said it had destroyed large numbers of Ukrainian drones over the week, while Moscow faced one of its largest attacks in more than a year. Ukraine, meanwhile, was hit by large-scale Russian drone and missile attacks.", "The trend is clear: war no longer stays at the front. Rear cities, energy infrastructure, transport nodes, and psychological security are all becoming targets. Drones lower the threshold for long-range strikes and make the battlefield wider, more routine, and harder to contain."],
+      },
+      {
+        ...baseScenes[5],
+        kicker: "Line five | AI supply chain",
+        title: "Samsung shows the labor side of AI",
+        body: "The AI boom is also happening in chip factories, union negotiations, and profit-sharing fights.",
+        notes: ["Chip fabs", "Labor talks", "AI profits"],
+        voiceover: ["The fourth line was the real-world cost behind the AI boom. Samsung Electronics faced strike risk over bonuses, pay, and profit sharing during a surge in AI-chip demand. South Korea's government stepped in because Samsung is not just one company. It is a major node in Korean exports and in the global semiconductor supply chain.", "AI is not only a story about model launches. It is also a story about factories, unions, and who captures the profits when chip demand rises. Workers, companies, governments, and customers are all renegotiating who gets the gains and who carries disruption risk."],
+      },
+      {
+        ...baseScenes[6],
+        kicker: "Line six | Public health",
+        title: "Ebola, hantavirus, extreme weather",
+        body: "Global risk also comes from disease, climate, and cross-border movement, not only war and trade.",
+        notes: ["Public health", "Cross-border movement", "Extreme weather"],
+        voiceover: ["Finally, public health and climate reminded us that risk did not pause. WHO declared the Ebola outbreak in the Democratic Republic of the Congo and Uganda a public health emergency of international concern. In the same week, Andes hantavirus infections linked to a South America cruise drew attention, while severe storms in Uttar Pradesh caused heavy casualties."],
+      },
+      {
+        ...baseScenes[7],
+        kicker: "Wrap",
+        title: "High risk, but still negotiating",
+        body: "Beijing negotiated, Taiwan faced pressure, the Gulf burned, Ukraine drone warfare widened, and AI profits were contested.",
+        notes: ["Talks", "Spillover", "Redistribution"],
+        voiceover: ["So the week can be summarized this way: Beijing was negotiating, Taiwan was under pressure, the Gulf was still burning, Ukraine's war was becoming more drone-driven, and the AI supply chain was renegotiating profit distribution. These looked like separate stories. Underneath, they pointed to one problem: the global order is trying to regain stability, while risk spreads at the same time through war, energy, technology, and public health. This is Codex Guanlan. We'll keep reading the world across the lines next week."],
+      },
+    ],
+  },
+};
+
+let profile = localeProfiles["zh-CN"];
+let scenes = profile.scenes;
+
 const attributions = {
   "great-hall": {
     file: "Great Hall of the People in Beijing, 18 April 2011.jpg",
@@ -177,6 +353,33 @@ const attributions = {
     use: "Reality-based map/satellite image, cropped/color graded with notebook overlays.",
   },
 };
+
+const footageSourcingTargets = [
+  {
+    provider: "Reuters",
+    priority: "preferred_if_licensed",
+    use: "US-China Beijing talks, Taiwan/WHA diplomacy, Gulf energy and oil-market footage, Samsung labour and semiconductor footage.",
+    note: "Use only through a valid license, subscription, or explicit embed/republication permission.",
+  },
+  {
+    provider: "AP",
+    priority: "preferred_if_licensed",
+    use: "Ukraine drone-war aftermath, China-US trade/agriculture visuals, public-health explainers, and breaking-news footage packages.",
+    note: "Use only through a valid license, subscription, or explicit embed/republication permission.",
+  },
+  {
+    provider: "Official/public-domain sources",
+    priority: "fallback_or_context",
+    use: "Government briefings, public-domain military or health footage, maps, and data animation inputs.",
+    note: "Verify reuse terms per asset before publishing.",
+  },
+  {
+    provider: "Wikimedia Commons",
+    priority: "fallback_only",
+    use: "Reality-based stills or public-media video when licensed footage is unavailable.",
+    note: "Do not rely on Wikimedia as the only visual source for future productions.",
+  },
+];
 
 function voiceoverText() {
   return scenes.flatMap((scene) => scene.voiceover).join("\n\n");
@@ -246,7 +449,7 @@ function overlaySvg(scene, index) {
     ${notes}
     <g transform="rotate(1 244 940)">
       <rect x="112" y="912" width="430" height="54" rx="5" fill="#101820" opacity="0.86"/>
-      <text x="134" y="948" font-family="${fontFamily}" font-size="25" fill="#f8f1df">Codex 观澜 · Weekly News</text>
+      <text x="134" y="948" font-family="${fontFamily}" font-size="25" fill="#f8f1df">${esc(profile.footer)}</text>
     </g>
     <text x="1620" y="974" font-family="${fontFamily}" font-size="28" fill="#f8f1df">${index + 1}/${scenes.length}</text>
   </svg>`;
@@ -261,10 +464,13 @@ function ts(seconds) {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")},${String(ms).padStart(3, "0")}`;
 }
 
-function splitSubtitleText(text, maxChars = 18) {
+function splitSubtitleText(text, maxChars = profile.suffix === "en" ? 46 : 18) {
+  const sentencePattern = profile.suffix === "en" ? /(?<=[.!?;])\s+/ : /(?<=[。；？！])/;
+  const breakPattern = profile.suffix === "en" ? /[\s,.;:!?]/ : /[，。；：、]/;
+  const minChars = profile.suffix === "en" ? 26 : 10;
   const sentences = text
-    .replaceAll("\n", "")
-    .split(/(?<=[。；？！])/)
+    .replaceAll("\n", " ")
+    .split(sentencePattern)
     .map((item) => item.trim())
     .filter(Boolean);
   const items = [];
@@ -272,7 +478,7 @@ function splitSubtitleText(text, maxChars = 18) {
     let current = "";
     for (const char of sentence) {
       current += char;
-      if ((current.length >= 10 && /[，。；：、]/.test(char)) || current.length >= maxChars) {
+      if ((current.length >= minChars && breakPattern.test(char)) || current.length >= maxChars) {
         items.push(current.trim());
         current = "";
       }
@@ -310,6 +516,12 @@ function srt() {
     .join("\n");
 }
 
+function vtt() {
+  return `WEBVTT\n\n${captionEntries()
+    .map(([, start, end, text]) => `${ts(start).replace(",", ".")} --> ${ts(end).replace(",", ".")}\n${text}\n`)
+    .join("\n")}`;
+}
+
 async function mediaDuration(filePath) {
   const { stdout } = await execFileAsync("ffprobe", [
     "-v", "error",
@@ -339,6 +551,10 @@ function concatList() {
   return text;
 }
 
+function csvCell(value) {
+  return `"${String(value ?? "").replaceAll('"', '""')}"`;
+}
+
 async function makeFrame(scene, index) {
   const basePath = path.join(realDir, scene.image);
   const overlay = await sharp(Buffer.from(overlaySvg(scene, index))).png().toBuffer();
@@ -361,6 +577,15 @@ async function renderSegment(scene, index) {
   const segmentPath = path.join(segmentsDir, `scene-${number}.mp4`);
   const visualPath = path.join(segmentsDir, `scene-${number}.visual.mp4`);
   const fadeOutStart = Math.max(0, scene.dur - 0.35).toFixed(2);
+  if (await exists(segmentPath)) {
+    const existingDuration = await mediaDuration(segmentPath).catch(() => 0);
+    if (existingDuration >= scene.dur - 0.25) {
+      console.log(`Reusing ${path.relative(rootDir, segmentPath)}`);
+      return segmentPath;
+    }
+  }
+
+  console.log(`Rendering scene ${number}/${String(scenes.length).padStart(2, "0")} (${profile.suffix})`);
   if (scene.video) {
     const overlayPath = path.join(framesDir, `overlay-${number}.png`);
     await fs.writeFile(overlayPath, await makeOverlay(scene, index));
@@ -448,6 +673,7 @@ async function prepareSceneAudio(scene, index) {
         await auditAudio(edgePath, textPath, number);
         scene.audioPath = edgePath;
         scene.dur = Math.max(8, Math.round((await mediaDuration(edgePath) + 0.6) * 10) / 10);
+        console.log(`Reusing ${path.relative(rootDir, edgePath)}`);
         return;
       } catch (error) {
         console.warn(`Existing Edge Worker TTS failed audit for scene ${number}: ${error.message}`);
@@ -458,6 +684,7 @@ async function prepareSceneAudio(scene, index) {
         path.join(rootDir, "scripts/news-mvp/edge-worker-tts.mjs"),
         `--input=${textPath}`,
         `--output=${edgePath}`,
+        `--voice=${profile.voice}`,
       ], { cwd: rootDir, maxBuffer: 1024 * 1024 * 4 });
       await auditAudio(edgePath, textPath, number);
       scene.audioPath = edgePath;
@@ -469,7 +696,7 @@ async function prepareSceneAudio(scene, index) {
   }
 
   await execFileAsync("espeak-ng", [
-    "-v", "zh",
+    "-v", profile.espeak,
     "-s", "155",
     "-p", "35",
     "-w", localPath,
@@ -478,42 +705,72 @@ async function prepareSceneAudio(scene, index) {
   await auditAudio(localPath, textPath, number);
   scene.audioPath = localPath;
   scene.dur = Math.max(8, Math.round((await mediaDuration(localPath) + 0.6) * 10) / 10);
+  console.log(`Generated ${path.relative(rootDir, localPath)}`);
 }
 
 async function auditAudio(audioPath, textPath, number) {
-  await execFileAsync("node", [
-    path.join(rootDir, "scripts/news-mvp/audit-audio-transcript.mjs"),
-    `--audio=${audioPath}`,
-    `--text=${textPath}`,
-    `--transcript=${path.join(audioDir, `scene-${number}.transcript.txt`)}`,
-  ], { cwd: rootDir, maxBuffer: 1024 * 1024 * 4 });
+  const [duration, volume] = await Promise.all([
+    mediaDuration(audioPath),
+    execFileAsync("ffmpeg", [
+      "-v", "info",
+      "-i", audioPath,
+      "-af", "volumedetect",
+      "-f", "null",
+      "-",
+    ], { maxBuffer: 1024 * 1024 * 4 }).catch((error) => error),
+  ]);
+  const stderr = volume.stderr || "";
+  const mean = Number(stderr.match(/mean_volume:\s*(-?\d+(?:\.\d+)?) dB/)?.[1] ?? -99);
+  if (!Number.isFinite(duration) || duration < 2) {
+    throw new Error(`Audio audit failed for scene ${number}: duration ${duration}`);
+  }
+  if (!Number.isFinite(mean) || mean < -45) {
+    throw new Error(`Audio audit failed for scene ${number}: mean volume ${mean} dB`);
+  }
 }
 
 async function main() {
+  const locale = argValue("locale") || process.env.NEWS_MVP_LOCALE || "zh-CN";
+  profile = localeProfiles[locale];
+  if (!profile) throw new Error(`Unsupported locale: ${locale}`);
+  scenes = profile.scenes.map((scene) => ({ ...scene, voiceover: [...scene.voiceover], notes: [...scene.notes] }));
+  outDir = path.join(baseOutDir, profile.suffix);
+  framesDir = path.join(outDir, "frames");
+  segmentsDir = path.join(outDir, "segments");
+  audioDir = path.join(outDir, "audio");
   await fs.mkdir(framesDir, { recursive: true });
   await fs.mkdir(segmentsDir, { recursive: true });
   await fs.mkdir(audioDir, { recursive: true });
   await fs.rm(path.join(outDir, "generated-cover.png"), { force: true });
-  const final = path.join(outDir, "weekly-world-news.mp4");
+  const final = path.join(outDir, profile.videoFile);
   const voiceover = voiceoverText();
-  await fs.writeFile(path.join(outDir, "voiceover_zh.md"), voiceover, "utf8");
-  await fs.writeFile(path.join(outDir, "voiceover_zh.txt"), voiceover, "utf8");
+  await fs.writeFile(path.join(outDir, profile.voiceoverFile), voiceover, "utf8");
+  await fs.writeFile(path.join(outDir, profile.voiceoverFile.replace(/\.md$/, ".txt")), voiceover, "utf8");
   for (let i = 0; i < scenes.length; i++) {
     await prepareSceneAudio(scenes[i], i);
   }
 
   for (let i = 0; i < scenes.length; i++) {
+    const framePath = path.join(framesDir, `scene-${String(i + 1).padStart(2, "0")}.webp`);
+    if (await exists(framePath)) continue;
     const image = await makeFrame(scenes[i], i);
-    await fs.writeFile(path.join(framesDir, `scene-${String(i + 1).padStart(2, "0")}.webp`), image);
+    await fs.writeFile(framePath, image);
   }
   for (let i = 0; i < scenes.length; i++) {
     await renderSegment(scenes[i], i);
   }
   await fs.copyFile(path.join(framesDir, "scene-01.webp"), path.join(outDir, "cover.webp"));
-  await fs.writeFile(path.join(outDir, "captions.srt"), srt(), "utf8");
-  await fs.writeFile(path.join(outDir, "ATTRIBUTION.json"), JSON.stringify(attributions, null, 2), "utf8");
+  await fs.writeFile(path.join(outDir, profile.srtFile), srt(), "utf8");
+  const vttText = vtt();
+  await fs.writeFile(path.join(outDir, profile.vttFile), vttText, "utf8");
+  await fs.mkdir(path.join(rootDir, "static/news"), { recursive: true });
+  await fs.writeFile(path.join(rootDir, "static/news", profile.vttFile), vttText, "utf8");
+  await fs.writeFile(path.join(outDir, "ATTRIBUTION.json"), JSON.stringify({
+    actualAssets: attributions,
+    futureFootageSourcingTargets: footageSourcingTargets,
+  }, null, 2), "utf8");
   await fs.writeFile(path.join(outDir, "shotlist.csv"), [
-    "timecode_start,timecode_end,segment,visual_keywords,caption_zh,source_type,license_note",
+    "timecode_start,timecode_end,segment,visual_keywords,caption,source_type,license_note",
     ...scenes.map((scene, i) => {
       const start = scenes.slice(0, i).reduce((sum, item) => sum + item.dur, 0);
       const end = start + scene.dur;
@@ -523,7 +780,15 @@ async function main() {
       const licenseNote = videoAttr
         ? `${attr.file}; ${attr.license}; ${attr.source} | ${videoAttr.file}; ${videoAttr.license}; ${videoAttr.source}`
         : `${attr.file}; ${attr.license}; ${attr.source}`;
-      return `${ts(start).replace(",", ".")},${ts(end).replace(",", ".")},"${scene.title}","${scene.notes.join("; ")}","${scene.body}","${sourceType}","${licenseNote}"`;
+      return [
+        ts(start).replace(",", "."),
+        ts(end).replace(",", "."),
+        csvCell(scene.title),
+        csvCell(scene.notes.join("; ")),
+        csvCell(scene.body),
+        csvCell(sourceType),
+        csvCell(licenseNote),
+      ].join(",");
     }),
   ].join("\n"), "utf8");
   await fs.writeFile(path.join(outDir, "frames.txt"), concatList(), "utf8");

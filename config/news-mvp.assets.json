@@ -1,7 +1,12 @@
 {
   "2026-05-11_2026-05-17": {
     "cover": "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/cover.webp",
-    "video": "https://files.js.gripe/f/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4",
+    "video": "https://files.js.gripe/f/fil_IwYXCKhiUkHJQZJEPfbFYbrK.mp4",
+    "videos": {
+      "zh-CN": "https://files.js.gripe/f/fil_IwYXCKhiUkHJQZJEPfbFYbrK.mp4",
+      "zh-TW": "https://files.js.gripe/f/fil_X8sJpP3dQBDjPMshck-cwW2B.mp4",
+      "en": "https://files.js.gripe/f/fil_J85OySCQlhS8bMCtnJjtz45_.mp4"
+    },
     "images": [
       "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/un-security-council.webp",
       "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/global-shipping.webp",

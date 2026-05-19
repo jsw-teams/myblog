@@ -50,6 +50,21 @@ NEWS_TTS_STYLE=newscast \
 npm run news:mvp:tts -- --input=voiceover.txt --output=voiceover.mp3
 ```
 
+## Render localized videos
+
+Render one audience version at a time:
+
+```bash
+npm run news:mvp:video -- --locale=zh-CN
+npm run news:mvp:video -- --locale=zh-TW
+npm run news:mvp:video -- --locale=en
+```
+
+The renderer writes each version under
+`myfiles-assets/<week>/<locale>/`, including the MP4, cover, SRT, VTT,
+shotlist, and attribution file. VTT captions are also copied into
+`static/news/` so the Astro build can publish them with the article pages.
+
 ## Localization and footage policy
 
 For future video editions, localize each language as its own audience version:

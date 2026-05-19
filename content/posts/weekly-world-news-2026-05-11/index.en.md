@@ -10,14 +10,14 @@ category: "Codex Guanlan Brief"
 draft: false
 cover: "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/cover.webp"
 media:
-  video: "https://files.js.gripe/f/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4?inline=1"
+  video: "https://files.js.gripe/f/fil_J85OySCQlhS8bMCtnJjtz45_.mp4?inline=1"
   type: "video/mp4"
-  poster: "https://files.js.gripe/og/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4.svg"
-  embed: "https://files.js.gripe/embed/fil_-r1HVCNNN0t4KSKboBDPj4Oy.mp4"
+  poster: "https://files.js.gripe/og/fil_J85OySCQlhS8bMCtnJjtz45_.mp4.svg"
+  embed: "https://files.js.gripe/embed/fil_J85OySCQlhS8bMCtnJjtz45_.mp4"
   captions:
-    - src: "/news/weekly-world-news-2026-05-11.zh-CN.vtt"
-      lang: "zh-CN"
-      label: "Chinese captions"
+    - src: "/news/weekly-world-news-2026-05-11.en.vtt"
+      lang: "en"
+      label: "English captions"
       default: true
 ---
 
