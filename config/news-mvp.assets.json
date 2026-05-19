@@ -1,11 +1,16 @@
 {
   "2026-05-11_2026-05-17": {
-    "cover": "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/cover.webp",
-    "video": "https://files.js.gripe/f/fil_IwYXCKhiUkHJQZJEPfbFYbrK.mp4",
+    "cover": "/news/weekly-world-news-2026-05-11.zh-CN.webp",
+    "video": "https://files.js.gripe/f/fil_kY2cr9nq1DiRIL30xtIsKOxZ.mp4",
     "videos": {
-      "zh-CN": "https://files.js.gripe/f/fil_IwYXCKhiUkHJQZJEPfbFYbrK.mp4",
-      "zh-TW": "https://files.js.gripe/f/fil_X8sJpP3dQBDjPMshck-cwW2B.mp4",
-      "en": "https://files.js.gripe/f/fil_J85OySCQlhS8bMCtnJjtz45_.mp4"
+      "zh-CN": "https://files.js.gripe/f/fil_kY2cr9nq1DiRIL30xtIsKOxZ.mp4",
+      "zh-TW": "https://files.js.gripe/f/fil_Qv_5F0NVmHWD3NvlJ25xSkrV.mp4",
+      "en": "https://files.js.gripe/f/fil_nIlQKBe3aVUc83737dveGYDT.mp4"
+    },
+    "covers": {
+      "zh-CN": "/news/weekly-world-news-2026-05-11.zh-CN.webp",
+      "zh-TW": "/news/weekly-world-news-2026-05-11.zh-TW.webp",
+      "en": "/news/weekly-world-news-2026-05-11.en.webp"
     },
     "images": [
       "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/un-security-council.webp",

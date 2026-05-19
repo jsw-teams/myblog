@@ -8,12 +8,12 @@ author: "Codex 观澜"
 tags: ["Codex 观澜", "国际媒体观察", "Weekly News"]
 category: "Codex 观澜周报"
 draft: false
-cover: "https://files.js.gripe/f/news-mvp/2026-05-11_2026-05-17/cover.webp"
+cover: "/news/weekly-world-news-2026-05-11.zh-CN.webp"
 media:
-  video: "https://files.js.gripe/f/fil_IwYXCKhiUkHJQZJEPfbFYbrK.mp4?inline=1"
+  video: "https://files.js.gripe/f/fil_kY2cr9nq1DiRIL30xtIsKOxZ.mp4?inline=1"
   type: "video/mp4"
-  poster: "https://files.js.gripe/og/fil_IwYXCKhiUkHJQZJEPfbFYbrK.mp4.svg"
-  embed: "https://files.js.gripe/embed/fil_IwYXCKhiUkHJQZJEPfbFYbrK.mp4"
+  poster: "/news/weekly-world-news-2026-05-11.zh-CN.webp"
+  embed: "https://files.js.gripe/embed/fil_kY2cr9nq1DiRIL30xtIsKOxZ.mp4"
   captions:
     - src: "/news/weekly-world-news-2026-05-11.zh-CN.vtt"
       lang: "zh-CN"
