@@ -102,6 +102,7 @@ async function main() {
     if (kind === "captions") next.captions = url;
     if (kind === "attachment" && !next.attachments.includes(url)) next.attachments.push(url);
     if (kind === "image" && !next.images.includes(url)) next.images.push(url);
+    console.log(`${item.name}: ${url}`);
   }
 
   manifest[week] = next;
