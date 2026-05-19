@@ -8,7 +8,15 @@ import sharp from "sharp";
 
 const execFileAsync = promisify(execFile);
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const weekKey = "2026-05-11_2026-05-17";
+function initialArgValue(name) {
+  const prefix = `--${name}=`;
+  const item = process.argv.slice(2).find((arg) => arg.startsWith(prefix));
+  return item ? item.slice(prefix.length) : "";
+}
+
+const weekKey = initialArgValue("week") || process.env.NEWS_MVP_ASSET_WEEK || "2026-05-11_2026-05-17";
+const [weekStart, weekEnd] = weekKey.split("_");
+const videoSlug = `weekly-world-news-${weekStart}`;
 const videoWorkspaceRoot = process.env.NEWS_MVP_VIDEO_WORKSPACE_ROOT || "/opt/codex_mark_vedio";
 const baseOutDir = path.resolve(process.env.NEWS_MVP_VIDEO_WORKSPACE || path.join(videoWorkspaceRoot, weekKey));
 let outDir = baseOutDir;
@@ -169,7 +177,7 @@ const localeProfiles = {
     coverKicker: "简体中文语音版",
     voiceoverFile: "voiceover_zh-CN.md",
     srtFile: "captions.zh-CN.srt",
-    vttFile: "weekly-world-news-2026-05-11.zh-CN.vtt",
+    vttFile: `${videoSlug}.zh-CN.vtt`,
     videoFile: "weekly-world-news.zh-CN.mp4",
     scenes: baseScenes.map((scene) => ({ ...scene, voiceover: [...scene.voiceover], notes: [...scene.notes] })),
   },
@@ -182,7 +190,7 @@ const localeProfiles = {
     coverKicker: "繁體中文語音版",
     voiceoverFile: "voiceover_zh-TW.md",
     srtFile: "captions.zh-TW.srt",
-    vttFile: "weekly-world-news-2026-05-11.zh-TW.vtt",
+    vttFile: `${videoSlug}.zh-TW.vtt`,
     videoFile: "weekly-world-news.zh-TW.mp4",
     scenes: [
       {
@@ -260,7 +268,7 @@ const localeProfiles = {
     coverKicker: "English voice edition",
     voiceoverFile: "voiceover_en.md",
     srtFile: "captions.en.srt",
-    vttFile: "weekly-world-news-2026-05-11.en.vtt",
+    vttFile: `${videoSlug}.en.vtt`,
     videoFile: "weekly-world-news.en.mp4",
     scenes: [
       {
@@ -517,7 +525,7 @@ function coverSvg() {
     ${title}
     <rect x="128" y="860" width="650" height="60" rx="5" fill="#101820" opacity="0.9"/>
     <text x="156" y="899" font-family="${fontFamily}" font-size="27" fill="#f8f1df">${esc(profile.footer)}</text>
-    <text x="132" y="794" font-family="${fontFamily}" font-size="30" fill="#fff2bc">2026-05-11 / 2026-05-17</text>
+    <text x="132" y="794" font-family="${fontFamily}" font-size="30" fill="#fff2bc">${esc(weekStart)} / ${esc(weekEnd || weekStart)}</text>
   </svg>`;
 }
 
