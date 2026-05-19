@@ -16,6 +16,29 @@ Set `NEWS_MVP_REFERENCE_DATE` to test another Taipei-week boundary:
 NEWS_MVP_REFERENCE_DATE=2026-05-18T01:30:00Z npm run news:mvp
 ```
 
+## Next weekly edition checklist
+
+Use this flow when continuing the series next week:
+
+1. Pick the Taipei-week key, for example `2026-05-18_2026-05-24`.
+2. Gather source links and reuse notes before writing narration.
+3. Update the weekly article draft and the scene list in
+   `scripts/news-mvp/render-first-video.mjs`.
+4. Put reality-based stills and authorized/public/embeddable footage in the
+   external video workspace, for example
+   `/opt/codex_mark_vedio/2026-05-18_2026-05-24/real/` and `video/`.
+5. Render each localized version with the week key:
+
+```bash
+npm run news:mvp:video -- --week=2026-05-18_2026-05-24 --locale=zh-CN --force-audio --force-video --force-frames
+npm run news:mvp:video -- --week=2026-05-18_2026-05-24 --locale=zh-TW --force-audio --force-video --force-frames
+npm run news:mvp:video -- --week=2026-05-18_2026-05-24 --locale=en --force-audio --force-video --force-frames
+```
+
+6. Upload the final MP4 files to myfiles, copy the generated covers into
+   `static/news/`, update each localized article frontmatter, then run
+   `npm run build` and `npm run check`.
+
 ## Upload myfiles assets
 
 `myfiles` already supports `POST /api/upload` and returns each uploaded file's
@@ -64,9 +87,9 @@ directory, or `NEWS_MVP_VIDEO_WORKSPACE_ROOT` for the parent directory.
 Render one audience version at a time:
 
 ```bash
-npm run news:mvp:video -- --locale=zh-CN
-npm run news:mvp:video -- --locale=zh-TW
-npm run news:mvp:video -- --locale=en
+npm run news:mvp:video -- --week=2026-05-11_2026-05-17 --locale=zh-CN
+npm run news:mvp:video -- --week=2026-05-11_2026-05-17 --locale=zh-TW
+npm run news:mvp:video -- --week=2026-05-11_2026-05-17 --locale=en
 ```
 
 The renderer writes each version under `<video-workspace>/<locale>/`,
@@ -78,6 +101,22 @@ By default the renderer uses the online Edge/Azure-compatible speech endpoint
 at `https://tts.wangwangit.com`. Use `--force-audio` when replacing old local
 draft audio. Local `espeak-ng` fallback is disabled unless explicitly requested
 with `--allow-local-tts`.
+
+## Video tone
+
+The weekly video should feel less like a straight news bulletin and more like a
+human, reality-based short essay:
+
+- Open from a concrete scene, human consequence, or visual detail before moving
+  into the policy frame.
+- Keep the narration measured, but avoid stacked headline summaries. Use fewer
+  abstract nouns and more cause, texture, and consequence.
+- Let each segment answer: who felt the pressure, what changed in daily life or
+  risk perception, and why this matters beyond the event itself.
+- Use pauses, image holds, ambient movement, and quieter transitions so the video
+  has emotional shape instead of only information density.
+- End with a reflective synthesis rather than a presenter-style signoff when the
+  week calls for it.
 
 ## Localization and footage policy
 
