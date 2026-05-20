@@ -209,6 +209,8 @@ async function writeManifest() {
 async function copyBaseFiles() {
   await fs.copyFile(path.join(rootDir, "src", "styles.css"), path.join(assetsDir, "site.css"));
   await fs.copyFile(path.join(rootDir, "src", "client.js"), path.join(assetsDir, "client.js"));
+  await fs.copyFile(path.join(rootDir, "src", "privacy-plugin-loader.js"), path.join(assetsDir, "privacy-plugin-loader.js"));
+  await fs.copyFile(path.join(rootDir, "src", "privacy-plugins.json"), path.join(assetsDir, "privacy-plugins.json"));
 }
 
 async function writeOgImage() {
