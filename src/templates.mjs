@@ -162,7 +162,7 @@ export function renderLayout({
   ${main}
   ${renderFooter(site, locale)}
   <script src="/assets/client.js" defer></script>
-  <script src="/assets/privacy-plugin-loader.js?v=20260520v6" data-config="/assets/privacy-plugins.json" data-stylesheet="/assets/privacy-plugin-banner.css" defer></script>
+  <script src="/assets/privacy-plugin-loader.js?v=20260520v8" data-config="/assets/privacy-plugins.json" data-stylesheet="/assets/privacy-plugin-banner.css" defer></script>
 </body>
 </html>`;
 }
