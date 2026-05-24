@@ -162,7 +162,7 @@ export function renderLayout({
   ${main}
   ${renderFooter(site, locale)}
   <script src="/assets/client.js" defer></script>
-  <script src="/assets/privacy-plugin-loader.js?v=20260520v9" data-config="/assets/privacy-plugins.json" data-stylesheet="/assets/privacy-plugin-banner.css" defer></script>
+  <script src="https://privacy.js.gripe/privacy-plugin-loader.js?v=20260524v1" defer></script>
 </body>
 </html>`;
 }
