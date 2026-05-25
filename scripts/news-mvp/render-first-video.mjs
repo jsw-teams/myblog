@@ -58,6 +58,30 @@ function argFlag(name) {
   return process.argv.slice(2).includes(`--${name}`);
 }
 
+async function loadSceneProfile(locale) {
+  const profilePath = argValue("scene-profile") || process.env.NEWS_MVP_SCENE_PROFILE || "";
+  if (!profilePath) return null;
+  const profileJson = JSON.parse(await fs.readFile(path.resolve(profilePath), "utf8"));
+  const override = profileJson.locales?.[locale] ?? profileJson[locale] ?? null;
+  if (!override) throw new Error(`Scene profile ${profilePath} does not include locale: ${locale}`);
+  if (!Array.isArray(override.scenes) || override.scenes.length === 0) {
+    throw new Error(`Scene profile ${profilePath} locale ${locale} has no scenes.`);
+  }
+  return {
+    suffix: override.suffix ?? locale,
+    voice: override.voice ?? localeProfiles[locale]?.voice,
+    espeak: override.espeak ?? localeProfiles[locale]?.espeak,
+    footer: override.footer ?? localeProfiles[locale]?.footer,
+    articleTitle: override.articleTitle,
+    coverKicker: override.coverKicker ?? localeProfiles[locale]?.coverKicker,
+    voiceoverFile: override.voiceoverFile ?? `voiceover_${locale}.md`,
+    srtFile: override.srtFile ?? `captions.${locale}.srt`,
+    vttFile: override.vttFile ?? `${videoSlug}.${locale}.vtt`,
+    videoFile: override.videoFile ?? `weekly-world-news.${locale}.mp4`,
+    scenes: override.scenes,
+  };
+}
+
 const baseScenes = [
   {
     dur: 12,
@@ -824,7 +848,7 @@ async function auditAudio(audioPath, textPath, number) {
 async function main() {
   await loadLocalEnv();
   const locale = argValue("locale") || process.env.NEWS_MVP_LOCALE || "zh-CN";
-  profile = localeProfiles[locale];
+  profile = await loadSceneProfile(locale) ?? localeProfiles[locale];
   if (!profile) throw new Error(`Unsupported locale: ${locale}`);
   scenes = profile.scenes.map((scene) => ({ ...scene, voiceover: [...scene.voiceover], notes: [...scene.notes] }));
   outDir = path.join(baseOutDir, profile.suffix);
