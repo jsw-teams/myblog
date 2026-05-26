@@ -8,6 +8,7 @@
     "sync:cookies": "node /opt/mycookies/scripts/sync-to-projects.mjs",
     "prebuild": "node src/assets.mjs",
     "build": "astro build",
+    "pages:build": "npm run build && npm run check",
     "news:mvp": "node scripts/news-mvp/generate-weekly-news.mjs",
     "news:mvp:video": "node scripts/news-mvp/render-first-video.mjs",
     "news:mvp:tts": "node scripts/news-mvp/edge-worker-tts.mjs",

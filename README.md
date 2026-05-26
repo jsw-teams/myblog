@@ -75,3 +75,14 @@ npm run deploy:production
 ```
 
 Cloudflare Pages 的输出目录请设置为 `public`。
+
+如果使用 Cloudflare Pages 连接 GitHub 仓库自动部署，项目设置请填：
+
+```text
+Framework preset: Astro
+Build command: npm run pages:build
+Build output directory: public
+Root directory: /
+```
+
+不要把 Build command 设置成 `npm install`。Cloudflare Pages 会先自动安装依赖；Build command 必须生成 `public/`，否则会报 `Error: Output directory "public" not found.`。
