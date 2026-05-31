@@ -660,6 +660,66 @@ h3 {
   image-rendering: pixelated;
 }
 
+.prose img.js-lightbox-image {
+  cursor: zoom-in;
+}
+
+.prose img.js-lightbox-image:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.image-lightbox {
+  align-items: center;
+  background: rgba(17, 17, 17, 0.88);
+  display: none;
+  inset: 0;
+  justify-content: center;
+  padding: 1rem;
+  position: fixed;
+  z-index: 1000;
+}
+
+.image-lightbox.is-open {
+  display: flex;
+}
+
+.image-lightbox-preview {
+  background: var(--surface);
+  border: 3px solid var(--surface);
+  border-radius: var(--radius);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.35);
+  cursor: zoom-out;
+  image-rendering: auto;
+  max-height: calc(100vh - 5rem);
+  max-width: calc(100vw - 2rem);
+  object-fit: contain;
+}
+
+.image-lightbox-close {
+  align-items: center;
+  background: var(--surface);
+  border: 3px solid var(--text);
+  border-radius: 999px;
+  box-shadow: var(--pixel-shadow-soft);
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  font: 700 1.25rem/1 var(--font-heading);
+  height: 2.5rem;
+  justify-content: center;
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  width: 2.5rem;
+}
+
+.image-lightbox-close:hover,
+.image-lightbox-close:focus-visible {
+  background: var(--accent);
+  outline: none;
+}
+
 .article-footer {
   border-top: 2px solid var(--border);
   margin-top: 2.5rem;
