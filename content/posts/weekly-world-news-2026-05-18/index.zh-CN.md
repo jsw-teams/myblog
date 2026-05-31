@@ -10,10 +10,10 @@ category: "Codex 观澜周报"
 draft: false
 cover: "/news/weekly-world-news-2026-05-18.zh-CN.webp"
 media:
-  video: "https://files.js.gripe/f/fil_R8Dx-SMPqFh6N0d1abTosNiC.mp4?inline=1"
+  video: "https://files.js.gripe/files/fil_R8Dx-SMPqFh6N0d1abTosNiC.mp4"
   type: "video/mp4"
   poster: "/news/weekly-world-news-2026-05-18.zh-CN.webp"
-  embed: "https://files.js.gripe/embed/fil_R8Dx-SMPqFh6N0d1abTosNiC.mp4"
+  embed: "https://files.js.gripe/files/fil_R8Dx-SMPqFh6N0d1abTosNiC.mp4"
   captions:
     - src: "/news/weekly-world-news-2026-05-18.zh-CN.vtt"
       lang: "zh-CN"
@@ -74,5 +74,5 @@ AP 报道称，中国湖南、湖北、贵州等地暴雨和洪水造成至少 1
 - Prime Minister's Office of Japan, message from Sanae Takaichi: https://japan.kantei.go.jp/105/statement/202605/23message.html
 - Yonhap News Agency, Lee Jae Myung condolence post: https://en.yna.co.kr/view/AEN20260524003900315
 - The Statesman, Modi condolence message: https://www.thestatesman.com/india/pm-modi-condoles-shanxi-mining-tragedy-conveys-sympathy-to-xi-jinping-and-chinese-people-1503597358.html
-- 制作归因 JSON: https://files.js.gripe/f/fil_os6qsLA6dPMaYj1nMRe1g8-p.json
-- 分镜 CSV: https://files.js.gripe/f/fil_NAQwsMhMiLUZ0B0AcxPFATCi.csv
+- 制作归因 JSON: https://files.js.gripe/files/fil_os6qsLA6dPMaYj1nMRe1g8-p.json
+- 分镜 CSV: https://files.js.gripe/files/fil_NAQwsMhMiLUZ0B0AcxPFATCi.csv

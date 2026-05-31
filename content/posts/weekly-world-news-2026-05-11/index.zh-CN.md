@@ -10,10 +10,10 @@ category: "Codex 观澜周报"
 draft: false
 cover: "/news/weekly-world-news-2026-05-11.zh-CN.webp"
 media:
-  video: "https://files.js.gripe/f/fil_kY2cr9nq1DiRIL30xtIsKOxZ.mp4?inline=1"
+  video: "https://files.js.gripe/files/fil_kY2cr9nq1DiRIL30xtIsKOxZ.mp4"
   type: "video/mp4"
   poster: "/news/weekly-world-news-2026-05-11.zh-CN.webp"
-  embed: "https://files.js.gripe/embed/fil_kY2cr9nq1DiRIL30xtIsKOxZ.mp4"
+  embed: "https://files.js.gripe/files/fil_kY2cr9nq1DiRIL30xtIsKOxZ.mp4"
   captions:
     - src: "/news/weekly-world-news-2026-05-11.zh-CN.vtt"
       lang: "zh-CN"
