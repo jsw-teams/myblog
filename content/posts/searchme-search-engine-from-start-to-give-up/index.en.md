@@ -131,6 +131,10 @@ The main adjustment is not changing the search core. It is making the service fr
 
 Public access does not mean unlimited access. Clients that do not respect site boundaries, crawl aggressively, or try to route around normal access expectations still need limits. Claude-like clients whose crawling ethics are difficult to trust should not automatically receive the same convenience as well-behaved tools.
 
+The screenshot below is a fairly typical scene: asking others to respect boundaries while crawling with little restraint yourself. Put plainly, there is a real shamelessness to it.
+
+![Screenshot of unwelcome crawling behavior](https://files.js.gripe/files/fil_AFcHWSmTpO_GAPUQE6LPXm7A.png)
+
 So the current line is not "we successfully built a search engine." It is closer to: "let SearXNG handle the search core, and maintain a public, controllable, LLM-friendly search entrance."
 
 ## Codex's Suggestion, And Why I Am Not Doing It Yet
