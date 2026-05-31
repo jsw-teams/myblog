@@ -16,6 +16,29 @@ This post could have been called "How to Build Your Own Search Engine Gracefully
 
 But search has a way of growing teeth. You think you are building an input box. Then you realize you are designing an information worldview.
 
+**Current live entry point:** `search.js.gripe` is running normally at <https://search.js.gripe/>. At the moment, it is intentionally close to a stock SearXNG deployment, with JSON results enabled so users, scripts, and well-behaved LLMs can read structured search output.
+
+The simplest beginner workflow is: search normally in the browser first. If you want a web-enabled LLM to fetch structured results, put the query into this URL shape:
+
+```text
+https://search.js.gripe/search?q=your search terms&format=json
+```
+
+For example:
+
+```text
+https://search.js.gripe/search?q=SearchMe%20SearXNG&format=json
+```
+
+Then you can ask an LLM:
+
+```text
+Please open this JSON search result, compare the relevance of the first few links, and tell me which results are worth opening next:
+https://search.js.gripe/search?q=SearchMe%20SearXNG&format=json
+```
+
+If your query contains spaces or non-English text, the browser usually encodes it for you. When in doubt, search on `search.js.gripe` first, then adapt the address so it includes `format=json`.
+
 <!--more-->
 
 ## Starting With SearXNG

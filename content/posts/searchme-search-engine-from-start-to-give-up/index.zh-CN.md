@@ -16,6 +16,29 @@ cover: ""
 
 然而搜索这个东西，越看越像一句老话：你以为是在做输入框，实际上是在做世界观。
 
+**当前可用入口：** `search.js.gripe` 目前正常运行，入口是 <https://search.js.gripe/>。它现在就是一个尽量保持原版的 SearXNG 搜索站点，并开放 JSON 结果，方便用户、脚本和守规矩的 LLM 读取。
+
+给小白用户最简单的用法是：先在网页上正常搜索；如果要让支持联网访问的 LLM 抓取结构化结果，就把搜索词放进下面这个地址：
+
+```text
+https://search.js.gripe/search?q=你的搜索词&format=json
+```
+
+例如：
+
+```text
+https://search.js.gripe/search?q=SearchMe%20SearXNG&format=json
+```
+
+然后可以直接对 LLM 说：
+
+```text
+请访问这个 JSON 搜索结果，帮我比较前几条链接的相关性，并说明哪些结果值得继续打开：
+https://search.js.gripe/search?q=SearchMe%20SearXNG&format=json
+```
+
+如果搜索词里有中文或空格，浏览器通常会自动处理；不放心的话，可以先在 `search.js.gripe` 网页里搜索，再把地址栏里的查询改成带 `format=json` 的形式。
+
 <!--more-->
 
 ## 起点：先从 SearXNG 开始
