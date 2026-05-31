@@ -286,6 +286,78 @@
     });
   }
 
+  function setupArticleAudioTracks() {
+    var roots = Array.prototype.slice.call(document.querySelectorAll("[data-audio-track-root]"));
+    roots.forEach(function (root) {
+      var select = root.querySelector("[data-audio-track-select]");
+      var player = root.querySelector("[data-audio-track-player]");
+      var shell = root.closest(".article-video-shell");
+      var video = shell ? shell.querySelector("video") : null;
+      if (!select || !player || !video) return;
+
+      var active = false;
+      var originalMuted = video.muted;
+
+      function syncPlayer(force) {
+        if (!active) return;
+        if (!video.muted) video.muted = true;
+        player.playbackRate = video.playbackRate || 1;
+        player.volume = video.volume;
+        if (force || Math.abs((player.currentTime || 0) - (video.currentTime || 0)) > 0.25) {
+          try {
+            player.currentTime = video.currentTime || 0;
+          } catch (error) {
+            return;
+          }
+        }
+        if (video.paused || video.ended) {
+          player.pause();
+          return;
+        }
+        var playPromise = player.play();
+        if (playPromise && typeof playPromise.catch === "function") playPromise.catch(function () {});
+      }
+
+      function disableTrack() {
+        if (active) video.muted = originalMuted;
+        active = false;
+        root.classList.remove("is-active");
+        player.pause();
+        player.removeAttribute("src");
+        player.load();
+      }
+
+      function setTrack() {
+        var next = select.value || "";
+        if (!next) {
+          disableTrack();
+          return;
+        }
+        if (!active) originalMuted = video.muted;
+        active = true;
+        root.classList.add("is-active");
+        video.muted = true;
+        if (player.getAttribute("src") !== next) {
+          player.src = next;
+          player.load();
+        }
+        syncPlayer(true);
+      }
+
+      select.addEventListener("change", setTrack);
+      video.addEventListener("play", function () { syncPlayer(true); });
+      video.addEventListener("pause", function () { syncPlayer(false); });
+      video.addEventListener("seeked", function () { syncPlayer(true); });
+      video.addEventListener("seeking", function () { syncPlayer(true); });
+      video.addEventListener("timeupdate", function () { syncPlayer(false); });
+      video.addEventListener("ratechange", function () { syncPlayer(false); });
+      video.addEventListener("volumechange", function () { syncPlayer(false); });
+      video.addEventListener("ended", function () { player.pause(); });
+      setTrack();
+    });
+  }
+
   setupSearch();
   setupImageLightbox();
+  setupArticleAudioTracks();
 })();

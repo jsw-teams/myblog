@@ -561,13 +561,57 @@ h3 {
   color: var(--muted);
 }
 
+.article-video-shell {
+  background: #111;
+  border: 2px solid var(--text);
+  display: grid;
+  position: relative;
+}
+
 .article-video {
   aspect-ratio: 16 / 9;
   background: #111;
-  border: 2px solid var(--text);
   border-radius: var(--radius);
   display: block;
   width: 100%;
+}
+
+.article-audio-track {
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border: 2px solid var(--text);
+  box-shadow: 3px 3px 0 rgb(0 0 0 / 18%);
+  left: 0.85rem;
+  max-width: min(24rem, calc(100% - 1.7rem));
+  padding: 0.35rem 0.45rem;
+  position: absolute;
+  top: 0.85rem;
+  z-index: 2;
+}
+
+.article-audio-track label {
+  align-items: center;
+  color: var(--text);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.92rem;
+  gap: 0.6rem;
+}
+
+.article-audio-track select {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  max-width: 100%;
+  padding: 0.3rem 0.55rem;
+}
+
+.article-audio-track audio {
+  block-size: 1px;
+  inline-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
 }
 
 .article-media-links {

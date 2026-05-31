@@ -208,6 +208,20 @@ function renderMediaPlayer(post, locale) {
   const downloadLink = media.download ? `<a href="${escapeHtml(media.download)}">${escapeHtml(media.downloadLabel || "Download video")}</a>` : "";
   const captionsLink = captions[0]?.download ? `<a href="${escapeHtml(captions[0].download)}">${escapeHtml(captions[0].downloadLabel || "Download captions")}</a>` : "";
   const links = [downloadLink, captionsLink, transcriptLink].filter(Boolean).join("");
+  const audioTracks = Array.isArray(media.audioTracks) ? media.audioTracks.filter((track) => track?.src) : [];
+  const defaultAudioTrack = audioTracks.find((track) => track.default) || audioTracks[0];
+  const audioSelector = audioTracks.length
+    ? `<div class="article-audio-track" data-audio-track-root data-audio-track-default="${escapeHtml(defaultAudioTrack?.src || "")}">
+      <label>
+        <span>${escapeHtml(media.audioTrackLabel || "Audio track")}</span>
+        <select data-audio-track-select>
+          <option value="">${escapeHtml(media.audioTrackOffLabel || "Off")}</option>
+          ${audioTracks.map((track) => `<option value="${escapeHtml(track.src)}"${track.src === defaultAudioTrack?.src ? " selected" : ""}>${escapeHtml(track.label || localeLabel(track.lang || locale))}</option>`).join("")}
+        </select>
+      </label>
+      <audio preload="auto" data-audio-track-player${defaultAudioTrack?.src ? ` src="${escapeHtml(defaultAudioTrack.src)}"` : ""}></audio>
+    </div>`
+    : "";
   const heading = media.title || media.description
     ? `<div class="article-media-heading">
       ${media.title ? `<h2 id="article-media-title">${escapeHtml(title)}</h2>` : ""}
@@ -217,10 +231,13 @@ function renderMediaPlayer(post, locale) {
   const sectionLabel = media.title ? ' aria-labelledby="article-media-title"' : ` aria-label="${escapeHtml(title)}"`;
   return `<section class="article-media"${sectionLabel}>
     ${heading}
-    <video class="article-video" controls playsinline preload="metadata"${poster ? ` poster="${escapeHtml(poster)}"` : ""}>
-      <source src="${escapeHtml(media.video)}" type="${escapeHtml(sourceType)}">
-      ${captionTracks}
-    </video>
+    <div class="article-video-shell">
+      <video class="article-video" controls playsinline preload="metadata"${poster ? ` poster="${escapeHtml(poster)}"` : ""}>
+        <source src="${escapeHtml(media.video)}" type="${escapeHtml(sourceType)}">
+        ${captionTracks}
+      </video>
+      ${audioSelector}
+    </div>
     ${links ? `<nav class="article-media-links" aria-label="Media links">${links}</nav>` : ""}
   </section>`;
 }
