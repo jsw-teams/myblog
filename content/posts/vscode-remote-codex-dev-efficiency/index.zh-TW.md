@@ -1,8 +1,8 @@
 ---
-title: "把 VS Code 遠端開發與 Codex 結合：讓遠端主機成為高效開發工作台"
-description: "透過 VS Code Remote SSH、Codex IDE 擴充套件與 Codex CLI，把遠端主機上的真實專案環境變成可協作、可建置、可審查的開發工作台。"
+title: "VS Code Remote SSH 連接後安裝 Codex：為什麼遠端視窗需要重新安裝和認證"
+description: "透過 VS Code Remote SSH 連接遠端主機後，Codex 需要在遠端視窗中重新安裝並重新認證，否則側邊欄圖示和功能可能不會像本機視窗那樣顯示。"
 date: "2026-05-10"
-updated: "2026-05-10"
+updated: "2026-06-02"
 translationKey: "vscode-remote-codex-dev-efficiency"
 tags: ["VS Code", "Remote SSH", "Codex"]
 category: "開發效率"
@@ -10,214 +10,149 @@ draft: false
 cover: ""
 ---
 
-單獨使用 VS Code Remote SSH，可以把專案放在遠端主機上開發；單獨使用 Codex，可以讓 AI 協助理解程式碼、修改檔案、執行命令與產生方案。把兩者結合起來，遠端主機就不只是「伺服器」，而是一個帶有 AI 協作能力的開發工作台。
+使用 VS Code Remote SSH 連接遠端主機後，經常會遇到一個容易誤解的現象：本機 VS Code 明明已經安裝了 Codex 擴充套件，切到遠端 SSH 視窗後，Codex 圖示卻沒有像本機視窗那樣出現在側邊欄。
 
-這篇文章記錄一種適合 `blog.js.gripe` 這類靜態部落格專案，也適合 API、閘道、控制台與自動化腳本專案的開發模式。
+原因很簡單：Remote SSH 開啟的不是普通本機視窗，而是連接到遠端主機的遠端視窗。VS Code 會在遠端主機上執行一套遠端擴充套件環境。本機安裝過的擴充套件和本機登入狀態，不一定會自動帶到遠端主機裡。對 Codex 來說，遠端視窗通常需要重新安裝一次擴充套件，並重新完成一次認證。
 
-## 總體架構
+下面用一個泛化主機名 `remote-dev` 舉例，避免把真實伺服器名稱寫進教學。
 
-推薦的工作流如下：
+## 前提
 
-```text
-Windows 本機 VS Code
-        ↓ Remote SSH
-遠端 Linux 專案目錄
-        ↓
-Codex IDE 擴充套件 / Codex CLI
-        ↓
-Git 分支、建置檢查、提交推送
-```
-
-本機只保留編輯器 UI 與認證入口，真正的程式碼、依賴、建置命令與 Git 狀態都在遠端主機上。
-
-這種結構有三個優勢：
-
-1. 遠端環境更接近部署環境；
-2. Codex 取得的是目前專案的真實上下文；
-3. 建置與檢查命令可以直接在遠端終端機執行，減少環境差異。
-
-## 方式一：使用 Codex IDE 擴充套件
-
-在 VS Code 中安裝 Codex IDE 擴充套件後，可以在側邊欄中開啟 Codex。對於遠端視窗，建議先確認你目前開啟的是遠端工作區，而不是本機目錄：
+繼續之前，先確認你已經完成了 VS Code Remote SSH 連接：
 
 ```text
-左下角應顯示 SSH: blog-dev
-檔案總管開啟的是遠端路徑，例如 /home/deploy/projects/blog.js.gripe
+左側遠端資源管理器中能看到 SSH 主機 remote-dev
+主機狀態顯示已連接
+目前視窗左下角顯示 SSH: remote-dev
+遠端終端機提示字元來自遠端主機
 ```
 
-然後可以讓 Codex 基於目前工作區執行任務，例如：
-
-```text
-請閱讀 content/posts 的現有文章結構，按照目前 frontmatter 規範新增一篇關於 Remote SSH 的中文文章，並保持 translationKey 命名一致。
-```
-
-這類任務適合：
-
-- 新增部落格文章；
-- 產生 frontmatter；
-- 檢查 Markdown 連結；
-- 解釋專案結構；
-- 修改小範圍程式碼；
-- 產生提交說明。
-
-## 方式二：在遠端終端機使用 Codex CLI
-
-如果更偏好命令列工作流，可以在遠端主機中安裝 Codex CLI：
+如果目前開啟的還是本機 Windows 目錄，例如 `C:\Users\User\Desktop`，那還不是遠端工作區。需要先從遠端資源管理器中連接主機，並開啟遠端目錄，例如：
 
 ```bash
-npm i -g @openai/codex
-```
-
-進入專案目錄後執行：
-
-```bash
-cd ~/projects/blog.js.gripe
-codex
-```
-
-首次執行時需要登入或設定 API Key。CLI 模式的優勢是和遠端 Shell 更貼近，適合直接圍繞 Git、建置命令、腳本與檔案修改進行協作。
-
-常見用法：
-
-```text
-請檢查這個 Astro 靜態部落格的 content/posts 結構，告訴我新增三語言文章時應該使用哪些檔名。
+/opt
 ```
 
 或：
 
-```text
-請根據專案說明文件的規範，為新增文章產生 zh-CN、zh-TW、en 三個版本，並在完成後執行 npm run build 和 npm run check。
+```bash
+/home/deploy
 ```
 
-## 為 Codex 提供清楚邊界
+## 為什麼本機裝過 Codex 還要遠端再裝
 
-和 AI 協作時，最重要的是邊界清楚。建議每次任務都說明四件事：
+VS Code Remote SSH 連接後，擴充套件大致分成兩類：
 
-```text
-目標：要完成什麼
-範圍：允許改哪些目錄或檔案
-驗證：完成後需要執行哪些命令
-限制：不要改哪些內容
-```
+- 本機 UI 側擴充套件：執行在本機 VS Code 用戶端中；
+- 遠端工作區擴充套件：執行在遠端主機的 VS Code Server 環境中。
 
-例如：
+Codex 需要讀取目前工作區、顯示側邊欄入口，並和遠端目錄中的檔案互動。遠端 SSH 視窗裡的工作區在遠端主機上，所以只在本機裝過 Codex 並不夠。你需要在遠端視窗裡安裝 Codex，安裝位置通常會顯示為類似：
 
 ```text
-目標：新增一篇關於 GitHub Webhook 觸發 Cloudflare Pages 重新部署的文章。
-範圍：只允許修改 content/posts/github-webhook-blog-redeploy 下的 Markdown 檔案。
-驗證：完成後執行 npm run build 和 npm run check。
-限制：不要修改 package.json、astro.config.mjs、src 目錄和 wrangler.toml。
+Install in SSH: remote-dev
 ```
 
-這樣可以降低誤改核心設定的風險。
+安裝完成後，Codex 圖示才會在這個遠端視窗裡正常出現。
 
-## 建議的目錄策略
+## 安裝步驟
 
-對於多語言文章，建議使用同一個 slug 目錄，不同語言使用不同檔案：
+### 1. 先連接 Remote SSH
+
+開啟 VS Code 左側遠端資源管理器，選擇 `遠端(隧道/SSH)`，在 `SSH` 下連接示例主機：
 
 ```text
-content/posts/vscode-remote-codex-dev-efficiency/index.zh-CN.md
-content/posts/vscode-remote-codex-dev-efficiency/index.zh-TW.md
-content/posts/vscode-remote-codex-dev-efficiency/index.en.md
+remote-dev
 ```
 
-三份檔案使用相同的 `translationKey`：
+連接成功後，開啟一個遠端目錄，例如 `/opt`。這一步很重要，因為 Codex 要安裝到目前遠端視窗，而不是普通本機視窗。
 
-```yaml
-translationKey: "vscode-remote-codex-dev-efficiency"
+### 2. 在遠端視窗安裝 Codex 擴充套件
+
+開啟擴充套件面板：
+
+```text
+Ctrl + Shift + X
 ```
 
-這樣後續做語言切換、站內索引、RSS、sitemap 或 llms 檔案時，更容易把不同語言識別為同一篇文章的不同版本。
+搜尋：
 
-## 遠端建置檢查
+```text
+Codex
+```
 
-文章或程式碼修改完成後，在遠端終端機執行：
+如果擴充套件已經在本機安裝過，但遠端視窗還不能使用，擴充套件頁面通常會出現遠端安裝入口。選擇類似下面的按鈕：
+
+```text
+Install in SSH: remote-dev
+```
+
+不要只看本機是否已經安裝。關鍵是確認目前遠端 SSH 視窗也安裝了 Codex。
+
+### 3. 重載或重啟 VS Code 視窗
+
+安裝完成後，如果側邊欄沒有立即出現 Codex 圖示，可以執行：
+
+```text
+Ctrl + Shift + P
+Developer: Reload Window
+```
+
+也可以直接關閉目前遠端視窗，再重新透過 Remote SSH 連接 `remote-dev`。很多時候，重載視窗後 Codex 圖示才會穩定顯示。
+
+### 4. 重新認證 Codex
+
+遠端視窗裡的 Codex 需要單獨認證。即使本機 VS Code 已經登入過 Codex，遠端 SSH 視窗仍然可能要求重新登入或設定 API Key。
+
+開啟 Codex 圖示後，按提示完成認證。常見方式包括：
+
+```text
+使用 ChatGPT / OpenAI 帳號登入
+或設定 OpenAI API Key
+```
+
+認證完成後，Codex 才能在遠端視窗中讀取目前目錄、輔助修改檔案，並根據遠端工作區上下文執行任務。
+
+## 常見現象
+
+### 1. 本機視窗有 Codex 圖示，遠端視窗沒有
+
+優先檢查 Codex 是否安裝到了遠端 SSH 視窗。只在本機安裝並不等於遠端可用。
+
+### 2. 擴充套件頁顯示已安裝，但遠端側邊欄還是沒有圖示
+
+確認目前視窗左下角是否顯示 `SSH: remote-dev`。如果不是遠端視窗，表示你還在本機環境。若已經是遠端視窗，執行 `Developer: Reload Window`。
+
+### 3. 遠端視窗提示需要登入
+
+這是正常現象。遠端主機和本機用戶端的認證狀態可能不同，需要重新完成 Codex 登入或 API Key 設定。
+
+### 4. 遠端主機空間很小
+
+Codex 擴充套件、VS Code Server 和其他遠端擴充套件都會占用遠端磁碟。如果是只有 5G 左右儲存的小型 VPS，建議先檢查空間：
 
 ```bash
-npm run build
-npm run check
+df -h
+du -sh ~/.vscode-server ~/.cache 2>/dev/null
 ```
 
-如果 PowerShell 本機執行策略影響 `npm.ps1`，遠端 Linux 終端機通常不會遇到這個問題。但如果你是在 Windows 本機專案中執行，可以使用：
-
-```powershell
-npm.cmd run build
-npm.cmd run check
-```
-
-對於部落格專案，建議把建置檢查作為每次提交前的固定動作，而不是部署失敗後再排查。
-
-## Git 工作流
-
-如果直接推送主分支：
-
-```bash
-git status
-git add content/posts
-git commit -m "docs: add Codex remote development article"
-git push origin main
-```
-
-如果使用分支：
-
-```bash
-git checkout -b docs/codex-remote-dev
-git add content/posts
-git commit -m "docs: add Codex remote development article"
-git push -u origin docs/codex-remote-dev
-```
-
-分支模式更適合讓 Codex 參與較大範圍修改，因為可以先透過 Pull Request 查看 diff，再合併到主分支。
-
-## 適合交給 Codex 的任務
-
-Codex 更適合做結構清楚、驗證路徑明確的任務，例如：
-
-- 根據既有模板新增文章；
-- 把簡體中文轉換為繁體中文和英文版本；
-- 檢查 Markdown frontmatter 欄位；
-- 總結最近一次 diff；
-- 為提交產生 commit message；
-- 排查建置錯誤；
-- 補充專案說明文件或部署文件；
-- 對小範圍腳本做重構。
-
-不建議一開始就讓 Codex 改動過大的範圍，例如同時修改建置系統、部署腳本、站點主題與文章內容。大任務應該拆成多個小任務，每個任務都能獨立驗證。
-
-## 一個可重複使用的提示詞
-
-下面這個提示詞適合遠端專案中新增多語言部落格文章：
-
-```text
-你正在 /home/deploy/projects/blog.js.gripe 工作區。
-請讀取專案說明文件和 content/posts 的現有結構。
-目標：新增一篇關於 {主題} 的文章。
-要求：
-1. 路徑為 content/posts/{slug}/index.zh-CN.md、index.zh-TW.md、index.en.md；
-2. 三個語言版本使用相同 translationKey；
-3. frontmatter 必須包含 title、description、date、updated、translationKey、tags、category、draft、cover；
-4. draft 設定為 false；
-5. 完成後執行 npm run build 和 npm run check；
-6. 不要修改 src、package.json、wrangler.toml。
-```
-
-這個提示詞把任務範圍、檔案結構、frontmatter、驗證命令與禁止修改項都寫清楚了，更適合讓 Codex 執行。
-
-## 安全注意事項
-
-遠端主機一旦和 AI 工具、Git 倉庫、部署腳本綁定，就要更注意權限：
-
-- 不要把 `.env`、API Key、Cloudflare Token、Webhook Secret 寫進文章或提交到倉庫；
-- 如果需要讓 Codex 讀取設定，優先給示例檔案，例如 `.env.example`；
-- 對能執行命令的模式保持審慎，先看計畫，再授權執行；
-- 大範圍改動使用 Git 分支和 Pull Request；
-- 對部署鉤子、私鑰、Token 一律視為敏感資訊。
+空間不足時，遠端擴充套件可能安裝失敗，Codex 圖示也可能無法正常顯示。
 
 ## 小結
 
-VS Code Remote SSH 解決的是「在哪裡開發」的問題，Codex 解決的是「如何更快理解、修改和驗證專案」的問題。兩者結合後，遠端主機就能變成一個穩定、可復現、可協作的開發工作台。
+把 VS Code Remote SSH 和 Codex 放在一起使用時，要記住一個區別：本機 VS Code 用戶端和遠端 SSH 視窗不是同一個擴充套件執行環境。本機裝過 Codex，不代表遠端視窗已經裝好；本機認證過，也不代表遠端視窗已經認證。
 
-對於 `blog.js.gripe`，可以把這個工作流固定為：遠端開啟專案、讓 Codex 產生或審查內容、執行建置檢查、透過 Git 合併和部署。這樣既能提升寫作和開發效率，也能控制誤改和部署風險。
+實踐順序可以固定為：
+
+```text
+連接 Remote SSH
+開啟遠端目錄
+在遠端視窗安裝 Codex
+重載或重啟 VS Code 視窗
+重新完成 Codex 認證
+確認 Codex 圖示出現在遠端視窗側邊欄
+```
+
+這樣處理後，Codex 才會像本機視窗一樣，在遠端主機的工作區裡正常顯示和使用。
 
 ## 參考
 

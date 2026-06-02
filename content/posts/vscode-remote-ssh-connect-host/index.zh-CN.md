@@ -1,8 +1,8 @@
 ---
-title: "使用 VS Code Remote SSH 连接远程主机：从密钥到工作区"
-description: "在 Windows 上通过 VS Code Remote SSH 连接远程 Linux 主机，把远程目录当成本地项目一样编辑、运行和排障。"
+title: "使用 VS Code Remote SSH 连接远程主机：从插件到远程目录"
+description: "在 Windows 上通过 VS Code Remote SSH 连接远程 Linux 主机，配置 SSH Host，并在远程资源管理器中打开远程目录。"
 date: "2026-05-10"
-updated: "2026-05-10"
+updated: "2026-06-02"
 translationKey: "vscode-remote-ssh-connect-host"
 tags: ["VS Code", "Remote SSH"]
 category: "开发效率"
@@ -10,30 +10,31 @@ draft: false
 cover: ""
 ---
 
-远程开发的核心不是“把文件传来传去”，而是让编辑器、终端、Git、依赖安装、构建命令和日志排障尽量靠近真实运行环境。VS Code Remote SSH 的价值就在这里：本地 Windows 只负责交互，远程主机负责保存代码、运行命令和承载开发环境。
+远程开发的核心不是“把文件传来传去”，而是让本地 VS Code 直接打开远程主机上的目录。VS Code Remote SSH 的价值就在这里：本地 Windows 负责界面和交互，远程主机负责保存文件并提供远程终端。
 
-这篇文章记录一套可复用的 Windows + VS Code + SSH 远程开发流程。
+这篇文章从实际连接远程主机的角度出发，记录 VS Code Remote SSH 的两种常见配置方式：密钥对登录和密码登录。
 
 ## 适用场景
 
 这个方案适合以下几类工作：
 
-- 博客、文档站、静态站点的远程写作与构建；
-- Node.js、Astro、Vite、Next.js 等项目的服务器侧调试；
-- 在云主机、NAS、软路由或开发机上维护长期运行的项目；
-- 希望减少“本地能跑，服务器不能跑”这类环境偏差。
+- 在云主机、NAS、软路由或开发机上直接编辑远程文件；
+- 需要用 VS Code 管理远程目录和远程终端；
+- 不想频繁通过 SFTP、scp 或文件管理器手动同步文件；
+- 希望在多个远程主机之间快速切换。
 
-如果项目最终部署在 Linux 或 Cloudflare Pages，远程开发能让依赖、换行符、脚本执行权限和构建命令更接近线上环境。
+这篇文章只讨论如何连接远程主机，不展开项目克隆、依赖安装或构建流程。
 
 ## 准备连接信息
 
-连接前先准备四个信息：
+连接前先准备这些信息：
 
 ```text
 HostName：远程主机公网 IP 或域名
 User：远程用户名，例如 root、ubuntu、debian 或自定义用户
 Port：SSH 端口，默认 22，也可以是自定义端口
-IdentityFile：本地私钥路径
+IdentityFile：本地私钥路径，使用密钥登录时需要
+Password：远程用户密码，使用密码登录时需要，不建议写入 config
 ```
 
 Windows 10/11 通常已经内置 OpenSSH Client。可以在 PowerShell 中检查：
@@ -44,7 +45,11 @@ ssh -V
 
 如果能看到 OpenSSH 版本，说明本地 SSH 客户端可用。
 
-## 生成 SSH 密钥
+## 方式一：使用密钥对登录
+
+密钥对登录是更推荐的方式。它不需要每次输入服务器密码，也更适合长期使用 VS Code Remote SSH。
+
+### 生成 SSH 密钥
 
 在 PowerShell 中执行：
 
@@ -83,15 +88,42 @@ chmod 700 ~/.ssh
 chmod 600 ~/.ssh/authorized_keys
 ```
 
-## 配置 Windows SSH Host
+准备好公钥后，后面在 VS Code 的 SSH Host 配置里填入本地私钥路径即可。
 
-编辑本地文件：
+## 方式二：使用密码登录
+
+如果只是临时连接一台测试主机，或者还没有来得及配置公钥，也可以直接使用密码登录。此时本地 SSH Host 配置不需要写 `IdentityFile`。如果服务器允许密码登录，VS Code Remote SSH 连接这个 Host 时会弹出密码输入框。
+
+需要注意的是，密码登录依赖远程 SSH 服务端允许 `PasswordAuthentication`。有些 VPS 镜像默认关闭密码登录，只允许密钥登录；如果开启密码登录，建议配合强密码、非默认端口、防火墙或 Fail2ban 一类的登录保护策略。
+
+## 连接步骤
+
+### 1. 安装 Remote - SSH 插件
+
+安装 VS Code 扩展：
+
+```text
+Remote - SSH
+```
+
+安装完成后建议重启一次 VS Code，避免左侧远程资源管理器、命令面板和 SSH 配置入口没有立即刷新。
+
+### 2. 配置 SSH Host
+
+打开命令面板：
+
+```text
+Ctrl + Shift + P
+Remote-SSH: Open SSH Configuration File...
+```
+
+选择 Windows 用户目录下的 SSH 配置文件：
 
 ```text
 C:\Users\User\.ssh\config
 ```
 
-添加一个主机别名：
+如果使用密钥登录，写入类似配置：
 
 ```sshconfig
 Host blog-dev
@@ -103,23 +135,21 @@ Host blog-dev
   ServerAliveCountMax 3
 ```
 
-保存后，在 PowerShell 中测试：
+如果使用密码登录，可以不写 `IdentityFile`：
 
-```powershell
-ssh blog-dev
+```sshconfig
+Host blog-dev-password
+  HostName 你的服务器IP或域名
+  User root
+  Port 22
+  PreferredAuthentications password,keyboard-interactive
 ```
 
-如果能进入远程 Shell，说明 SSH 配置已经可用。
+保存配置后，VS Code 的远程资源管理器中会出现对应的 Host。
 
-## 在 VS Code 中连接
+### 3. 连接远程主机
 
-安装 VS Code 扩展：
-
-```text
-Remote - SSH
-```
-
-然后执行：
+连接方式有两种。可以继续使用命令面板：
 
 ```text
 Ctrl + Shift + P
@@ -127,93 +157,50 @@ Remote-SSH: Connect to Host...
 blog-dev
 ```
 
-首次连接时，VS Code 会在远程主机安装 VS Code Server。连接成功后，选择远程目录，例如：
+也可以点击左侧活动栏的远程资源管理器图标，在 `远程(隧道/SSH)` 视图里展开 `SSH`，选择刚配置的主机并连接。连接成功后，主机旁边会显示已连接状态。
+
+首次连接时，VS Code 会在远程主机安装 VS Code Server。如果使用密码登录，VS Code 会弹出密码输入框；如果使用密钥登录，通常会直接进入远程窗口。
+
+### 4. 打开远程目录
+
+连接成功后，在远程资源管理器中展开主机，选择需要打开的远程目录，例如：
 
 ```bash
-/root/projects/blog.js.gripe
+/opt
 ```
 
 或：
 
 ```bash
-/home/deploy/projects/blog.js.gripe
+/home/deploy
 ```
 
-这样，本地 VS Code 打开的就是远程目录，而不是本地副本。
+打开后，本地 VS Code 窗口实际操作的是远程主机上的目录。后续在资源管理器中编辑文件、打开终端、保存内容，都会发生在远程主机上。
 
-## 克隆或进入博客项目
+## 小容量 VPS 的限制
 
-如果远程主机上还没有项目，可以在 VS Code 的远程终端执行：
+VS Code Remote SSH 首次连接时会在远程主机安装 VS Code Server，通常位于：
 
 ```bash
-mkdir -p ~/projects
-cd ~/projects
-git clone https://github.com/jsw-teams/myblog.git blog.js.gripe
-cd blog.js.gripe
+~/.vscode-server
 ```
 
-如果已经存在项目，直接进入：
+后续安装远程扩展、打开多个远程窗口或保留旧版本 VS Code Server 时，也会继续占用远程磁盘。对于 edgeproxy 这类只有 5G 左右存储分配的小型 VPS，这个限制会比较明显：`~/.vscode-server` 和远程扩展缓存叠加后，可能把磁盘占满。磁盘满了以后，常见表现包括 VS Code Server 安装失败、远程终端异常、文件保存失败。
+
+连接前建议先检查空间：
 
 ```bash
-cd ~/projects/blog.js.gripe
-git status
+df -h
+du -sh ~/.vscode-server ~/.cache 2>/dev/null
 ```
 
-建议先确认远端地址：
+如果空间紧张，可以优先减少远程扩展数量，或者移除旧的 VS Code Server 版本：
 
 ```bash
-git remote -v
+rm -rf ~/.vscode-server/bin/<旧版本目录>
 ```
 
-如果需要切回正确远端：
-
-```bash
-git remote set-url origin https://github.com/jsw-teams/myblog.git
-```
-
-## 远程安装依赖并构建
-
-在远程终端执行：
-
-```bash
-npm install
-npm run build
-npm run check
-```
-
-这样做的好处是构建环境和远程部署环境更一致。对于博客类项目，建议每次新增文章后至少执行一次 `npm run build`，再执行 `npm run check`。
-
-## 推荐工作流
-
-我通常会把远程开发流程拆成五步：
-
-```text
-连接远程主机
-打开远程项目目录
-新增或修改 Markdown 内容
-执行 build/check
-git commit && git push
-```
-
-对应命令可以是：
-
-```bash
-git status
-npm run build
-npm run check
-git add content/posts
-git commit -m "docs: add remote development articles"
-git push origin main
-```
-
-如果主分支有保护规则，则使用分支：
-
-```bash
-git checkout -b docs/remote-dev-posts
-git push -u origin docs/remote-dev-posts
-```
-
-然后在 GitHub 上创建 Pull Request。
+如果这台 VPS 主要用于代理、转发或轻量服务，不建议把它当成完整开发机长期使用。Remote SSH 更适合磁盘空间、内存和 CPU 都有一定余量的远程主机。
 
 ## 常见问题
 
@@ -249,20 +236,9 @@ ssh-keygen -R 服务器IP或域名
 
 然后重新连接。
 
-### 4. 远程终端找不到 node 或 npm
-
-说明远程主机没有安装 Node.js，或 PATH 没配置好。建议用 nvm 管理 Node.js 版本：
-
-```bash
-node -v
-npm -v
-```
-
-如果命令不存在，需要先安装 Node.js，再重新打开 VS Code 远程窗口。
-
 ## 小结
 
-VS Code Remote SSH 的重点不是“远程桌面”，而是把开发上下文放到远程主机里：代码、终端、Git、依赖和构建命令都在同一个环境中运行。对于 `blog.js.gripe` 这种静态博客项目，它能让文章写作、构建检查、提交推送和部署验证形成稳定闭环。
+VS Code Remote SSH 的重点不是“远程桌面”，而是让 VS Code 通过 SSH 直接管理远程主机上的目录。实际使用时，把顺序记住就够了：安装 Remote - SSH 插件，重启 VS Code，配置 SSH Host，然后从远程资源管理器连接主机并打开目录。
 
 ## 参考
 

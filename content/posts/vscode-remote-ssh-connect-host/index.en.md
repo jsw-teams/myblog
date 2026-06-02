@@ -1,8 +1,8 @@
 ---
-title: "Using VS Code Remote SSH to Connect to a Remote Host: From Keys to Workspace"
-description: "A practical Windows workflow for connecting VS Code to a remote Linux host over SSH and editing, running, and troubleshooting a project directly on the server."
+title: "Using VS Code Remote SSH to Connect to a Remote Host: From Extension to Remote Folder"
+description: "A practical Windows workflow for connecting VS Code to a remote Linux host over SSH, configuring an SSH Host, and opening a remote folder from Remote Explorer."
 date: "2026-05-10"
-updated: "2026-05-10"
+updated: "2026-06-02"
 translationKey: "vscode-remote-ssh-connect-host"
 tags: ["VS Code", "Remote SSH"]
 category: "Development Efficiency"
@@ -10,30 +10,31 @@ draft: false
 cover: ""
 ---
 
-Remote development is not just about moving files between machines. The real goal is to keep the editor, terminal, Git, dependencies, build commands, and troubleshooting workflow close to the environment where the project actually runs. VS Code Remote SSH does exactly that: Windows handles the local UI, while the remote host stores code, runs commands, and provides the development environment.
+Remote development is not just about moving files between machines. The practical goal is to let local VS Code open a folder that actually lives on a remote host. VS Code Remote SSH does exactly that: Windows handles the UI and interaction, while the remote host stores files and provides the remote terminal.
 
-This article documents a reusable Windows + VS Code + SSH workflow for remote development.
+This article focuses on the practical connection setup. VS Code Remote SSH commonly supports two ways to connect to a server: SSH key authentication and password authentication.
 
 ## When this workflow is useful
 
 This setup is suitable for:
 
-- writing and building blogs, documentation sites, and static sites remotely;
-- debugging Node.js, Astro, Vite, Next.js, and similar projects on a server;
-- maintaining long-running projects on a cloud VM, NAS, router, or development machine;
-- reducing environment drift between "works on my machine" and "fails on the server."
+- editing remote files directly on a cloud VM, NAS, router, or development machine;
+- managing remote folders and remote terminals from VS Code;
+- avoiding repeated manual file sync through SFTP, scp, or a file manager;
+- switching quickly between multiple remote hosts.
 
-If the project is ultimately deployed from Linux or to Cloudflare Pages, remote development keeps dependencies, line endings, script permissions, and build commands closer to production.
+This article only covers connecting VS Code to a remote host. It does not cover cloning projects, installing dependencies, or running builds.
 
 ## Prepare the connection details
 
-Before connecting, prepare four values:
+Before connecting, prepare these values:
 
 ```text
 HostName: public IP address or domain of the remote host
 User: remote user, such as root, ubuntu, debian, or a custom user
 Port: SSH port, usually 22 unless customized
-IdentityFile: path to the local private key
+IdentityFile: path to the local private key, required for key-based login
+Password: remote user password, required for password login, not recommended to store in config
 ```
 
 Windows 10/11 usually includes the OpenSSH client. Check it in PowerShell:
@@ -44,7 +45,11 @@ ssh -V
 
 If an OpenSSH version is printed, the local SSH client is available.
 
-## Generate an SSH key
+## Option 1: key-based login
+
+Key-based login is the recommended approach. It avoids typing the server password repeatedly and works better for long-term VS Code Remote SSH use.
+
+### Generate an SSH key
 
 Run this in PowerShell:
 
@@ -83,15 +88,42 @@ chmod 700 ~/.ssh
 chmod 600 ~/.ssh/authorized_keys
 ```
 
-## Configure the Windows SSH host
+After the public key is ready, use the local private key path in the VS Code SSH Host configuration later.
 
-Edit the local file:
+## Option 2: password login
+
+For a temporary test server, or before you have configured a public key, you can also use password login. In this case, the local SSH Host config does not need an `IdentityFile`. If the server allows password login, VS Code Remote SSH will prompt for the remote user's password when connecting to this Host.
+
+Password login depends on the remote SSH server allowing `PasswordAuthentication`. Some VPS images disable password login by default and only allow key-based login. If you enable password login, use a strong password and consider pairing it with a non-default port, firewall rules, or Fail2ban-style login protection.
+
+## Connection steps
+
+### 1. Install the Remote - SSH extension
+
+Install the VS Code extension:
+
+```text
+Remote - SSH
+```
+
+After installation, restart VS Code once so Remote Explorer, the command palette entries, and SSH configuration entry points are refreshed.
+
+### 2. Configure the SSH Host
+
+Open the command palette:
+
+```text
+Ctrl + Shift + P
+Remote-SSH: Open SSH Configuration File...
+```
+
+Choose the SSH config file under your Windows user directory:
 
 ```text
 C:\Users\User\.ssh\config
 ```
 
-Add a host alias:
+For key-based login, add a config like this:
 
 ```sshconfig
 Host blog-dev
@@ -103,23 +135,21 @@ Host blog-dev
   ServerAliveCountMax 3
 ```
 
-Save the file, then test it in PowerShell:
+For password login, omit `IdentityFile`:
 
-```powershell
-ssh blog-dev
+```sshconfig
+Host blog-dev-password
+  HostName your-server-ip-or-domain
+  User root
+  Port 22
+  PreferredAuthentications password,keyboard-interactive
 ```
 
-If you can enter the remote shell, the SSH configuration is ready.
+After saving the config, the Host appears in VS Code's Remote Explorer.
 
-## Connect from VS Code
+### 3. Connect to the remote host
 
-Install the VS Code extension:
-
-```text
-Remote - SSH
-```
-
-Then run:
+You can connect from the command palette:
 
 ```text
 Ctrl + Shift + P
@@ -127,93 +157,50 @@ Remote-SSH: Connect to Host...
 blog-dev
 ```
 
-On the first connection, VS Code installs VS Code Server on the remote host. After the connection succeeds, open a remote directory, for example:
+Or click the Remote Explorer icon in the left activity bar, switch to the `Remote (Tunnels/SSH)` view, expand `SSH`, and connect to the Host you configured. After the connection succeeds, the Host will show a connected state.
+
+On the first connection, VS Code installs VS Code Server on the remote host. For password login, VS Code prompts for the remote user's password. For key-based login, it usually opens the remote window directly.
+
+### 4. Open a remote folder
+
+After connecting, expand the Host in Remote Explorer and choose a remote folder to open, for example:
 
 ```bash
-/root/projects/blog.js.gripe
+/opt
 ```
 
 or:
 
 ```bash
-/home/deploy/projects/blog.js.gripe
+/home/deploy
 ```
 
-Now VS Code is editing the remote directory rather than a local copy.
+After that, the local VS Code window is operating on the remote folder. Editing files, opening terminals, and saving content all happen on the remote host.
 
-## Clone or open the blog project
+## Limits on small VPS disks
 
-If the project does not exist on the remote host yet, run this in VS Code's remote terminal:
+On the first connection, VS Code Remote SSH installs VS Code Server on the remote host, usually under:
 
 ```bash
-mkdir -p ~/projects
-cd ~/projects
-git clone https://github.com/jsw-teams/myblog.git blog.js.gripe
-cd blog.js.gripe
+~/.vscode-server
 ```
 
-If it already exists, enter it directly:
+Remote extensions, multiple remote windows, and old VS Code Server versions also consume disk space on the server. On small edgeproxy-style VPS instances with only around 5 GB of allocated storage, this can become a real limitation. `~/.vscode-server` and remote extension caches can fill the disk. Once the disk is full, VS Code Server installation may fail, the remote terminal may behave oddly, and file saves may fail.
+
+Before using a small VPS for Remote SSH, check the available space:
 
 ```bash
-cd ~/projects/blog.js.gripe
-git status
+df -h
+du -sh ~/.vscode-server ~/.cache 2>/dev/null
 ```
 
-Check the remote URL:
+If space is tight, reduce the number of remote extensions or delete old VS Code Server version directories:
 
 ```bash
-git remote -v
+rm -rf ~/.vscode-server/bin/<old-version-directory>
 ```
 
-If it needs to be corrected:
-
-```bash
-git remote set-url origin https://github.com/jsw-teams/myblog.git
-```
-
-## Install dependencies and build remotely
-
-Run the project commands in the remote terminal:
-
-```bash
-npm install
-npm run build
-npm run check
-```
-
-This keeps the build environment closer to the deployment environment. For a blog project, it is a good practice to run at least `npm run build` and then `npm run check` after adding new posts.
-
-## Recommended workflow
-
-A practical remote workflow has five steps:
-
-```text
-Connect to the remote host
-Open the remote project directory
-Add or edit Markdown content
-Run build/check
-git commit && git push
-```
-
-Example commands:
-
-```bash
-git status
-npm run build
-npm run check
-git add content/posts
-git commit -m "docs: add remote development articles"
-git push origin main
-```
-
-If the main branch is protected, use a feature branch:
-
-```bash
-git checkout -b docs/remote-dev-posts
-git push -u origin docs/remote-dev-posts
-```
-
-Then create a Pull Request on GitHub.
+If the VPS is mainly used for proxying, forwarding, or lightweight services, it is usually not a good long-term development machine. Remote SSH works best on a host with some spare disk, memory, and CPU headroom.
 
 ## Common issues
 
@@ -249,20 +236,9 @@ ssh-keygen -R server-ip-or-domain
 
 Reconnect afterward.
 
-### 4. The remote terminal cannot find node or npm
-
-The remote host may not have Node.js installed, or its PATH may be wrong. Check:
-
-```bash
-node -v
-npm -v
-```
-
-If the commands are missing, install Node.js first, then reopen the VS Code remote window.
-
 ## Summary
 
-VS Code Remote SSH is not a remote desktop replacement. Its purpose is to put the development context on the remote host: code, terminal, Git, dependencies, and build commands all run in the same environment. For a static blog such as `blog.js.gripe`, this creates a stable loop for writing, building, committing, pushing, and verifying deployment.
+VS Code Remote SSH is not a remote desktop replacement. It lets VS Code manage folders on a remote host directly over SSH. In practice, the sequence is simple: install the Remote - SSH extension, restart VS Code, configure the SSH Host, then connect from Remote Explorer and open a remote folder.
 
 ## References
 

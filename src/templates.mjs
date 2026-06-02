@@ -208,10 +208,22 @@ function renderMediaPlayer(post, locale) {
   const downloadLink = media.download ? `<a href="${escapeHtml(media.download)}">${escapeHtml(media.downloadLabel || "Download video")}</a>` : "";
   const captionsLink = captions[0]?.download ? `<a href="${escapeHtml(captions[0].download)}">${escapeHtml(captions[0].downloadLabel || "Download captions")}</a>` : "";
   const links = [downloadLink, captionsLink, transcriptLink].filter(Boolean).join("");
+  const defaultCaption = captions.find((track) => track.default) || captions[0];
+  const captionSelector = captions.length
+    ? `<div class="article-media-control" data-caption-track-root>
+      <label>
+        <span>${escapeHtml(media.captionTrackLabel || "字幕")}</span>
+        <select data-caption-track-select>
+          <option value="">${escapeHtml(media.captionTrackOffLabel || "关闭字幕")}</option>
+          ${captions.map((track, index) => `<option value="${index}"${track === defaultCaption ? " selected" : ""}>${escapeHtml(track.label || localeLabel(track.lang || locale))}</option>`).join("")}
+        </select>
+      </label>
+    </div>`
+    : "";
   const audioTracks = Array.isArray(media.audioTracks) ? media.audioTracks.filter((track) => track?.src) : [];
   const defaultAudioTrack = audioTracks.find((track) => track.default) || audioTracks[0];
   const audioSelector = audioTracks.length
-    ? `<div class="article-audio-track" data-audio-track-root data-audio-track-default="${escapeHtml(defaultAudioTrack?.src || "")}">
+    ? `<div class="article-media-control" data-audio-track-root data-audio-track-default="${escapeHtml(defaultAudioTrack?.src || "")}">
       <label>
         <span>${escapeHtml(media.audioTrackLabel || "Audio track")}</span>
         <select data-audio-track-select>
@@ -222,6 +234,11 @@ function renderMediaPlayer(post, locale) {
       <audio preload="auto" data-audio-track-player${defaultAudioTrack?.src ? ` src="${escapeHtml(defaultAudioTrack.src)}"` : ""}></audio>
     </div>`
     : "";
+  const mediaTools = audioSelector || captionSelector
+    ? `<div class="article-media-tools">${audioSelector}${captionSelector}</div>`
+    : "";
+  const mainlandTitle = media.mainlandTitle || t(locale, "mediaRegionTitle");
+  const mainlandMessage = media.mainlandMessage || t(locale, "mediaRegionMessage");
   const heading = media.title || media.description
     ? `<div class="article-media-heading">
       ${media.title ? `<h2 id="article-media-title">${escapeHtml(title)}</h2>` : ""}
@@ -229,16 +246,55 @@ function renderMediaPlayer(post, locale) {
     </div>`
     : "";
   const sectionLabel = media.title ? ' aria-labelledby="article-media-title"' : ` aria-label="${escapeHtml(title)}"`;
-  return `<section class="article-media"${sectionLabel}>
+  return `<section class="article-media" data-region-media data-region-title="${escapeHtml(mainlandTitle)}" data-region-message="${escapeHtml(mainlandMessage)}"${poster ? ` data-region-poster="${escapeHtml(poster)}"` : ""}${sectionLabel}>
     ${heading}
     <div class="article-video-shell">
       <video class="article-video" controls playsinline preload="metadata"${poster ? ` poster="${escapeHtml(poster)}"` : ""}>
-        <source src="${escapeHtml(media.video)}" type="${escapeHtml(sourceType)}">
+        <source data-video-src="${escapeHtml(media.video)}" type="${escapeHtml(sourceType)}">
         ${captionTracks}
       </video>
-      ${audioSelector}
+      ${mediaTools}
     </div>
     ${links ? `<nav class="article-media-links" aria-label="Media links">${links}</nav>` : ""}
+  </section>`;
+}
+
+function renderCommentSection(post, locale) {
+  const commentKey = `${post.translationKey}:${post.locale}`;
+  const issueTitle = `Comments: ${post.title}`;
+  const issueBody = [
+    `Article: ${post.title}`,
+    `URL: https://blog.js.gripe${post.url}`,
+    `Comment key: blog-comment:${commentKey}`,
+    "",
+    "Please keep comments relevant and kind. Spam, repeated posts, or malicious links may be removed."
+  ].join("\n");
+  const issueUrl = new URL("https://github.com/jsw-teams/myblog/issues/new");
+  issueUrl.searchParams.set("title", issueTitle);
+  issueUrl.searchParams.set("body", issueBody);
+  issueUrl.searchParams.set("labels", "blog-comment");
+
+  return `<section class="article-comments"
+    data-comments-root
+    data-comments-owner="jsw-teams"
+    data-comments-repo="myblog"
+    data-comments-label="blog-comment"
+    data-comments-key="${escapeHtml(commentKey)}"
+    data-comments-create-url="${escapeHtml(issueUrl.toString())}"
+    data-comments-loading="${escapeHtml(t(locale, "commentsLoading"))}"
+    data-comments-empty="${escapeHtml(t(locale, "commentsEmpty"))}"
+    data-comments-error="${escapeHtml(t(locale, "commentsError"))}"
+    data-comments-readonly="${escapeHtml(t(locale, "commentsReadOnlyMainland"))}"
+    data-comments-open="${escapeHtml(t(locale, "commentsOpenIssue"))}"
+    data-comments-create="${escapeHtml(t(locale, "commentsCreateIssue"))}"
+    data-comments-missing="${escapeHtml(t(locale, "commentsIssueMissing"))}">
+    <div class="section-heading">
+      <h2>${escapeHtml(t(locale, "commentsTitle"))}</h2>
+    </div>
+    <p class="comments-note">${escapeHtml(t(locale, "commentsRules"))}</p>
+    <p class="comments-status" data-comments-status>${escapeHtml(t(locale, "commentsLoading"))}</p>
+    <div class="comments-list" data-comments-list></div>
+    <p class="comments-actions" data-comments-actions></p>
   </section>`;
 }
 
@@ -370,6 +426,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
       <div class="prose">
         ${post.html}
       </div>
+      ${renderCommentSection(post, locale)}
       <footer class="article-footer">
         <div class="article-end">
           <img src="/assets/mascot-happy.png" alt="" width="130" height="174">

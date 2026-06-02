@@ -1,218 +1,122 @@
 ---
-title: "Codex 加载历史对话很慢：清理日志库并保留会话历史"
-description: "一次 Codex 历史对话打开过久的排查记录：定位膨胀的 logs_2.sqlite，备份、清理低价值日志、压缩数据库，并提供可复用维护脚本。"
+title: "Codex 历史对话加载很慢：先开个新对话让它自己诊断"
+description: "Codex 历史对话加载慢时，不必一上来就手动翻数据库。更简单的做法是新开一个对话，让 Codex 判断原因并给出修复步骤。"
 date: "2026-05-19"
-updated: "2026-05-19"
+updated: "2026-06-02"
 translationKey: "codex-history-load-slow-maintenance"
-tags: ["Codex", "SQLite", "运维"]
+tags: ["Codex", "开发效率", "排查"]
 category: "开发效率"
 draft: false
 cover: ""
 ---
 
-最近在远程主机上打开 Codex 历史对话时，加载时间明显变长。问题本身不复杂，但很适合记录下来：Codex 的会话历史不只存在一个地方，真正拖慢界面的也未必是对话 JSONL 文件，而可能是本地日志库。
+有时候 Codex 打开历史对话会慢得像在翻一本很厚的旧账本。点一下历史记录，等半天；再点一下，继续等。你开始怀疑网络，怀疑远程主机，最后甚至开始怀疑自己是不是把太多东西塞进同一个会话里了。
 
-这篇文章基于一次实际处理过程，目标是尽量安全地恢复速度：先确认数据位置，再备份，再清理低价值日志，最后压缩 SQLite 文件。
+先别急着做数据库手术。最简单的办法是：**直接新开一个 Codex 对话，让 Codex 判断为什么慢，并让它帮你清理历史记录。**
 
-## 现象
+这听起来有点绕：Codex 慢了，找 Codex 修 Codex。但实际很好用，因为慢的往往是旧对话加载、日志膨胀、工作区扫描或远程环境状态，而新对话通常还能正常启动。
 
-表现是 Codex 打开历史对话时等待很久，当前工作区本身没有明显的大型源码变更，也不是构建命令卡住。
+## 先换一张干净桌子
 
-先看 Codex 本地状态目录：
-
-```bash
-ls -lh ~/.codex
-```
-
-这次看到最可疑的是：
+如果某个历史对话打开特别慢，不要一直在那个旧对话里硬等。可以先开一个新的 Codex 对话，然后直接这样说：
 
 ```text
-logs_2.sqlite       约 573M
-state_5.sqlite      约 3.4M
-session_index.jsonl 约 3.5K
-sessions/           约几十个会话文件
+我在当前机器上打开 Codex 历史对话很慢。
+请你判断可能原因，并先用只读方式检查 ~/.codex、当前工作区大小、
+日志文件、session 数量和数据库大小。
+不要删除任何文件，先告诉我风险和建议。
 ```
 
-`state_5.sqlite` 只有几十条 thread 记录，`session_index.jsonl` 也很小；真正异常的是 `logs_2.sqlite`。
+重点是让它先判断，不要让它一上来就删除。新对话没有背着旧上下文跑，反而更适合做这个“场外裁判”。
 
-## 先确认不是会话历史本身
+## 让 Codex 先看几件事
 
-可以先看会话文件数量和最大文件：
-
-```bash
-find ~/.codex/sessions -type f | wc -l
-find ~/.codex/sessions -type f -printf '%s %p\n' | sort -nr | head
-```
-
-如果只是少量 10MB 到 30MB 的长对话文件，通常还不至于让历史列表整体卡住。再检查 thread 元数据：
-
-```bash
-sqlite3 ~/.codex/state_5.sqlite 'select count(*) from threads;'
-sqlite3 ~/.codex/state_5.sqlite 'pragma quick_check;'
-```
-
-这次 thread 数量很小，健康检查也正常。
-
-## 定位 logs_2.sqlite
-
-查看日志库结构：
-
-```bash
-sqlite3 ~/.codex/logs_2.sqlite '.schema logs'
-```
-
-重点字段包括：
+可以让 Codex 按顺序检查：
 
 ```text
-level
-target
-thread_id
-estimated_bytes
-ts
+1. ~/.codex 目录里有没有特别大的文件；
+2. sessions 目录里的会话数量和最大文件；
+3. logs_2.sqlite 是否明显膨胀；
+4. state_5.sqlite 和 session_index.jsonl 是否正常；
+5. 当前项目是否有巨大的 node_modules、dist、日志或缓存；
+6. 远程主机磁盘空间是否快满。
 ```
 
-再按级别和 target 聚合：
+如果你是在小型 VPS 上使用 VS Code Remote + Codex，这一步尤其重要。磁盘只有几 GB 的机器，一旦日志、构建缓存、依赖目录一起膨胀，体验就会突然变得很黏。
 
-```bash
-sqlite3 ~/.codex/logs_2.sqlite \
-  "select level, count(*), sum(estimated_bytes) from logs group by level order by sum(estimated_bytes) desc;"
+## 一个更好用的提示词
 
-sqlite3 ~/.codex/logs_2.sqlite \
-  "select target, count(*), sum(estimated_bytes) from logs group by target order by sum(estimated_bytes) desc limit 20;"
+我更推荐把需求说得具体一点：
+
+```text
+请你帮我排查 Codex 历史对话加载慢的问题。
+
+要求：
+- 先只读检查，不要修改文件；
+- 说明哪些文件可能影响历史加载；
+- 区分“可以安全清理”和“不要随便动”的内容；
+- 如果需要清理，请先给备份方案；
+- 如果确认可以清理，请帮我清理 Codex 历史记录；
+- 最后告诉我如何回到 VS Code Codex 首页确认结果。
 ```
 
-这次 `TRACE` 和 `DEBUG` 占了大量空间，`codex_api::endpoint::responses_websocket` 这类 target 也非常大。对历史对话可读性来说，这些日志价值不高；但如果界面或后台需要按 thread 查询日志，库太大会直接拖慢体验。
+这样 Codex 通常会先列出检查命令，再根据输出判断是不是日志库、会话文件、项目缓存或磁盘空间的问题。
 
-## 安全处理步骤
+## 让它直接清理历史记录
 
-不要直接删除整个 `~/.codex`。那里面还有认证、模型缓存、会话文件、插件和技能配置。
+如果你只是想让历史首页变清爽，可以继续对新对话说：
 
-更稳的顺序是：
-
-1. 对 `logs_2.sqlite` 做 SQLite 在线备份；
-2. 删除低价值日志，例如 `TRACE`、`DEBUG`，以及 24 小时以前的普通 `INFO`；
-3. 保留 `WARN`、`ERROR`；
-4. 执行 WAL checkpoint 和 `VACUUM`；
-5. 再跑 `quick_check`。
-
-手工命令示例：
-
-```bash
-sqlite3 ~/.codex/logs_2.sqlite ".backup '$HOME/.codex/logs_2.sqlite.bak-$(date +%Y%m%d-%H%M%S)'"
-
-sqlite3 ~/.codex/logs_2.sqlite "
-  PRAGMA busy_timeout=10000;
-  DELETE FROM logs
-  WHERE level IN ('TRACE','DEBUG')
-     OR (
-       ts < (SELECT max(ts) - 86400 FROM logs)
-       AND level NOT IN ('WARN','ERROR')
-     );
-  PRAGMA wal_checkpoint(TRUNCATE);
-  VACUUM;
-  PRAGMA wal_checkpoint(TRUNCATE);
-"
-
-sqlite3 ~/.codex/logs_2.sqlite 'pragma quick_check;'
+```text
+请帮我清理 Codex 历史记录。
+要求：
+- 先告诉我要清理哪些文件或记录；
+- 清理前做必要备份；
+- 不要影响当前认证和插件配置；
+- 清理完成后告诉我怎么在 VS Code Codex 首页确认。
 ```
 
-这次处理后，主日志库从约 `573M` 降到约 `36M`，历史会话文件和 thread 元数据都没有删除。
+清理完成后，回到 VS Code，打开 Codex 首页或刷新 Codex 面板，就会看到历史记录已经被清掉或明显变少。这个反馈很直观：不用盯着数据库大小猜，首页列表自己会告诉你结果。
 
-## 可复制脚本
+## 常见结论
 
-下面这份脚本是给遇到类似问题的人使用的，可以保存为 `maintain-codex-history.sh`。默认只是 dry run，不会修改数据库；确认输出后再加 `--apply`。
+排查后常见会遇到几种情况。
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
+第一种是旧会话太长。这个时候不一定要修，直接把任务拆到新对话里就行。旧会话留着当资料，新会话负责继续干活。
 
-CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-KEEP_HOURS=24
-APPLY=0
-BACKUP=1
-VACUUM_DB=1
+第二种是 `~/.codex/logs_2.sqlite` 变得很大。它是日志库，不等于你的真正对话历史。通常需要先备份，再清理低价值日志，最后压缩数据库。
 
-while [ "$#" -gt 0 ]; do
-  case "$1" in
-    --codex-home) CODEX_HOME="$2"; shift 2 ;;
-    --keep-hours) KEEP_HOURS="$2"; shift 2 ;;
-    --apply) APPLY=1; shift ;;
-    --no-backup) BACKUP=0; shift ;;
-    --no-vacuum) VACUUM_DB=0; shift ;;
-    *) echo "Unknown option: $1" >&2; exit 1 ;;
-  esac
-done
+第三种是当前工作区太胖。比如 `node_modules`、`dist`、临时构建目录、下载文件堆在一起，Codex 和 VS Code Remote 都会被拖累。
 
-DB="$CODEX_HOME/logs_2.sqlite"
-[ -f "$DB" ] || { echo "Codex log database not found: $DB" >&2; exit 1; }
-command -v sqlite3 >/dev/null || { echo "sqlite3 is required" >&2; exit 1; }
+第四种是远程 VPS 存储快满。磁盘一紧张，很多东西都会变慢，包括 shell、编辑器、日志写入和数据库操作。
 
-echo "Database: $DB"
-ls -lh "$DB" "$DB"-wal "$DB"-shm 2>/dev/null || true
+## 真要清理时，别裸奔
 
-CHECK="$(sqlite3 "$DB" 'PRAGMA quick_check;')"
-echo "quick_check: $CHECK"
-[ "$CHECK" = "ok" ] || { echo "Database is not healthy. Stop here." >&2; exit 1; }
+如果 Codex 判断是日志库膨胀，可以让它生成一套更稳的步骤：
 
-echo
-sqlite3 "$DB" "SELECT 'rows', count(*), 'estimated_bytes', coalesce(sum(estimated_bytes),0) FROM logs;"
-sqlite3 "$DB" "SELECT level, count(*), coalesce(sum(estimated_bytes),0) FROM logs GROUP BY level ORDER BY level;"
-
-CUTOFF_EXPR="(SELECT max(ts) - ($KEEP_HOURS * 3600) FROM logs)"
-WHERE_EXPR="level IN ('TRACE','DEBUG') OR (ts < $CUTOFF_EXPR AND level NOT IN ('WARN','ERROR'))"
-
-echo
-echo "Rows that would be removed:"
-sqlite3 "$DB" "SELECT count(*), coalesce(sum(estimated_bytes),0) FROM logs WHERE $WHERE_EXPR;"
-
-if [ "$APPLY" -ne 1 ]; then
-  echo
-  echo "Dry run only. Re-run with --apply to clean the log database."
-  exit 0
-fi
-
-if [ "$BACKUP" -eq 1 ]; then
-  BACKUP_PATH="$DB.bak-$(date +%Y%m%d-%H%M%S)"
-  echo "Creating backup: $BACKUP_PATH"
-  sqlite3 "$DB" ".backup '$BACKUP_PATH'"
-fi
-
-sqlite3 "$DB" "
-  PRAGMA busy_timeout=10000;
-  DELETE FROM logs WHERE $WHERE_EXPR;
-  SELECT 'deleted_rows', changes();
-  PRAGMA wal_checkpoint(TRUNCATE);
-"
-
-if [ "$VACUUM_DB" -eq 1 ]; then
-  sqlite3 "$DB" "VACUUM; PRAGMA wal_checkpoint(TRUNCATE);"
-fi
-
-echo
-echo "Final database files:"
-ls -lh "$DB" "$DB"-wal "$DB"-shm 2>/dev/null || true
-sqlite3 "$DB" 'PRAGMA quick_check;'
+```text
+请给我一个保守清理方案：
+1. 先备份 ~/.codex/logs_2.sqlite；
+2. 只清理 TRACE、DEBUG 和旧 INFO；
+3. 保留 WARN、ERROR；
+4. 执行 quick_check；
+5. 清理前后显示文件大小；
+6. 不要删除 sessions、state_5.sqlite、session_index.jsonl。
 ```
 
-使用方式：
+这里最重要的是最后一句：不要误删真正的会话历史。`sessions`、`state_5.sqlite`、`session_index.jsonl` 这些东西要谨慎对待。
 
-```bash
-chmod +x maintain-codex-history.sh
-./maintain-codex-history.sh
-./maintain-codex-history.sh --apply
-./maintain-codex-history.sh --keep-hours 48 --apply
+## 什么时候什么都别动
+
+如果你正在排查 Codex 本身的异常，或者准备把日志交给上游分析，就先别清理。让 Codex 帮你打包信息、列出文件大小、说明现象就好。
+
+如果数据库健康检查失败，也不要急着删。先备份，再让 Codex 判断是恢复、复制还是重建索引。慢可以忍一会儿，误删会比较疼。
+
+## 小结
+
+Codex 历史对话加载慢时，不必第一时间冲进 `~/.codex` 手动开刀。更省心的做法是：
+
+```text
+新开 Codex 对话 -> 让它只读检查 -> 让它判断原因 -> 让它清理历史 -> 回到 VS Code Codex 首页确认
 ```
 
-脚本默认策略是：检查 `logs_2.sqlite`，确认 `quick_check` 为 `ok`，统计可清理日志；只有加 `--apply` 才会先备份再删除低价值日志，并执行 checkpoint 和 `VACUUM`。
-
-## 什么时候不该清理
-
-如果你正在排查 Codex 本身的异常，或者需要把完整日志交给上游分析，就先不要清理。可以只运行 dry run，确认膨胀来源后，把 `logs_2.sqlite` 备份出来再处理。
-
-如果 `quick_check` 不是 `ok`，也不要继续删除。先复制整个数据库和 WAL 文件，再单独做 SQLite 修复或恢复。
-
-## 结论
-
-Codex 历史对话加载慢，不一定是历史对话太多。更常见的低风险处理对象，是膨胀的本地日志库。
-
-保守做法是：保留 `sessions`、`state_5.sqlite` 和 `session_index.jsonl`，只对 `logs_2.sqlite` 做备份后的日志瘦身。这样既能改善加载速度，也不破坏真正的对话历史。
+这就像桌面太乱时先换一张干净桌子，再请人帮你一起看哪一堆该收、哪一堆不能碰。简单、稳，也更不容易把真正的历史对话弄丢。

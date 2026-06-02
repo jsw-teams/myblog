@@ -159,6 +159,15 @@ function createMarkdownRenderer(baseDir, contentKey) {
   }).use(anchor, {
     slugify: headingSlug
   });
+  const defaultLinkOpen = md.renderer.rules.link_open ?? ((tokens, idx, options, env, self) => self.renderToken(tokens, idx, options));
+  md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    const href = token.attrGet("href");
+    if (/^(?:https?:)?\/\//i.test(href ?? "")) {
+      token.attrJoin("rel", "nofollow");
+    }
+    return defaultLinkOpen(tokens, idx, options, env, self);
+  };
   const defaultImage = md.renderer.rules.image ?? ((tokens, idx, options, env, self) => self.renderToken(tokens, idx, options));
   md.renderer.rules.image = (tokens, idx, options, env, self) => {
     const token = tokens[idx];

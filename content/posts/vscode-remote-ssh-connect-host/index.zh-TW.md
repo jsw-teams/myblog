@@ -1,8 +1,8 @@
 ---
-title: "使用 VS Code Remote SSH 連接遠端主機：從金鑰到工作區"
-description: "在 Windows 上透過 VS Code Remote SSH 連接遠端 Linux 主機，把遠端目錄當成本機專案一樣編輯、執行與除錯。"
+title: "使用 VS Code Remote SSH 連接遠端主機：從外掛到遠端目錄"
+description: "在 Windows 上透過 VS Code Remote SSH 連接遠端 Linux 主機，設定 SSH Host，並在遠端資源管理器中開啟遠端目錄。"
 date: "2026-05-10"
-updated: "2026-05-10"
+updated: "2026-06-02"
 translationKey: "vscode-remote-ssh-connect-host"
 tags: ["VS Code", "Remote SSH"]
 category: "開發效率"
@@ -10,30 +10,31 @@ draft: false
 cover: ""
 ---
 
-遠端開發的核心不是「把檔案傳來傳去」，而是讓編輯器、終端機、Git、依賴安裝、建置命令與日誌排障盡量靠近真實執行環境。VS Code Remote SSH 的價值就在這裡：本機 Windows 只負責互動，遠端主機負責保存程式碼、執行命令與承載開發環境。
+遠端開發的核心不是「把檔案傳來傳去」，而是讓本機 VS Code 直接開啟遠端主機上的目錄。VS Code Remote SSH 的價值就在這裡：本機 Windows 負責介面和互動，遠端主機負責保存檔案並提供遠端終端機。
 
-這篇文章記錄一套可重複使用的 Windows + VS Code + SSH 遠端開發流程。
+這篇文章從實際連接遠端主機的角度出發，記錄 VS Code Remote SSH 的兩種常見設定方式：金鑰對登入和密碼登入。
 
 ## 適用場景
 
 這個方案適合以下幾類工作：
 
-- 部落格、文件站、靜態站點的遠端寫作與建置；
-- Node.js、Astro、Vite、Next.js 等專案的伺服器側除錯；
-- 在雲主機、NAS、軟路由或開發機上維護長期執行的專案；
-- 希望減少「本機能跑，伺服器不能跑」這類環境偏差。
+- 在雲主機、NAS、軟路由或開發機上直接編輯遠端檔案；
+- 需要用 VS Code 管理遠端目錄和遠端終端機；
+- 不想頻繁透過 SFTP、scp 或檔案管理器手動同步檔案；
+- 希望在多個遠端主機之間快速切換。
 
-如果專案最終部署在 Linux 或 Cloudflare Pages，遠端開發能讓依賴、換行符、腳本執行權限與建置命令更接近線上環境。
+這篇文章只討論如何連接遠端主機，不展開專案複製、依賴安裝或建置流程。
 
 ## 準備連線資訊
 
-連線前先準備四個資訊：
+連線前先準備這些資訊：
 
 ```text
 HostName：遠端主機公網 IP 或網域
 User：遠端使用者名稱，例如 root、ubuntu、debian 或自訂使用者
 Port：SSH 連接埠，預設 22，也可以是自訂連接埠
-IdentityFile：本機私鑰路徑
+IdentityFile：本機私鑰路徑，使用金鑰登入時需要
+Password：遠端使用者密碼，使用密碼登入時需要，不建議寫入 config
 ```
 
 Windows 10/11 通常已經內建 OpenSSH Client。可以在 PowerShell 中檢查：
@@ -44,7 +45,11 @@ ssh -V
 
 如果能看到 OpenSSH 版本，表示本機 SSH 用戶端可用。
 
-## 產生 SSH 金鑰
+## 方式一：使用金鑰對登入
+
+金鑰對登入是更推薦的方式。它不需要每次輸入伺服器密碼，也更適合長期使用 VS Code Remote SSH。
+
+### 產生 SSH 金鑰
 
 在 PowerShell 中執行：
 
@@ -83,15 +88,42 @@ chmod 700 ~/.ssh
 chmod 600 ~/.ssh/authorized_keys
 ```
 
-## 設定 Windows SSH Host
+準備好公鑰後，後面在 VS Code 的 SSH Host 設定裡填入本機私鑰路徑即可。
 
-編輯本機檔案：
+## 方式二：使用密碼登入
+
+如果只是臨時連接一台測試主機，或者還沒有來得及設定公鑰，也可以直接使用密碼登入。此時本機 SSH Host 設定不需要寫 `IdentityFile`。如果伺服器允許密碼登入，VS Code Remote SSH 連接這個 Host 時會跳出密碼輸入框。
+
+需要注意的是，密碼登入依賴遠端 SSH 服務端允許 `PasswordAuthentication`。有些 VPS 映像預設關閉密碼登入，只允許金鑰登入；如果開啟密碼登入，建議配合強密碼、非預設連接埠、防火牆或 Fail2ban 一類的登入保護策略。
+
+## 連接步驟
+
+### 1. 安裝 Remote - SSH 擴充套件
+
+安裝 VS Code 擴充套件：
+
+```text
+Remote - SSH
+```
+
+安裝完成後建議重啟一次 VS Code，避免左側遠端資源管理器、命令面板和 SSH 設定入口沒有立即刷新。
+
+### 2. 設定 SSH Host
+
+開啟命令面板：
+
+```text
+Ctrl + Shift + P
+Remote-SSH: Open SSH Configuration File...
+```
+
+選擇 Windows 使用者目錄下的 SSH 設定檔：
 
 ```text
 C:\Users\User\.ssh\config
 ```
 
-加入一個主機別名：
+如果使用金鑰登入，寫入類似設定：
 
 ```sshconfig
 Host blog-dev
@@ -103,23 +135,21 @@ Host blog-dev
   ServerAliveCountMax 3
 ```
 
-儲存後，在 PowerShell 中測試：
+如果使用密碼登入，可以不寫 `IdentityFile`：
 
-```powershell
-ssh blog-dev
+```sshconfig
+Host blog-dev-password
+  HostName 你的伺服器IP或網域
+  User root
+  Port 22
+  PreferredAuthentications password,keyboard-interactive
 ```
 
-如果能進入遠端 Shell，表示 SSH 設定已經可用。
+儲存設定後，VS Code 的遠端資源管理器中會出現對應的 Host。
 
-## 在 VS Code 中連接
+### 3. 連接遠端主機
 
-安裝 VS Code 擴充套件：
-
-```text
-Remote - SSH
-```
-
-然後執行：
+連接方式有兩種。可以繼續使用命令面板：
 
 ```text
 Ctrl + Shift + P
@@ -127,93 +157,50 @@ Remote-SSH: Connect to Host...
 blog-dev
 ```
 
-首次連接時，VS Code 會在遠端主機安裝 VS Code Server。連接成功後，選擇遠端目錄，例如：
+也可以點擊左側活動列的遠端資源管理器圖示，在 `遠端(隧道/SSH)` 視圖裡展開 `SSH`，選擇剛設定的主機並連接。連接成功後，主機旁邊會顯示已連接狀態。
+
+首次連接時，VS Code 會在遠端主機安裝 VS Code Server。如果使用密碼登入，VS Code 會跳出密碼輸入框；如果使用金鑰登入，通常會直接進入遠端視窗。
+
+### 4. 開啟遠端目錄
+
+連接成功後，在遠端資源管理器中展開主機，選擇需要開啟的遠端目錄，例如：
 
 ```bash
-/root/projects/blog.js.gripe
+/opt
 ```
 
 或：
 
 ```bash
-/home/deploy/projects/blog.js.gripe
+/home/deploy
 ```
 
-這樣，本機 VS Code 開啟的就是遠端目錄，而不是本機副本。
+開啟後，本機 VS Code 視窗實際操作的是遠端主機上的目錄。後續在資源管理器中編輯檔案、開啟終端機、保存內容，都會發生在遠端主機上。
 
-## 複製或進入部落格專案
+## 小容量 VPS 的限制
 
-如果遠端主機上還沒有專案，可以在 VS Code 的遠端終端機執行：
+VS Code Remote SSH 首次連接時會在遠端主機安裝 VS Code Server，通常位於：
 
 ```bash
-mkdir -p ~/projects
-cd ~/projects
-git clone https://github.com/jsw-teams/myblog.git blog.js.gripe
-cd blog.js.gripe
+~/.vscode-server
 ```
 
-如果已經存在專案，直接進入：
+後續安裝遠端擴充套件、開啟多個遠端視窗或保留舊版本 VS Code Server 時，也會繼續占用遠端磁碟。對於 edgeproxy 這類只有 5G 左右儲存分配的小型 VPS，這個限制會比較明顯：`~/.vscode-server` 和遠端擴充套件快取疊加後，可能把磁碟占滿。磁碟滿了以後，常見表現包括 VS Code Server 安裝失敗、遠端終端機異常、檔案保存失敗。
+
+連接前建議先檢查空間：
 
 ```bash
-cd ~/projects/blog.js.gripe
-git status
+df -h
+du -sh ~/.vscode-server ~/.cache 2>/dev/null
 ```
 
-建議先確認遠端位址：
+如果空間緊張，可以優先減少遠端擴充套件數量，或者移除舊的 VS Code Server 版本目錄：
 
 ```bash
-git remote -v
+rm -rf ~/.vscode-server/bin/<舊版本目錄>
 ```
 
-如果需要切回正確遠端：
-
-```bash
-git remote set-url origin https://github.com/jsw-teams/myblog.git
-```
-
-## 遠端安裝依賴並建置
-
-在遠端終端機執行：
-
-```bash
-npm install
-npm run build
-npm run check
-```
-
-這樣做的好處是建置環境和遠端部署環境更一致。對於部落格類專案，建議每次新增文章後至少執行一次 `npm run build`，再執行 `npm run check`。
-
-## 推薦工作流
-
-我通常會把遠端開發流程拆成五步：
-
-```text
-連接遠端主機
-開啟遠端專案目錄
-新增或修改 Markdown 內容
-執行 build/check
-git commit && git push
-```
-
-對應命令可以是：
-
-```bash
-git status
-npm run build
-npm run check
-git add content/posts
-git commit -m "docs: add remote development articles"
-git push origin main
-```
-
-如果主分支有保護規則，則使用分支：
-
-```bash
-git checkout -b docs/remote-dev-posts
-git push -u origin docs/remote-dev-posts
-```
-
-然後在 GitHub 上建立 Pull Request。
+如果這台 VPS 主要用於代理、轉發或輕量服務，不建議把它當成完整開發機長期使用。Remote SSH 更適合磁碟空間、記憶體和 CPU 都有一定餘量的遠端主機。
 
 ## 常見問題
 
@@ -249,20 +236,9 @@ ssh-keygen -R 伺服器IP或網域
 
 然後重新連線。
 
-### 4. 遠端終端機找不到 node 或 npm
-
-表示遠端主機沒有安裝 Node.js，或 PATH 沒設定好。建議用 nvm 管理 Node.js 版本：
-
-```bash
-node -v
-npm -v
-```
-
-如果命令不存在，需要先安裝 Node.js，再重新開啟 VS Code 遠端視窗。
-
 ## 小結
 
-VS Code Remote SSH 的重點不是「遠端桌面」，而是把開發上下文放到遠端主機裡：程式碼、終端機、Git、依賴與建置命令都在同一個環境中執行。對於 `blog.js.gripe` 這種靜態部落格專案，它能讓文章寫作、建置檢查、提交推送與部署驗證形成穩定閉環。
+VS Code Remote SSH 的重點不是「遠端桌面」，而是讓 VS Code 透過 SSH 直接管理遠端主機上的目錄。實際使用時，把順序記住就夠了：安裝 Remote - SSH 擴充套件，重啟 VS Code，設定 SSH Host，然後從遠端資源管理器連接主機並開啟目錄。
 
 ## 參考
 

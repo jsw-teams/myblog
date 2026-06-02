@@ -83,6 +83,74 @@
     }).format(date);
   }
 
+  function readJsonStorage(key) {
+    try {
+      return JSON.parse(window.localStorage.getItem(key) || "null");
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeJsonStorage(key, value) {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      return;
+    }
+  }
+
+  function normalizeCountry(value) {
+    return String(value || "").trim().toUpperCase();
+  }
+
+  var regionPromise = null;
+
+  function detectMainlandChina() {
+    if (regionPromise) return regionPromise;
+    regionPromise = new Promise(function (resolve) {
+      var forced = new URLSearchParams(window.location.search).get("region");
+      if (forced && normalizeCountry(forced) === "CN") {
+        resolve(true);
+        return;
+      }
+
+      var cached = readJsonStorage("privacy_plugins_region_v1");
+      if (cached && cached.country && Date.now() - Number(cached.time || 0) < 86400000) {
+        resolve(normalizeCountry(cached.country) === "CN");
+        return;
+      }
+
+      if (!window.fetch) {
+        resolve(isMainlandTimezoneFallback());
+        return;
+      }
+
+      fetch("/cdn-cgi/trace", { cache: "no-store", credentials: "omit" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("trace unavailable");
+          return response.text();
+        })
+        .then(function (trace) {
+          var match = trace.match(/^loc=([A-Z]{2})$/m);
+          var country = match ? normalizeCountry(match[1]) : "";
+          if (country) writeJsonStorage("privacy_plugins_region_v1", { country: country, time: Date.now() });
+          resolve(country === "CN");
+        })
+        .catch(function () {
+          resolve(isMainlandTimezoneFallback());
+        });
+    });
+    return regionPromise;
+  }
+
+  function isMainlandTimezoneFallback() {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Shanghai";
+    } catch (error) {
+      return false;
+    }
+  }
+
   function scoreEntry(entry, tokens) {
     var title = normalizeText(entry.title);
     var description = normalizeText(entry.description);
@@ -357,7 +425,196 @@
     });
   }
 
+  function setupArticleCaptionTracks() {
+    var roots = Array.prototype.slice.call(document.querySelectorAll("[data-caption-track-root]"));
+    roots.forEach(function (root) {
+      var select = root.querySelector("[data-caption-track-select]");
+      var shell = root.closest(".article-video-shell");
+      var video = shell ? shell.querySelector("video") : null;
+      if (!select || !video || !video.textTracks) return;
+
+      function setCaption() {
+        var selected = select.value === "" ? -1 : Number(select.value);
+        for (var index = 0; index < video.textTracks.length; index += 1) {
+          var track = video.textTracks[index];
+          track.mode = index === selected ? "showing" : "disabled";
+        }
+      }
+
+      select.addEventListener("change", setCaption);
+      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) setCaption();
+      else video.addEventListener("loadedmetadata", setCaption, { once: true });
+    });
+  }
+
+  function setupRegionMedia() {
+    var sections = Array.prototype.slice.call(document.querySelectorAll("[data-region-media]"));
+    if (!sections.length) return;
+
+    detectMainlandChina().then(function (isMainland) {
+      sections.forEach(function (section) {
+        var shell = section.querySelector(".article-video-shell");
+        var video = section.querySelector("video");
+        if (!shell || !video) return;
+
+        if (isMainland) {
+          var title = section.getAttribute("data-region-title") || "Video unavailable";
+          var message = section.getAttribute("data-region-message") || "";
+          var poster = section.getAttribute("data-region-poster") || video.getAttribute("poster") || "";
+          video.pause();
+          shell.innerHTML = '<div class="article-media-region-card">' +
+            (poster ? '<img src="' + escapeHtml(poster) + '" alt="" loading="lazy" decoding="async">' : "") +
+            '<div><h2>' + escapeHtml(title) + '</h2>' +
+            '<p>' + escapeHtml(message) + '</p></div>' +
+            "</div>";
+          return;
+        }
+
+        Array.prototype.slice.call(video.querySelectorAll("source[data-video-src]")).forEach(function (source) {
+          source.src = source.getAttribute("data-video-src") || "";
+        });
+        video.load();
+      });
+    });
+  }
+
+  function setupIssueComments() {
+    var roots = Array.prototype.slice.call(document.querySelectorAll("[data-comments-root]"));
+    if (!roots.length || !window.fetch) return;
+
+    detectMainlandChina().then(function (isMainland) {
+      roots.forEach(function (root) {
+        loadIssueComments(root, isMainland);
+      });
+    });
+  }
+
+  function setCommentStatus(root, message, isError) {
+    var status = root.querySelector("[data-comments-status]");
+    if (!status) return;
+    status.textContent = message || "";
+    status.classList.toggle("is-error", Boolean(isError));
+  }
+
+  function setCommentAction(root, href, label) {
+    var actions = root.querySelector("[data-comments-actions]");
+    if (!actions) return;
+    actions.innerHTML = "";
+    if (!href || !label) return;
+    var link = document.createElement("a");
+    link.className = "button-link";
+    link.href = href;
+    link.rel = "nofollow noopener noreferrer";
+    link.target = "_blank";
+    link.textContent = label;
+    actions.appendChild(link);
+  }
+
+  function renderComments(root, comments) {
+    var list = root.querySelector("[data-comments-list]");
+    if (!list) return;
+    list.innerHTML = "";
+    comments.forEach(function (comment) {
+      var article = document.createElement("article");
+      article.className = "comment-card";
+
+      var header = document.createElement("header");
+      var avatar = document.createElement("img");
+      var title = document.createElement("p");
+      var link = document.createElement("a");
+      var time = document.createElement("time");
+      var body = document.createElement("p");
+
+      avatar.src = comment.user && comment.user.avatar_url ? comment.user.avatar_url : "";
+      avatar.alt = "";
+      avatar.loading = "lazy";
+      avatar.decoding = "async";
+      link.href = comment.html_url || "#";
+      link.rel = "nofollow noopener noreferrer";
+      link.target = "_blank";
+      link.textContent = comment.user && comment.user.login ? comment.user.login : "GitHub user";
+      time.dateTime = comment.created_at || "";
+      time.textContent = comment.created_at ? new Date(comment.created_at).toLocaleString() : "";
+      title.appendChild(link);
+      title.appendChild(document.createTextNode(" · "));
+      title.appendChild(time);
+      header.appendChild(avatar);
+      header.appendChild(title);
+      body.className = "comment-body";
+      body.textContent = comment.body || "";
+      article.appendChild(header);
+      article.appendChild(body);
+      list.appendChild(article);
+    });
+  }
+
+  function loadIssueComments(root, isMainland) {
+    var owner = root.getAttribute("data-comments-owner") || "";
+    var repo = root.getAttribute("data-comments-repo") || "";
+    var label = root.getAttribute("data-comments-label") || "";
+    var key = root.getAttribute("data-comments-key") || "";
+    var createUrl = root.getAttribute("data-comments-create-url") || "";
+    var emptyText = root.getAttribute("data-comments-empty") || "";
+    var errorText = root.getAttribute("data-comments-error") || "";
+    var readonlyText = root.getAttribute("data-comments-readonly") || "";
+    var openText = root.getAttribute("data-comments-open") || "";
+    var createText = root.getAttribute("data-comments-create") || "";
+    var missingText = root.getAttribute("data-comments-missing") || "";
+
+    var query = [
+      "repo:" + owner + "/" + repo,
+      "is:issue",
+      "label:" + label,
+      '"blog-comment:' + key + '"',
+      "in:body"
+    ].join(" ");
+    var searchUrl = "https://api.github.com/search/issues?q=" + encodeURIComponent(query) + "&per_page=1";
+
+    fetch(searchUrl, {
+      headers: { Accept: "application/vnd.github+json" },
+      credentials: "omit"
+    })
+      .then(function (response) {
+        if (!response.ok) throw new Error("issue search failed");
+        return response.json();
+      })
+      .then(function (data) {
+        var issue = data && Array.isArray(data.items) ? data.items[0] : null;
+        if (!issue) {
+          setCommentStatus(root, isMainland ? readonlyText + " " + missingText : missingText, false);
+          setCommentAction(root, isMainland ? "" : createUrl, isMainland ? "" : createText);
+          return [];
+        }
+
+        setCommentAction(root, isMainland ? "" : issue.html_url, isMainland ? "" : openText);
+        if (isMainland) {
+          var note = root.querySelector(".comments-note");
+          if (note) note.textContent = readonlyText;
+        }
+
+        return fetch(issue.comments_url + "?per_page=50", {
+          headers: { Accept: "application/vnd.github+json" },
+          credentials: "omit"
+        })
+          .then(function (response) {
+            if (!response.ok) throw new Error("comments failed");
+            return response.json();
+          });
+      })
+      .then(function (comments) {
+        if (!Array.isArray(comments)) return;
+        renderComments(root, comments);
+        setCommentStatus(root, comments.length ? "" : emptyText, false);
+      })
+      .catch(function () {
+        setCommentStatus(root, errorText, true);
+      });
+  }
+
   setupSearch();
   setupImageLightbox();
+  setupRegionMedia();
   setupArticleAudioTracks();
+  setupArticleCaptionTracks();
+  setupIssueComments();
 })();

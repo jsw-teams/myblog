@@ -14,6 +14,7 @@ media:
   type: "video/mp4"
   poster: "/news/weekly-world-news-2026-05-18.zh-CN.webp"
   embed: "https://files.js.gripe/files/fil_R8Dx-SMPqFh6N0d1abTosNiC.mp4"
+  mainlandNotice: "视频媒体托管在境外文件服务，中国大陆网络可能无法播放；正文已补充现实新闻图片与来源，方便在视频不可用时阅读。"
   captions:
     - src: "/news/weekly-world-news-2026-05-18.zh-CN.vtt"
       lang: "zh-CN"
@@ -41,6 +42,10 @@ media:
 
 5 月 24 日，俄罗斯对基辅发动大规模无人机和导弹袭击。乌克兰方面称，Oreshnik 高超音速弹道导弹也被使用。AP 报道称袭击造成至少 2 人死亡、83 人受伤。
 
+![2026 年 5 月 24 日基辅空袭后建筑起火](https://files.js.gripe/files/fil_svZ3DBV8FMUjUODzwVrGflr9.jpg)
+
+图片来源：Euronews 转引 AP Photo/Efrem Lukatsky，2026-05-24 基辅空袭现场。
+
 ### 3. 台湾：军售是否延后
 
 5 月 22 日，台湾方面称未收到美国暂停 140 亿美元军售的通知。此前美国代理海军部长在参议院听证中提到，部分对外军售因确保伊朗方向弹药需求而延后。
@@ -49,6 +54,10 @@ media:
 
 5 月 20 日，欧盟批准与美国的关税安排，将多数欧盟出口商品关税上限控制在 15%。同一周，台湾检方调查高性能 AI 服务器涉嫌流向中国；美国方面，特朗普披露一季度超过 3600 笔股票买卖，涉及 Nvidia、Apple、Boeing 等公司。
 
+![Nvidia CEO 黄仁勋出席台湾总部项目员工活动](https://files.js.gripe/files/fil_TkCXGY2AwFw0cwnyzdkbgijV.jpg)
+
+图片来源：CNA / Taiwan News / Focus Taiwan，2026-05-27 Nvidia 台湾总部项目员工活动。
+
 ### 5. 雨水、高温和电力
 
 AP 报道称，中国湖南、湖北、贵州等地暴雨和洪水造成至少 12 人死亡，数万人撤离。印度方面，高温推高用电需求，峰值负荷突破 270 吉瓦。
@@ -56,6 +65,10 @@ AP 报道称，中国湖南、湖北、贵州等地暴雨和洪水造成至少 1
 ### 6. 山西：煤矿爆炸与悼念
 
 5 月 22 日，山西长治一座煤矿发生瓦斯爆炸。AP 后续报道称，截至 5 月 24 日，事故造成至少 82 人死亡，2 人失踪，超过 100 人住院。日本首相高市早苗发表慰问信，韩国总统李在明在 X 上致哀，印度总理莫迪也公开表达慰问。
+
+![山西沁源县李树峪煤矿瓦斯爆炸后救援车辆集结](https://files.js.gripe/files/fil_EWQalCh8kKnmu6xsoQEZxiM7.jpg)
+
+图片来源：China Daily / Zhu Xingxin，2026-05-23 山西长治沁源李树峪煤矿救援现场。
 
 ## 来源与制作文件
 

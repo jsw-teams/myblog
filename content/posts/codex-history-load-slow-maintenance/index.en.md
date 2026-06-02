@@ -1,218 +1,120 @@
 ---
-title: "When Codex History Loads Slowly: Trim the Log Database Without Losing Conversations"
-description: "A practical Codex maintenance note: find an oversized logs_2.sqlite, back it up, remove low-value logs, vacuum the database, and reuse the included script."
+title: "Codex History Loading Slowly? Open a Fresh Chat and Let Codex Diagnose It"
+description: "When Codex history feels slow, do not start with database surgery. Open a new Codex chat, ask it to inspect safely, and let it suggest the fix."
 date: "2026-05-19"
-updated: "2026-05-19"
+updated: "2026-06-02"
 translationKey: "codex-history-load-slow-maintenance"
-tags: ["Codex", "SQLite", "Operations"]
+tags: ["Codex", "Development Efficiency", "Debugging"]
 category: "Development Efficiency"
 draft: false
 cover: ""
 ---
 
-I recently hit a slow Codex history view on a remote development host. The fix was straightforward, but the path is worth writing down: Codex history lives in more than one place, and the slow part is not always the conversation JSONL files. In this case, the local log database was the heavy piece.
+Sometimes Codex history opens as if it is carrying a very old suitcase upstairs. You click a past conversation, wait, click again, wait again, and eventually start blaming the network, the remote host, the workspace, and maybe your own habit of keeping one conversation alive forever.
 
-This note keeps the maintenance path conservative: inspect first, back up, remove low-value logs, then compact the SQLite database.
+Before doing database surgery, try the simple path: **open a fresh Codex chat, ask Codex to diagnose why the old history is slow, and let it clean the history for you.**
 
-## Symptom
+It sounds a little circular: Codex is slow, so we ask Codex to fix Codex. But it works because the slow part is often an old thread, a swollen log database, a huge workspace, or a tight remote VPS. A new chat is usually clean enough to act as the calm outside observer.
 
-Opening Codex history took a long time. The current workspace did not have a suspiciously large code change, and no build command was running.
+## Start From a Clean Desk
 
-The first useful check was the Codex state directory:
-
-```bash
-ls -lh ~/.codex
-```
-
-The suspicious file was:
+If one history thread is painfully slow, stop waiting inside that old thread. Open a new Codex chat and say:
 
 ```text
-logs_2.sqlite       about 573M
-state_5.sqlite      about 3.4M
-session_index.jsonl about 3.5K
-sessions/           a few dozen session files
+Codex history is loading slowly on this machine.
+Please diagnose likely causes. First inspect ~/.codex, workspace size,
+log files, session count, and database sizes in read-only mode.
+Do not delete anything. Tell me the risks and recommendations first.
 ```
 
-`state_5.sqlite` only had a few dozen thread records, and `session_index.jsonl` was tiny. The unusual file was `logs_2.sqlite`.
+The key is to ask for judgment first, not deletion. The fresh chat is not dragging the old context behind it, so it is a better place to troubleshoot.
 
-## Check the Conversation Files First
+## What Codex Should Check
 
-Start with the number and size of stored sessions:
-
-```bash
-find ~/.codex/sessions -type f | wc -l
-find ~/.codex/sessions -type f -printf '%s %p\n' | sort -nr | head
-```
-
-A handful of 10MB to 30MB long conversations usually does not explain a slow history list by itself. Then check the thread metadata:
-
-```bash
-sqlite3 ~/.codex/state_5.sqlite 'select count(*) from threads;'
-sqlite3 ~/.codex/state_5.sqlite 'pragma quick_check;'
-```
-
-In this case the thread count was small and the health check was clean.
-
-## Inspect logs_2.sqlite
-
-Look at the log schema:
-
-```bash
-sqlite3 ~/.codex/logs_2.sqlite '.schema logs'
-```
-
-The useful fields are:
+Ask Codex to inspect these items in order:
 
 ```text
-level
-target
-thread_id
-estimated_bytes
-ts
+1. unusually large files under ~/.codex;
+2. session count and largest files under sessions;
+3. whether logs_2.sqlite is oversized;
+4. whether state_5.sqlite and session_index.jsonl look normal;
+5. whether the workspace contains huge node_modules, dist, logs, or caches;
+6. whether the remote host is running out of disk.
 ```
 
-Then aggregate by level and target:
+This matters even more on small VPS machines used through VS Code Remote + Codex. When the disk is only a few GB, logs, build output, dependencies, and editor state can make the whole machine feel sticky.
 
-```bash
-sqlite3 ~/.codex/logs_2.sqlite \
-  "select level, count(*), sum(estimated_bytes) from logs group by level order by sum(estimated_bytes) desc;"
+## A Better Prompt
 
-sqlite3 ~/.codex/logs_2.sqlite \
-  "select target, count(*), sum(estimated_bytes) from logs group by target order by sum(estimated_bytes) desc limit 20;"
+This prompt is usually enough:
+
+```text
+Please help me troubleshoot slow Codex history loading.
+
+Requirements:
+- inspect read-only first;
+- explain which files may affect history loading;
+- separate safe-to-clean items from do-not-touch items;
+- if cleanup is needed, give me a backup plan first;
+- if it is safe, help me clean Codex history;
+- tell me how to return to the VS Code Codex home screen and confirm the result.
 ```
 
-Here, `TRACE` and `DEBUG` took a large amount of space, and targets such as `codex_api::endpoint::responses_websocket` dominated the database. These logs are not very useful for reading old conversations, but a large log database can still slow down history-related queries.
+Codex will usually list inspection commands first, then use the output to decide whether the problem is logs, sessions, workspace cache, or disk pressure.
 
-## Safe Maintenance Steps
+## Let It Clean the History
 
-Do not delete the whole `~/.codex` directory. It also contains auth state, model cache, session files, plugins, and skills.
+If your main goal is to make the history home screen feel clean again, continue with:
 
-The safer order is:
-
-1. create a SQLite backup of `logs_2.sqlite`;
-2. delete low-value logs such as `TRACE`, `DEBUG`, and ordinary old `INFO`;
-3. keep `WARN` and `ERROR`;
-4. run WAL checkpoint and `VACUUM`;
-5. run `quick_check` again.
-
-Manual commands:
-
-```bash
-sqlite3 ~/.codex/logs_2.sqlite ".backup '$HOME/.codex/logs_2.sqlite.bak-$(date +%Y%m%d-%H%M%S)'"
-
-sqlite3 ~/.codex/logs_2.sqlite "
-  PRAGMA busy_timeout=10000;
-  DELETE FROM logs
-  WHERE level IN ('TRACE','DEBUG')
-     OR (
-       ts < (SELECT max(ts) - 86400 FROM logs)
-       AND level NOT IN ('WARN','ERROR')
-     );
-  PRAGMA wal_checkpoint(TRUNCATE);
-  VACUUM;
-  PRAGMA wal_checkpoint(TRUNCATE);
-"
-
-sqlite3 ~/.codex/logs_2.sqlite 'pragma quick_check;'
+```text
+Please help me clean Codex history.
+Requirements:
+- tell me which files or records will be cleaned first;
+- make any necessary backup before cleanup;
+- do not affect current authentication or plugin configuration;
+- after cleanup, tell me how to confirm it on the VS Code Codex home screen.
 ```
 
-In this run, the main log database went from about `573M` to about `36M`, while the real session files and thread metadata stayed in place.
+After cleanup, go back to VS Code and open or refresh the Codex home screen. The history list should be cleared or noticeably shorter. That feedback is pleasantly direct: you do not have to guess from database sizes, because the home screen tells you what changed.
 
-## Copyable Script
+## Common Answers
 
-The script below is meant for readers who hit a similar problem. Save it as `maintain-codex-history.sh`. By default it is a dry run and does not modify the database; add `--apply` only after checking the output.
+The first common answer is that the old thread is simply too long. That does not need a heroic fix. Keep the old thread as reference and continue the work in a new chat.
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
+The second is that `~/.codex/logs_2.sqlite` is very large. That is a log database, not the real conversation history. The safer route is to back it up, remove low-value logs, and compact the database.
 
-CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-KEEP_HOURS=24
-APPLY=0
-BACKUP=1
-VACUUM_DB=1
+The third is a heavy workspace. `node_modules`, `dist`, build caches, downloads, and generated files can slow both Codex and VS Code Remote.
 
-while [ "$#" -gt 0 ]; do
-  case "$1" in
-    --codex-home) CODEX_HOME="$2"; shift 2 ;;
-    --keep-hours) KEEP_HOURS="$2"; shift 2 ;;
-    --apply) APPLY=1; shift ;;
-    --no-backup) BACKUP=0; shift ;;
-    --no-vacuum) VACUUM_DB=0; shift ;;
-    *) echo "Unknown option: $1" >&2; exit 1 ;;
-  esac
-done
+The fourth is a nearly full remote disk. Once a small VPS runs out of breathing room, shells, editors, logs, and databases all start feeling worse.
 
-DB="$CODEX_HOME/logs_2.sqlite"
-[ -f "$DB" ] || { echo "Codex log database not found: $DB" >&2; exit 1; }
-command -v sqlite3 >/dev/null || { echo "sqlite3 is required" >&2; exit 1; }
+## If Cleanup Is Needed, Wear a Seatbelt
 
-echo "Database: $DB"
-ls -lh "$DB" "$DB"-wal "$DB"-shm 2>/dev/null || true
+If Codex says the log database is oversized, ask for a conservative cleanup plan:
 
-CHECK="$(sqlite3 "$DB" 'PRAGMA quick_check;')"
-echo "quick_check: $CHECK"
-[ "$CHECK" = "ok" ] || { echo "Database is not healthy. Stop here." >&2; exit 1; }
-
-echo
-sqlite3 "$DB" "SELECT 'rows', count(*), 'estimated_bytes', coalesce(sum(estimated_bytes),0) FROM logs;"
-sqlite3 "$DB" "SELECT level, count(*), coalesce(sum(estimated_bytes),0) FROM logs GROUP BY level ORDER BY level;"
-
-CUTOFF_EXPR="(SELECT max(ts) - ($KEEP_HOURS * 3600) FROM logs)"
-WHERE_EXPR="level IN ('TRACE','DEBUG') OR (ts < $CUTOFF_EXPR AND level NOT IN ('WARN','ERROR'))"
-
-echo
-echo "Rows that would be removed:"
-sqlite3 "$DB" "SELECT count(*), coalesce(sum(estimated_bytes),0) FROM logs WHERE $WHERE_EXPR;"
-
-if [ "$APPLY" -ne 1 ]; then
-  echo
-  echo "Dry run only. Re-run with --apply to clean the log database."
-  exit 0
-fi
-
-if [ "$BACKUP" -eq 1 ]; then
-  BACKUP_PATH="$DB.bak-$(date +%Y%m%d-%H%M%S)"
-  echo "Creating backup: $BACKUP_PATH"
-  sqlite3 "$DB" ".backup '$BACKUP_PATH'"
-fi
-
-sqlite3 "$DB" "
-  PRAGMA busy_timeout=10000;
-  DELETE FROM logs WHERE $WHERE_EXPR;
-  SELECT 'deleted_rows', changes();
-  PRAGMA wal_checkpoint(TRUNCATE);
-"
-
-if [ "$VACUUM_DB" -eq 1 ]; then
-  sqlite3 "$DB" "VACUUM; PRAGMA wal_checkpoint(TRUNCATE);"
-fi
-
-echo
-echo "Final database files:"
-ls -lh "$DB" "$DB"-wal "$DB"-shm 2>/dev/null || true
-sqlite3 "$DB" 'PRAGMA quick_check;'
+```text
+Please give me a conservative cleanup plan:
+1. back up ~/.codex/logs_2.sqlite first;
+2. clean only TRACE, DEBUG, and old INFO logs;
+3. keep WARN and ERROR;
+4. run quick_check;
+5. show file sizes before and after;
+6. do not delete sessions, state_5.sqlite, or session_index.jsonl.
 ```
 
-Usage:
+That last line matters. `sessions`, `state_5.sqlite`, and `session_index.jsonl` are the parts you should treat carefully.
 
-```bash
-chmod +x maintain-codex-history.sh
-./maintain-codex-history.sh
-./maintain-codex-history.sh --apply
-./maintain-codex-history.sh --keep-hours 48 --apply
-```
+## When to Touch Nothing
 
-The default policy is to inspect `logs_2.sqlite`, require `quick_check = ok`, and report removable logs. Only `--apply` creates a backup, deletes low-value logs, checkpoints the WAL, and runs `VACUUM`.
+If you are debugging Codex itself, or you plan to send complete logs upstream, do not clean yet. Let Codex summarize the situation, list file sizes, and prepare the evidence.
 
-## When Not to Clean
-
-If you are actively debugging Codex itself, or you need complete logs for upstream analysis, do not clean immediately. Run the dry run first, confirm what is large, and keep a copy of `logs_2.sqlite`.
-
-If `quick_check` does not return `ok`, stop. Copy the database and WAL files first, then handle SQLite repair or recovery separately.
+If a database health check fails, do not start deleting rows. Back it up first, then ask Codex whether recovery, copying, or rebuilding an index is the better move. Slow is annoying; accidental deletion is worse.
 
 ## Takeaway
 
-Slow Codex history loading does not always mean there are too many conversations. The lower-risk maintenance target is often the local log database.
+When Codex history loads slowly, do not immediately dive into `~/.codex` with a wrench. The easier path is:
 
-The conservative approach is to keep `sessions`, `state_5.sqlite`, and `session_index.jsonl`, and only trim `logs_2.sqlite` after a backup. That improves loading speed without destroying the actual conversation history.
+```text
+open a fresh Codex chat -> ask for read-only inspection -> let it diagnose -> clean history -> confirm on the VS Code Codex home screen
+```
+
+It is like moving to a clean desk before sorting a messy one. You get a clearer view, fewer risky guesses, and a much better chance of keeping the real conversation history intact.
