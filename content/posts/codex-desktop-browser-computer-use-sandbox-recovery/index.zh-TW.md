@@ -1,88 +1,80 @@
 ---
-title: "一覺醒來，Windows Codex Desktop 的 Browser 和 Computer Use 都不可用了：如何請 Codex 自己修好"
-description: "面向新手使用者和接手排障的 Codex：電腦休眠後 Browser、Computer Use 與智慧沙盒不可用時，如何用提示詞和檢查順序修回來。"
+title: "一覺醒來，Windows Codex Desktop 的 Browser 和 Computer Use 都不可用了：直接讓 Codex 接手修"
+description: "電腦休眠後 Codex Desktop Browser、Computer Use 和智慧沙盒不可用時，把現場交給 Codex 接手排障和修復。"
 date: "2026-06-03"
 updated: "2026-06-03"
 translationKey: "codex-desktop-browser-computer-use-sandbox-recovery"
 tags: ["Codex", "Windows", "Browser", "Computer Use", "Sandbox"]
 category: "開發效率"
 draft: false
-cover: "https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png"
+cover: "https://files.js.gripe/files/fil_swPhoelH0iPoZvfZDp71USKn.png"
 ---
 
-一覺醒來，Windows 還在，Codex Desktop 也還在，但 Browser 和 Computer Use 都不在了。Codex Desktop 的 Browser 顯示「應用內瀏覽器外掛不可用」，Computer Use 也連不上。單純關閉再打開 Codex Desktop 沒有立即解決，因為底層其實同時壞了幾段鏈路。
+一覺醒來，Windows 還在，Codex Desktop 也還在，但 Browser 和 Computer Use 都不在了。設定頁能開，瀏覽器頁面只剩「應用內瀏覽器外掛不可用」，電腦操控也連不上。
 
-這篇可以當成給新手使用者和另一個 Codex 的排障提示詞。不要一開始就刪整個 `.codex`，先讓 Codex 只讀檢查外掛來源、快取檔案、Chrome native host、智慧沙盒 helper，再決定要修哪裡。
+這篇寫給剛遇到問題的使用者，以及接手排障的 Codex。重點不是讓使用者照著命令一步一步拆 `.codex`，而是把現場交給 Codex：讓它讀狀態、判斷問題、修復檔案、重啟該重啟的元件，最後留下可重用的修復紀錄。
+
+原始故障截圖保留如下：
 
 ![Codex Desktop Browser 顯示應用內瀏覽器外掛不可用](https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
 
 ![Codex Desktop 本地主機模式下 Browser 仍顯示不可用](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
-![Codex Desktop 修復鏈路](https://files.js.gripe/files/raw/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg)
+這張繁中圖把接手排障的檢查順序壓縮成一張 runbook；Codex 形象負責檢查和修復，臺灣黑熊形象代表只在高風險動作上確認的使用者。
 
-最後的恢復順序是：補回 `openai-bundled` marketplace，重新安裝 Browser、Chrome、Computer Use 外掛，重建 Chrome 的 `latest` junction，修復 `.sandbox-bin` 裡的 `codex-command-runner`，再重啟 Codex Desktop 讓 native pipe 重新注入。
+![接手排障檢查清單：替我審批模式](https://files.js.gripe/files/fil_swPhoelH0iPoZvfZDp71USKn.png)
 
-## 先把這段話交給 Codex
+## 先把現場交給 Codex
+
+可以把下面這段交給 Codex，讓它直接接手修復：
 
 ```text
-我的 Windows Codex Desktop 在休眠/喚醒後，Browser 或 Computer Use 顯示不可用。請先只讀檢查，不要刪檔，不要重置。
+我的 Windows Codex Desktop 在電腦休眠/喚醒後壞了：設定頁顯示 Browser 或 Computer Use 不可用，Browser 頁面可能提示「應用內瀏覽器外掛不可用」，Computer Use 可能提示 native pipe path 不可用，普通 shell 可能還能跑。
 
-請依序檢查 openai-bundled marketplace、browser/chrome/computer-use 外掛、browser-client.mjs、computer-use-client.mjs、Chrome latest junction、chrome-native-hosts-v2.json、.sandbox-bin 裡的 codex-command-runner、舊 helper 進程、codex doctor、sandbox smoke test，以及是否需要重啟 Codex Desktop 讓 native pipe 重新注入。
+請你直接接手修復。先判斷是哪一層壞了，再主動完成常規檢查和常規修復：補檔案、修連結、恢復缺失外掛、停止明確卡住的舊 helper、執行驗證命令。只有刪除整個目錄、重裝 Codex、清空 .codex、大規模 kill 程序這類高風險動作，才需要先問我。
 
-也請排查維護腳本是否誤刪 .codex\plugins、.codex\.tmp\bundled-marketplaces、.codex\.sandbox-bin。
+修完後請告訴我：壞在哪裡、你改了哪裡、怎麼驗證通過、以後再壞怎麼一鍵複查。
 ```
 
-## 排查重點
+## 第一步：先看 openai-bundled 和外掛快取
 
-這類狀況容易被誤判成 UI 沒刷新，但這次不是單點問題。實際上同時看到了外掛快取缺失、Chrome native host 路徑斷裂，以及 Windows 智慧沙盒 helper 被舊狀態卡住。
+Browser、Chrome、Computer Use 依賴 Codex 本機的 bundled marketplace。這次排查時，`openai-bundled` 相關資源不完整，導致真正需要的 client script 缺失或路徑落空。
 
-恢復 `openai-bundled` 後，重點確認以下檔案存在：
+Codex 需要優先確認：
 
 ```text
+%USERPROFILE%\.codex\.tmp\bundled-marketplaces\openai-bundled
 %USERPROFILE%\.codex\plugins\cache\openai-bundled\browser\...\scripts\browser-client.mjs
 %USERPROFILE%\.codex\plugins\cache\openai-bundled\chrome\...\scripts\browser-client.mjs
 %USERPROFILE%\.codex\plugins\cache\openai-bundled\computer-use\...\scripts\computer-use-client.mjs
 ```
 
-Chrome 外掛還需要 `latest` 指到真實版本目錄，否則 `chrome-native-hosts-v2.json` 會引用到不存在的路徑。
+可選但建議放在第一步一起看：本機維護腳本有沒有清理 `.codex\plugins`、`.codex\.tmp\bundled-marketplaces` 或 `.codex\.sandbox-bin`。
 
-## 智慧沙盒
+## 第二步：修 Chrome latest junction
 
-沙盒層曾出現：
+Chrome 外掛還有 native host 設定。版本目錄存在，不代表 `latest` junction 一定正確；native host 設定檔存在，也不代表它指向的 script 還活著。
+
+需要修回類似這樣的 junction：
+
+```text
+%USERPROFILE%\.codex\plugins\cache\openai-bundled\chrome\latest -> 26.601.21317
+```
+
+再確認 `chrome-native-hosts-v2.json` 裡的路徑能落到真實檔案。
+
+## 第三步：修智慧沙盒 helper
+
+Browser 檔案恢復後，Windows 智慧沙盒仍可能出現：
 
 ```text
 CreateProcessWithLogonW failed: 5
 ```
 
-後續處理是停止舊的 `codex-command-runner` helper，並把 Codex AppData 中的 runner 重新複製到 `.codex\.sandbox-bin`。修復後，sandbox smoke test 與 `codex doctor --summary` 都恢復健康。
+這表示 sandbox shell 的啟動鏈路也受影響。Codex 需要確認 `.sandbox-bin` 裡的 `codex-command-runner` 是否存在、版本是否正確，並判斷舊 helper 程序是否卡住。明確 stale 的 helper 可以停止，再從 Codex AppData 恢復 runner，最後跑 `codex doctor --summary` 和 sandbox smoke test。
 
-![恢復檢查清單](https://files.js.gripe/files/raw/fil_BkYkqKeAVDyUo-7ADqoUrHMt.svg)
+## 第四步：重啟 Codex Desktop
 
-## 為什麼最後還要重啟
+底層檔案修好後，Browser API 可能先恢復，但 Computer Use 仍可能提示 native pipe path 不可用。這時要重啟 Codex Desktop，讓桌面端把 Browser / Computer Use 的 native pipe 路徑重新注入目前會話。
 
-檔案恢復後，Browser API 已經能通，但 Computer Use 仍提示 native pipe path 不可用。這時候需要重啟 Codex Desktop，因為已執行的桌面端行程不一定會自動重建 Browser / Computer Use 所需的 native pipe。
-
-之前手動重啟沒有用，是因為當時外掛檔案、Chrome latest、sandbox helper 還沒有修完整。重啟必須放在底層狀態修好之後。
-
-## 維護腳本排查
-
-也順手檢查了本機維護腳本，沒有看到它們刪除 `.codex\plugins`、`browser-client.mjs` 或 `computer-use-client.mjs` 的證據。`CodexBrightnessGuard` 只做亮度守護；`OptimizeDevice.ps1` 清理的是 TEMP 與 Windows Temp 舊檔；`RunIntegrityCheck.ps1` 只清理自己的 stdout / stderr。
-
-因此這次更像是 bundled marketplace 或外掛快取進入半損壞狀態，而不是維護腳本惡意清掉必要檔案。後續仍建議把 `.codex\plugins`、`.codex\.tmp\bundled-marketplaces`、`.codex\.sandbox-bin` 加入維護腳本保護名單。
-
-## 可復用順序
-
-```text
-1. 檢查 Browser / Computer Use 設定頁狀態
-2. 補回 openai-bundled marketplace
-3. 重裝 browser、chrome、computer-use
-4. 確認 client 腳本存在
-5. 修復 Chrome latest junction
-6. 修復 .sandbox-bin 的 command-runner
-7. 跑 codex doctor 與 sandbox smoke test
-8. 關閉 Windows 自動睡眠 / 休眠
-9. 重啟 Codex Desktop
-10. 回頭審計維護腳本
-```
-
-這次的結論是：Browser、Computer Use 和智慧沙盒不是同一個開關。只有把外掛檔案、native host 路徑、sandbox helper、桌面端 native pipe 都修好，UI 才會真正恢復。
+這次的關鍵經驗是：不要只看設定頁的「不可用」。把檔案、連結、helper、桌面端進程四層都修回來，UI 才會真正恢復。
