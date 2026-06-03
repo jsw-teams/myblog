@@ -20,8 +20,6 @@ cover: "https://files.js.gripe/files/fil_swPhoelH0iPoZvfZDp71USKn.png"
 
 ![Codex Desktop 本地主機模式下 Browser 仍顯示不可用](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
-這張繁中圖把接手排障的檢查順序壓縮成一張 runbook；Codex 形象負責檢查和修復，臺灣黑熊形象代表只在高風險動作上確認的使用者。
-
 ![接手排障檢查清單：替我審批模式](https://files.js.gripe/files/fil_swPhoelH0iPoZvfZDp71USKn.png)
 
 ## 先把現場交給 Codex

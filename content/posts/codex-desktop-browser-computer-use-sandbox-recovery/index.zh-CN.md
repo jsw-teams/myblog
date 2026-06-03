@@ -20,8 +20,6 @@ cover: "https://files.js.gripe/files/fil_R1Au-JpxT6nAKZ0Mjc3cbptX.png"
 
 ![Codex Desktop 本地主机模式下 Browser 仍显示不可用](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
-下面这张图是这次修复链路的简化版。蓝色助手代表接手排障的 Codex，台湾黑熊代表旁边看着屏幕、只在高风险动作上确认的人类用户。
-
 ![Codex 接手修复链路：常规动作直接做，高风险动作再问](https://files.js.gripe/files/fil_R1Au-JpxT6nAKZ0Mjc3cbptX.png)
 
 ## 先把现场交给 Codex

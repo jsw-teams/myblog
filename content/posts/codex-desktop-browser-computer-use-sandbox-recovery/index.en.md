@@ -20,8 +20,6 @@ The original failure screenshots stay here because they are the clearest evidenc
 
 ![Codex Desktop still shows Browser unavailable in local host mode](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
-The image below summarizes the recovery flow. The blue Codex assistant handles the investigation and repair; the Taiwan black bear represents the human user who only confirms risky actions.
-
 ![Codex recovery flow: routine fixes run, risky actions ask first](https://files.js.gripe/files/fil_yiHUhkElTdS8edM9WnqWBQow.png)
 
 ## Hand The Scene To Codex
