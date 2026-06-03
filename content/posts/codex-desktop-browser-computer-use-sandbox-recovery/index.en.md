@@ -18,7 +18,7 @@ This note is written for a beginner user and for the next Codex instance that ha
 
 ![Codex Desktop still showing Browser unavailable in local-host mode](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
-![Codex Desktop recovery flow](https://files.js.gripe/files/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg)
+![Codex Desktop recovery flow](https://files.js.gripe/files/raw/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg)
 
 The working recovery sequence was to restore the `openai-bundled` marketplace, reinstall the Browser, Chrome, and Computer Use plugins, recreate the Chrome `latest` junction, refresh the Windows sandbox command runner, then restart Codex Desktop so native pipe paths were injected again.
 
@@ -63,7 +63,7 @@ CreateProcessWithLogonW failed: 5
 
 The fix was to stop stale `codex-command-runner` helper processes and restore the runner into `.codex\.sandbox-bin`. After that, the sandbox smoke test worked again, and `codex doctor --summary` returned a healthy result.
 
-![Recovery checklist](https://files.js.gripe/files/fil_BkYkqKeAVDyUo-7ADqoUrHMt.svg)
+![Recovery checklist](https://files.js.gripe/files/raw/fil_BkYkqKeAVDyUo-7ADqoUrHMt.svg)
 
 ## Why The Final Restart Mattered
 

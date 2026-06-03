@@ -18,7 +18,7 @@ cover: "https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png"
 
 ![Codex Desktop 本地主機模式下 Browser 仍顯示不可用](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
-![Codex Desktop 修復鏈路](https://files.js.gripe/files/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg)
+![Codex Desktop 修復鏈路](https://files.js.gripe/files/raw/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg)
 
 最後的恢復順序是：補回 `openai-bundled` marketplace，重新安裝 Browser、Chrome、Computer Use 外掛，重建 Chrome 的 `latest` junction，修復 `.sandbox-bin` 裡的 `codex-command-runner`，再重啟 Codex Desktop 讓 native pipe 重新注入。
 
@@ -56,7 +56,7 @@ CreateProcessWithLogonW failed: 5
 
 後續處理是停止舊的 `codex-command-runner` helper，並把 Codex AppData 中的 runner 重新複製到 `.codex\.sandbox-bin`。修復後，sandbox smoke test 與 `codex doctor --summary` 都恢復健康。
 
-![恢復檢查清單](https://files.js.gripe/files/fil_BkYkqKeAVDyUo-7ADqoUrHMt.svg)
+![恢復檢查清單](https://files.js.gripe/files/raw/fil_BkYkqKeAVDyUo-7ADqoUrHMt.svg)
 
 ## 為什麼最後還要重啟
 

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">替我审批模式检查清单</title>
+  <desc id="desc">给接手排障的 Codex 使用的检查清单：常规修复直接做，高风险动作询问用户。</desc>
+  <rect width="1600" height="1000" fill="#fbfcfd"/>
+  <rect x="70" y="64" width="1460" height="860" rx="30" fill="#ffffff" stroke="#d8e2eb" stroke-width="4"/>
+  <text x="118" y="128" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="44" font-weight="800" fill="#172033">“替我审批”模式：给接手 Codex 的检查清单</text>
+  <text x="118" y="174" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="24" fill="#536579">能安全修的直接修，可能扩大影响的先问用户</text>
+
+  <g transform="translate(118 230)">
+    <circle cx="58" cy="58" r="44" fill="#dff7ff" stroke="#48bfe3" stroke-width="4"/>
+    <circle cx="44" cy="54" r="6" fill="#1f6f8b"/>
+    <circle cx="72" cy="54" r="6" fill="#1f6f8b"/>
+    <path d="M40 74 Q58 90 78 74" fill="none" stroke="#1f6f8b" stroke-width="5" stroke-linecap="round"/>
+    <text x="128" y="50" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="24" font-weight="800" fill="#172033">Codex 做常规判断</text>
+    <text x="128" y="86" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="20" fill="#536579">读状态、补文件、修链接、跑验证</text>
+  </g>
+
+  <g transform="translate(1060 225)">
+    <circle cx="58" cy="58" r="44" fill="#221d1b"/>
+    <circle cx="26" cy="24" r="15" fill="#221d1b"/>
+    <circle cx="90" cy="24" r="15" fill="#221d1b"/>
+    <circle cx="44" cy="54" r="5" fill="#fff5dc"/>
+    <circle cx="72" cy="54" r="5" fill="#fff5dc"/>
+    <ellipse cx="58" cy="76" rx="22" ry="14" fill="#d9b37a"/>
+    <text x="128" y="50" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="24" font-weight="800" fill="#172033">用户只处理红线</text>
+    <text x="128" y="86" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="20" fill="#536579">删目录、清缓存、重装、批量杀进程</text>
+  </g>
+
+  <g font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="22" fill="#172033">
+    <g transform="translate(118 380)">
+      <rect width="650" height="76" rx="16" fill="#edf7ff" stroke="#90cdf4" stroke-width="3"/>
+      <text x="28" y="48" font-weight="800">1. UI 现象：Browser / Computer Use / sandbox</text>
+    </g>
+    <g transform="translate(832 380)">
+      <rect width="650" height="76" rx="16" fill="#edf7ff" stroke="#90cdf4" stroke-width="3"/>
+      <text x="28" y="48" font-weight="800">2. openai-bundled 插件源是否完整</text>
+    </g>
+    <g transform="translate(118 480)">
+      <rect width="650" height="76" rx="16" fill="#fff8e8" stroke="#f6c85f" stroke-width="3"/>
+      <text x="28" y="48" font-weight="800">3. browser / chrome / computer-use 缓存</text>
+    </g>
+    <g transform="translate(832 480)">
+      <rect width="650" height="76" rx="16" fill="#fff8e8" stroke="#f6c85f" stroke-width="3"/>
+      <text x="28" y="48" font-weight="800">4. client.mjs 文件是否真实存在</text>
+    </g>
+    <g transform="translate(118 580)">
+      <rect width="650" height="76" rx="16" fill="#f1fff4" stroke="#7bd88f" stroke-width="3"/>
+      <text x="28" y="48" font-weight="800">5. Chrome latest junction 和 native host</text>
+    </g>
+    <g transform="translate(832 580)">
+      <rect width="650" height="76" rx="16" fill="#f1fff4" stroke="#7bd88f" stroke-width="3"/>
+      <text x="28" y="48" font-weight="800">6. .sandbox-bin 与 codex-command-runner</text>
+    </g>
+    <g transform="translate(118 680)">
+      <rect width="650" height="76" rx="16" fill="#f6f0ff" stroke="#b69cff" stroke-width="3"/>
+      <text x="28" y="48" font-weight="800">7. 停止明确卡住的旧 helper</text>
+    </g>
+    <g transform="translate(832 680)">
+      <rect width="650" height="76" rx="16" fill="#f6f0ff" stroke="#b69cff" stroke-width="3"/>
+      <text x="28" y="48" font-weight="800">8. codex doctor 与 sandbox smoke test</text>
+    </g>
+    <g transform="translate(118 780)">
+      <rect width="650" height="76" rx="16" fill="#eef2f7" stroke="#b8c6d4" stroke-width="3"/>
+      <text x="28" y="48" font-weight="800">9. 重启 Codex Desktop 注入 native pipe</text>
+    </g>
+    <g transform="translate(832 780)">
+      <rect width="650" height="76" rx="16" fill="#eef2f7" stroke="#b8c6d4" stroke-width="3"/>
+      <text x="28" y="48" font-weight="800">10. 检查睡眠策略和维护脚本</text>
+    </g>
+  </g>
+</svg>

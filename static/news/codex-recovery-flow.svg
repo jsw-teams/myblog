@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Codex Desktop 修复链路</title>
+  <desc id="desc">Codex 接手排障，用户只审批高风险动作，按插件源、插件缓存、Chrome 链接、沙盒 helper、重启桌面端的顺序恢复 Browser 和 Computer Use。</desc>
+  <rect width="1600" height="900" fill="#f7fafc"/>
+  <rect x="72" y="62" width="1456" height="776" rx="28" fill="#ffffff" stroke="#d8e2eb" stroke-width="4"/>
+  <text x="112" y="128" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="44" font-weight="800" fill="#172033">电脑睡醒后，交给 Codex 接手修</text>
+  <text x="112" y="174" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="24" fill="#536579">常规动作替我审批，高风险动作再问我</text>
+
+  <g transform="translate(110 250)">
+    <circle cx="80" cy="76" r="58" fill="#dff7ff" stroke="#48bfe3" stroke-width="4"/>
+    <rect x="40" y="130" width="80" height="104" rx="34" fill="#b9ecff" stroke="#48bfe3" stroke-width="4"/>
+    <circle cx="60" cy="70" r="8" fill="#1f6f8b"/>
+    <circle cx="100" cy="70" r="8" fill="#1f6f8b"/>
+    <path d="M58 96 Q80 116 104 96" fill="none" stroke="#1f6f8b" stroke-width="6" stroke-linecap="round"/>
+    <text x="0" y="282" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="26" font-weight="800" fill="#172033">Codex</text>
+    <text x="0" y="318" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="20" fill="#536579">读状态，判断，修复，验证</text>
+  </g>
+
+  <g transform="translate(1330 250)">
+    <circle cx="80" cy="76" r="58" fill="#221d1b"/>
+    <circle cx="36" cy="32" r="20" fill="#221d1b"/>
+    <circle cx="124" cy="32" r="20" fill="#221d1b"/>
+    <circle cx="60" cy="70" r="7" fill="#fff5dc"/>
+    <circle cx="100" cy="70" r="7" fill="#fff5dc"/>
+    <ellipse cx="80" cy="98" rx="28" ry="18" fill="#d9b37a"/>
+    <rect x="36" y="130" width="88" height="104" rx="32" fill="#2d3748"/>
+    <text x="-12" y="282" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="26" font-weight="800" fill="#172033">用户</text>
+    <text x="-80" y="318" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="20" fill="#536579">只审批高风险动作</text>
+  </g>
+
+  <g font-family="Segoe UI, Microsoft YaHei, sans-serif">
+    <rect x="352" y="248" width="870" height="90" rx="18" fill="#edf7ff" stroke="#90cdf4" stroke-width="3"/>
+    <text x="386" y="304" font-size="28" font-weight="800" fill="#17324d">1. 看现场：Browser / Computer Use / sandbox 哪些坏了</text>
+
+    <rect x="352" y="368" width="870" height="90" rx="18" fill="#fff8e8" stroke="#f6c85f" stroke-width="3"/>
+    <text x="386" y="424" font-size="28" font-weight="800" fill="#4a3410">2. 补插件源：openai-bundled marketplace 回来</text>
+
+    <rect x="352" y="488" width="870" height="90" rx="18" fill="#f1fff4" stroke="#7bd88f" stroke-width="3"/>
+    <text x="386" y="544" font-size="28" font-weight="800" fill="#173d23">3. 修插件缓存：browser / chrome / computer-use 完整</text>
+
+    <rect x="352" y="608" width="870" height="90" rx="18" fill="#f6f0ff" stroke="#b69cff" stroke-width="3"/>
+    <text x="386" y="664" font-size="28" font-weight="800" fill="#32224f">4. 修链接和 helper：Chrome latest + sandbox runner</text>
+
+    <rect x="352" y="728" width="870" height="64" rx="18" fill="#172033"/>
+    <text x="386" y="770" font-size="26" font-weight="800" fill="#ffffff">5. 跑 doctor / smoke test，重启 Codex Desktop 注入 native pipe</text>
+  </g>
+
+  <g stroke="#9fb2c3" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="M787 338 L787 368"/>
+    <path d="M787 458 L787 488"/>
+    <path d="M787 578 L787 608"/>
+    <path d="M787 698 L787 728"/>
+  </g>
+</svg>
