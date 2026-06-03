@@ -1,20 +1,62 @@
 ---
-title: "Codex Desktop 休眠后 Browser / Computer Use 不可用：一次插件缓存与智能沙盒修复记录"
-description: "记录电脑休眠后 Codex Desktop 应用内浏览器、Computer Use 和 Windows 智能沙盒不可用的排查与恢复过程。"
+title: "一觉醒来，Windows Codex Desktop 的 Browser 和 Computer Use 都不可用了：如何使唤 Codex 自己修好"
+description: "面向小白用户和接手排障的 Codex：电脑休眠后 Codex Desktop Browser、Computer Use 和智能沙盒不可用时，如何用提示词和检查顺序把它修回来。"
 date: "2026-06-03"
 updated: "2026-06-03"
 translationKey: "codex-desktop-browser-computer-use-sandbox-recovery"
 tags: ["Codex", "Windows", "Browser", "Computer Use", "Sandbox"]
 category: "开发效率"
 draft: false
-cover: "https://files.js.gripe/files/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg"
+cover: "https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png"
 ---
 
-这次问题的触发点很普通：电脑休眠后再唤醒，Codex Desktop 里的 Browser 和 Computer Use 都显示不可用。设置页能打开，但浏览器页上只有“应用内浏览器插件不可用”，电脑操控也连不上。更麻烦的是，单纯把 Codex Desktop 关闭再打开并没有立刻恢复。
+一觉醒来，Windows 还在，Codex Desktop 也还在，但 Browser 和 Computer Use 都不在了。设置页能打开，浏览器页上只有“应用内浏览器插件不可用”，电脑操控也连不上。更扎心的是，关掉 Codex Desktop 再打开一次，还是没好。
+
+这篇不是写给会熟练拆 `.codex` 目录的人看的，而是写给两类人：第一类是刚遇到这个问题的小白用户，第二类是被你喊来接手的另一个 Codex。你可以把下面的提示词直接丢给 Codex，让它按顺序检查，而不是自己在插件缓存、native host、智能沙盒里乱点一通。
+
+![Codex Desktop Browser 显示应用内浏览器插件不可用](https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
+
+![Codex Desktop 本地主机模式下 Browser 仍显示不可用](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
 ![Codex Desktop 修复链路](https://files.js.gripe/files/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg)
 
-最后恢复的关键不是某一个按钮，而是一组状态一起修好：插件市场源要回来，插件缓存要完整，Chrome native host 的 `latest` 路径要指向真实版本，Windows 智能沙盒的 helper 不能被旧进程锁住，最后还要重启 Codex Desktop，让 Browser 和 Computer Use 的 native pipe 重新注入。
+最后恢复的关键不是某一个神秘按钮，而是一组状态一起修好：插件市场源要回来，插件缓存要完整，Chrome native host 的 `latest` 路径要指向真实版本，Windows 智能沙盒的 helper 不能被旧进程锁住，最后还要重启 Codex Desktop，让 Browser 和 Computer Use 的 native pipe 重新注入。
+
+## 先把这段话丢给 Codex
+
+如果你不想先理解所有细节，可以直接复制这段：
+
+```text
+我的 Windows Codex Desktop 在电脑休眠/唤醒后，设置页显示 Browser 或 Computer Use 不可用，Browser 页面可能提示“应用内浏览器插件不可用”，Computer Use 可能提示 native pipe path 不可用。
+
+请你按“只读检查 -> 给出风险 -> 再请求我批准修复”的顺序处理，不要一上来删除文件。
+
+请重点检查：
+1. %USERPROFILE%\.codex\.tmp\bundled-marketplaces\openai-bundled 是否存在且完整；
+2. browser@openai-bundled、chrome@openai-bundled、computer-use@openai-bundled 是否安装；
+3. browser-client.mjs、computer-use-client.mjs 是否存在；
+4. Chrome 插件目录下 latest junction 是否指向真实版本目录；
+5. chrome-native-hosts-v2.json 里的路径是否落到真实文件；
+6. %USERPROFILE%\.codex\.sandbox-bin 里的 codex-command-runner 是否存在；
+7. 是否有旧的 codex-command-runner 进程占用；
+8. codex doctor --summary 和一个 sandbox smoke test 是否通过；
+9. Windows 是否自动睡眠/休眠；
+10. 修复底层文件后，是否需要重启 Codex Desktop 让 Browser / Computer Use 的 native pipe 重新注入。
+
+请同时排查本机维护脚本有没有清理 .codex\plugins、.codex\.tmp\bundled-marketplaces、.codex\.sandbox-bin。最后给我一个可复用的修复清单。
+```
+
+这段提示词的重点是“先检查，再修复”。Codex 有权限操作本机时很能干，但你仍然要让它先说明它准备动哪里，尤其不要在没确认前清理 `.codex`。
+
+## 小白先别急着做这几件事
+
+遇到这种情况时，先不要连续乱点重装、清空所有数据、删除整个 `.codex` 目录，或者把 Chrome 也一起卸载。它们看起来像“大力出奇迹”，但可能把原本可以恢复的状态变得更乱。
+
+更稳的方式是让 Codex 先读状态：
+
+```text
+先只读检查，不要删除，不要重置，不要清空缓存。请告诉我哪些文件缺失、哪些链接断了、哪些进程占用，再给修复建议。
+```
 
 ## 现象
 

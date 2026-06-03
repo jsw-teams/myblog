@@ -1,20 +1,36 @@
 ---
-title: "Codex Desktop 休眠後 Browser / Computer Use 不可用：一次外掛快取與智慧沙盒修復記錄"
-description: "記錄電腦休眠後 Codex Desktop 應用內瀏覽器、Computer Use 與 Windows 智慧沙盒不可用的排查與恢復過程。"
+title: "一覺醒來，Windows Codex Desktop 的 Browser 和 Computer Use 都不可用了：如何請 Codex 自己修好"
+description: "面向新手使用者和接手排障的 Codex：電腦休眠後 Browser、Computer Use 與智慧沙盒不可用時，如何用提示詞和檢查順序修回來。"
 date: "2026-06-03"
 updated: "2026-06-03"
 translationKey: "codex-desktop-browser-computer-use-sandbox-recovery"
 tags: ["Codex", "Windows", "Browser", "Computer Use", "Sandbox"]
 category: "開發效率"
 draft: false
-cover: "https://files.js.gripe/files/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg"
+cover: "https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png"
 ---
 
-這次問題發生在電腦休眠再喚醒之後：Codex Desktop 的 Browser 顯示「應用內瀏覽器外掛不可用」，Computer Use 也連不上。單純關閉再打開 Codex Desktop 沒有立即解決，因為底層其實同時壞了幾段鏈路。
+一覺醒來，Windows 還在，Codex Desktop 也還在，但 Browser 和 Computer Use 都不在了。Codex Desktop 的 Browser 顯示「應用內瀏覽器外掛不可用」，Computer Use 也連不上。單純關閉再打開 Codex Desktop 沒有立即解決，因為底層其實同時壞了幾段鏈路。
+
+這篇可以當成給新手使用者和另一個 Codex 的排障提示詞。不要一開始就刪整個 `.codex`，先讓 Codex 只讀檢查外掛來源、快取檔案、Chrome native host、智慧沙盒 helper，再決定要修哪裡。
+
+![Codex Desktop Browser 顯示應用內瀏覽器外掛不可用](https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
+
+![Codex Desktop 本地主機模式下 Browser 仍顯示不可用](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
 ![Codex Desktop 修復鏈路](https://files.js.gripe/files/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg)
 
 最後的恢復順序是：補回 `openai-bundled` marketplace，重新安裝 Browser、Chrome、Computer Use 外掛，重建 Chrome 的 `latest` junction，修復 `.sandbox-bin` 裡的 `codex-command-runner`，再重啟 Codex Desktop 讓 native pipe 重新注入。
+
+## 先把這段話交給 Codex
+
+```text
+我的 Windows Codex Desktop 在休眠/喚醒後，Browser 或 Computer Use 顯示不可用。請先只讀檢查，不要刪檔，不要重置。
+
+請依序檢查 openai-bundled marketplace、browser/chrome/computer-use 外掛、browser-client.mjs、computer-use-client.mjs、Chrome latest junction、chrome-native-hosts-v2.json、.sandbox-bin 裡的 codex-command-runner、舊 helper 進程、codex doctor、sandbox smoke test，以及是否需要重啟 Codex Desktop 讓 native pipe 重新注入。
+
+也請排查維護腳本是否誤刪 .codex\plugins、.codex\.tmp\bundled-marketplaces、.codex\.sandbox-bin。
+```
 
 ## 排查重點
 

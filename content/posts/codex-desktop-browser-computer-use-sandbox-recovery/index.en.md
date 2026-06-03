@@ -1,20 +1,36 @@
 ---
-title: "Recovering Codex Desktop Browser, Computer Use, and Sandbox After Sleep"
-description: "A repair note for Codex Desktop when Browser, Computer Use, and the Windows sandbox became unavailable after system sleep."
+title: "You Wake Up and Codex Desktop Browser and Computer Use Are Gone: How to Ask Codex to Fix It"
+description: "A beginner-friendly prompt and checklist for recovering Codex Desktop Browser, Computer Use, and the Windows sandbox after system sleep."
 date: "2026-06-03"
 updated: "2026-06-03"
 translationKey: "codex-desktop-browser-computer-use-sandbox-recovery"
 tags: ["Codex", "Windows", "Browser", "Computer Use", "Sandbox"]
 category: "Development Efficiency"
 draft: false
-cover: "https://files.js.gripe/files/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg"
+cover: "https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png"
 ---
 
-After the Windows machine resumed from sleep, Codex Desktop showed the in-app Browser plugin as unavailable, and Computer Use could not reconnect either. Restarting the app once did not help, because several lower-level pieces were broken at the same time.
+After the Windows machine resumed from sleep, Codex Desktop was still there, but Browser and Computer Use were not. The settings page showed the in-app Browser plugin as unavailable, and Computer Use could not reconnect either. Restarting the app once did not help, because several lower-level pieces were broken at the same time.
+
+This note is written for a beginner user and for the next Codex instance that has to pick up the repair. The useful move is not to delete `.codex` or clear everything. Ask Codex to inspect first, explain risk, then repair the specific broken links.
+
+![Codex Desktop Browser showing the in-app browser plugin unavailable](https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
+
+![Codex Desktop still showing Browser unavailable in local-host mode](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
 ![Codex Desktop recovery flow](https://files.js.gripe/files/fil_2uwVihY4MBZhcX3FCwg92Pmn.svg)
 
 The working recovery sequence was to restore the `openai-bundled` marketplace, reinstall the Browser, Chrome, and Computer Use plugins, recreate the Chrome `latest` junction, refresh the Windows sandbox command runner, then restart Codex Desktop so native pipe paths were injected again.
+
+## Give This Prompt To Codex First
+
+```text
+My Windows Codex Desktop shows Browser or Computer Use as unavailable after sleep/resume. Please inspect first, do not delete files, and do not reset anything until you explain the risk and ask for approval.
+
+Check the openai-bundled marketplace, browser/chrome/computer-use plugins, browser-client.mjs, computer-use-client.mjs, the Chrome latest junction, chrome-native-hosts-v2.json, .sandbox-bin codex-command-runner, stale helper processes, codex doctor, a sandbox smoke test, Windows sleep settings, and whether Codex Desktop must be restarted to inject native pipe paths again.
+
+Also audit maintenance scripts for accidental cleanup of .codex\plugins, .codex\.tmp\bundled-marketplaces, and .codex\.sandbox-bin.
+```
 
 ## What Failed
 
