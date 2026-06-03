@@ -83,22 +83,6 @@
     }).format(date);
   }
 
-  function readJsonStorage(key) {
-    try {
-      return JSON.parse(window.localStorage.getItem(key) || "null");
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function writeJsonStorage(key, value) {
-    try {
-      window.localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      return;
-    }
-  }
-
   function normalizeCountry(value) {
     return String(value || "").trim().toUpperCase();
   }
@@ -109,46 +93,23 @@
     if (regionPromise) return regionPromise;
     regionPromise = new Promise(function (resolve) {
       var forced = new URLSearchParams(window.location.search).get("region");
-      if (forced && normalizeCountry(forced) === "CN") {
-        resolve(true);
+      if (forced) {
+        resolve(normalizeCountry(forced) === "CN");
         return;
       }
 
-      var cached = readJsonStorage("privacy_plugins_region_v1");
-      if (cached && cached.country && Date.now() - Number(cached.time || 0) < 86400000) {
-        resolve(normalizeCountry(cached.country) === "CN");
-        return;
-      }
-
-      if (!window.fetch) {
-        resolve(isMainlandTimezoneFallback());
-        return;
-      }
-
-      fetch("/cdn-cgi/trace", { cache: "no-store", credentials: "omit" })
-        .then(function (response) {
-          if (!response.ok) throw new Error("trace unavailable");
-          return response.text();
-        })
-        .then(function (trace) {
-          var match = trace.match(/^loc=([A-Z]{2})$/m);
-          var country = match ? normalizeCountry(match[1]) : "";
-          if (country) writeJsonStorage("privacy_plugins_region_v1", { country: country, time: Date.now() });
-          resolve(country === "CN");
-        })
-        .catch(function () {
-          resolve(isMainlandTimezoneFallback());
-        });
+      resolve(readInjectedCountry() === "CN");
     });
     return regionPromise;
   }
 
-  function isMainlandTimezoneFallback() {
-    try {
-      return Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Shanghai";
-    } catch (error) {
-      return false;
-    }
+  function readInjectedCountry() {
+    var htmlCountry = document.documentElement.getAttribute("data-region-country");
+    var bodyCountry = document.body ? document.body.getAttribute("data-region-country") : "";
+    var meta = document.querySelector('meta[name="visitor-country"]');
+    var metaCountry = meta ? meta.getAttribute("content") : "";
+    var scriptCountry = window.JSGripeRegion && window.JSGripeRegion.country;
+    return normalizeCountry(htmlCountry || bodyCountry || metaCountry || scriptCountry);
   }
 
   function scoreEntry(entry, tokens) {
@@ -478,36 +439,105 @@
     });
   }
 
-  function setupIssueComments() {
-    var roots = Array.prototype.slice.call(document.querySelectorAll("[data-comments-root]"));
-    if (!roots.length || !window.fetch) return;
+  function setupUtterancesComments() {
+    var roots = Array.prototype.slice.call(document.querySelectorAll("[data-utterances-root]"));
+    if (!roots.length) return;
 
     detectMainlandChina().then(function (isMainland) {
       roots.forEach(function (root) {
-        loadIssueComments(root, isMainland);
+        var status = root.querySelector("[data-comments-status]");
+        var mount = root.querySelector("[data-utterances-mount]");
+        if (!mount) return;
+
+        if (isMainland) {
+          loadMirroredComments(root);
+          return;
+        }
+
+        if (status) status.textContent = "";
+        if (mount.querySelector("script")) return;
+
+        var script = document.createElement("script");
+        script.src = "https://utteranc.es/client.js";
+        script.async = true;
+        script.crossOrigin = "anonymous";
+        script.setAttribute("repo", root.getAttribute("data-utterances-repo") || "");
+        script.setAttribute("issue-term", root.getAttribute("data-utterances-issue-term") || "title");
+        script.setAttribute("label", root.getAttribute("data-utterances-label") || "");
+        script.setAttribute("theme", root.getAttribute("data-utterances-theme") || "github-light");
+        mount.appendChild(script);
       });
     });
   }
 
-  function setCommentStatus(root, message, isError) {
+  function loadMirroredComments(root) {
     var status = root.querySelector("[data-comments-status]");
-    if (!status) return;
-    status.textContent = message || "";
-    status.classList.toggle("is-error", Boolean(isError));
+    var repo = root.getAttribute("data-utterances-repo") || "";
+    var label = root.getAttribute("data-utterances-label") || "";
+    var issueTerm = root.getAttribute("data-utterances-issue-term") || "";
+    var readonlyText = root.getAttribute("data-comments-readonly") || "";
+    var loadingText = root.getAttribute("data-comments-loading") || "";
+    var emptyText = root.getAttribute("data-comments-empty") || "";
+    var errorText = root.getAttribute("data-comments-error") || "";
+
+    if (status) status.textContent = loadingText;
+    var query = [
+      "repo:" + repo,
+      "is:issue",
+      "label:" + label,
+      '"' + issueTerm + '"',
+      "in:title"
+    ].join(" ");
+    var searchUrl = "/api/comments/search?q=" + encodeURIComponent(query) + "&per_page=1";
+
+    fetch(searchUrl, {
+      headers: { Accept: "application/json" },
+      credentials: "same-origin"
+    })
+      .then(function (response) {
+        if (!response.ok) throw new Error("comment issue search failed");
+        return response.json();
+      })
+      .then(function (data) {
+        var issue = data && Array.isArray(data.items) ? data.items[0] : null;
+        if (!issue || !issue.number) return [];
+        return fetch("/api/comments/issues/" + encodeURIComponent(issue.number) + "/comments?per_page=50", {
+          headers: { Accept: "application/json" },
+          credentials: "same-origin"
+        })
+          .then(function (response) {
+            if (!response.ok) throw new Error("comments fetch failed");
+            return response.json();
+          })
+          .then(function (comments) {
+            return dedupeComments(comments || []);
+          });
+      })
+      .then(function (comments) {
+        if (!Array.isArray(comments)) comments = [];
+        renderComments(root, comments);
+        if (status) status.textContent = comments.length ? readonlyText : emptyText;
+      })
+      .catch(function () {
+        if (status) {
+          status.textContent = errorText;
+          status.classList.add("is-error");
+        }
+      });
   }
 
-  function setCommentAction(root, href, label) {
-    var actions = root.querySelector("[data-comments-actions]");
-    if (!actions) return;
-    actions.innerHTML = "";
-    if (!href || !label) return;
-    var link = document.createElement("a");
-    link.className = "button-link";
-    link.href = href;
-    link.rel = "nofollow noopener noreferrer";
-    link.target = "_blank";
-    link.textContent = label;
-    actions.appendChild(link);
+  function dedupeComments(comments) {
+    var seen = {};
+    return comments.filter(function (comment) {
+      var key = [
+        comment.user && comment.user.login || "",
+        String(comment.body || "").trim(),
+        comment.created_at || ""
+      ].join("\n");
+      if (seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
   }
 
   function renderComments(root, comments) {
@@ -548,73 +578,10 @@
     });
   }
 
-  function loadIssueComments(root, isMainland) {
-    var owner = root.getAttribute("data-comments-owner") || "";
-    var repo = root.getAttribute("data-comments-repo") || "";
-    var label = root.getAttribute("data-comments-label") || "";
-    var key = root.getAttribute("data-comments-key") || "";
-    var createUrl = root.getAttribute("data-comments-create-url") || "";
-    var emptyText = root.getAttribute("data-comments-empty") || "";
-    var errorText = root.getAttribute("data-comments-error") || "";
-    var readonlyText = root.getAttribute("data-comments-readonly") || "";
-    var openText = root.getAttribute("data-comments-open") || "";
-    var createText = root.getAttribute("data-comments-create") || "";
-    var missingText = root.getAttribute("data-comments-missing") || "";
-
-    var query = [
-      "repo:" + owner + "/" + repo,
-      "is:issue",
-      "label:" + label,
-      '"blog-comment:' + key + '"',
-      "in:body"
-    ].join(" ");
-    var searchUrl = "https://api.github.com/search/issues?q=" + encodeURIComponent(query) + "&per_page=1";
-
-    fetch(searchUrl, {
-      headers: { Accept: "application/vnd.github+json" },
-      credentials: "omit"
-    })
-      .then(function (response) {
-        if (!response.ok) throw new Error("issue search failed");
-        return response.json();
-      })
-      .then(function (data) {
-        var issue = data && Array.isArray(data.items) ? data.items[0] : null;
-        if (!issue) {
-          setCommentStatus(root, isMainland ? readonlyText + " " + missingText : missingText, false);
-          setCommentAction(root, isMainland ? "" : createUrl, isMainland ? "" : createText);
-          return [];
-        }
-
-        setCommentAction(root, isMainland ? "" : issue.html_url, isMainland ? "" : openText);
-        if (isMainland) {
-          var note = root.querySelector(".comments-note");
-          if (note) note.textContent = readonlyText;
-        }
-
-        return fetch(issue.comments_url + "?per_page=50", {
-          headers: { Accept: "application/vnd.github+json" },
-          credentials: "omit"
-        })
-          .then(function (response) {
-            if (!response.ok) throw new Error("comments failed");
-            return response.json();
-          });
-      })
-      .then(function (comments) {
-        if (!Array.isArray(comments)) return;
-        renderComments(root, comments);
-        setCommentStatus(root, comments.length ? "" : emptyText, false);
-      })
-      .catch(function () {
-        setCommentStatus(root, errorText, true);
-      });
-  }
-
   setupSearch();
   setupImageLightbox();
   setupRegionMedia();
   setupArticleAudioTracks();
   setupArticleCaptionTracks();
-  setupIssueComments();
+  setupUtterancesComments();
 })();

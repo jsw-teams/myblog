@@ -36,6 +36,15 @@ function renderJsonLd(items = []) {
   return `<script type="application/ld+json">${escapeJson(flat.length === 1 ? flat[0] : flat)}</script>`;
 }
 
+function imageType(imageUrl = "") {
+  const path = new URL(imageUrl, "https://example.invalid").pathname.toLowerCase();
+  if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg";
+  if (path.endsWith(".webp")) return "image/webp";
+  if (path.endsWith(".avif")) return "image/avif";
+  if (path.endsWith(".gif")) return "image/gif";
+  return "image/png";
+}
+
 function renderNav(site, locale, current) {
   const navItems = [
     ["home", `/${locale}/`],
@@ -129,6 +138,7 @@ export function renderLayout({
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
   const canonical = absoluteUrl(site, url);
   const imageUrl = absoluteUrl(site, ogImage);
+  const imageAlt = `${title} | ${siteName}`;
   return `<!doctype html>
 <html lang="${escapeHtml(htmlLang(locale))}">
 <head>
@@ -149,10 +159,16 @@ export function renderLayout({
   <meta property="og:type" content="${escapeHtml(ogType)}">
   <meta property="og:url" content="${escapeHtml(canonical)}">
   <meta property="og:image" content="${escapeHtml(imageUrl)}">
+  <meta property="og:image:secure_url" content="${escapeHtml(imageUrl)}">
+  <meta property="og:image:type" content="${escapeHtml(imageType(imageUrl))}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="${escapeHtml(imageAlt)}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHtml(fullTitle)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
   <meta name="twitter:image" content="${escapeHtml(imageUrl)}">
+  <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}">
   <link rel="stylesheet" href="/assets/site.css">
   ${renderJsonLd(jsonLd)}
 </head>
@@ -161,7 +177,7 @@ export function renderLayout({
   ${renderNav(site, locale, current)}
   ${main}
   ${renderFooter(site, locale)}
-  <script src="/assets/client.js" defer></script>
+  <script src="/assets/client.js?v=20260603-region" defer></script>
   <script src="https://privacy.js.gripe/privacy-plugin-loader.js?v=20260524v3" data-config="/assets/privacy-plugins.json?v=20260524v3" defer></script>
 </body>
 </html>`;
@@ -260,41 +276,23 @@ function renderMediaPlayer(post, locale) {
 }
 
 function renderCommentSection(post, locale) {
-  const commentKey = `${post.translationKey}:${post.locale}`;
-  const issueTitle = `Comments: ${post.title}`;
-  const issueBody = [
-    `Article: ${post.title}`,
-    `URL: https://blog.js.gripe${post.url}`,
-    `Comment key: blog-comment:${commentKey}`,
-    "",
-    "Please keep comments relevant and kind. Spam, repeated posts, or malicious links may be removed."
-  ].join("\n");
-  const issueUrl = new URL("https://github.com/jsw-teams/myblog/issues/new");
-  issueUrl.searchParams.set("title", issueTitle);
-  issueUrl.searchParams.set("body", issueBody);
-  issueUrl.searchParams.set("labels", "blog-comment");
-
   return `<section class="article-comments"
-    data-comments-root
-    data-comments-owner="jsw-teams"
-    data-comments-repo="myblog"
-    data-comments-label="blog-comment"
-    data-comments-key="${escapeHtml(commentKey)}"
-    data-comments-create-url="${escapeHtml(issueUrl.toString())}"
+    data-utterances-root
+    data-utterances-repo="jsw-teams/myblog"
+    data-utterances-issue-term="${escapeHtml(`Comments: ${post.title}`)}"
+    data-utterances-label="blog-comment"
+    data-utterances-theme="github-light"
+    data-comments-readonly="${escapeHtml(t(locale, "commentsReadOnlyMainland"))}"
     data-comments-loading="${escapeHtml(t(locale, "commentsLoading"))}"
     data-comments-empty="${escapeHtml(t(locale, "commentsEmpty"))}"
-    data-comments-error="${escapeHtml(t(locale, "commentsError"))}"
-    data-comments-readonly="${escapeHtml(t(locale, "commentsReadOnlyMainland"))}"
-    data-comments-open="${escapeHtml(t(locale, "commentsOpenIssue"))}"
-    data-comments-create="${escapeHtml(t(locale, "commentsCreateIssue"))}"
-    data-comments-missing="${escapeHtml(t(locale, "commentsIssueMissing"))}">
+    data-comments-error="${escapeHtml(t(locale, "commentsError"))}">
     <div class="section-heading">
       <h2>${escapeHtml(t(locale, "commentsTitle"))}</h2>
     </div>
     <p class="comments-note">${escapeHtml(t(locale, "commentsRules"))}</p>
     <p class="comments-status" data-comments-status>${escapeHtml(t(locale, "commentsLoading"))}</p>
     <div class="comments-list" data-comments-list></div>
-    <p class="comments-actions" data-comments-actions></p>
+    <div data-utterances-mount></div>
   </section>`;
 }
 
