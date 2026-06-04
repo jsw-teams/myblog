@@ -5,12 +5,12 @@
   "jwks_uri": "https://blog.js.gripe/.well-known/jwks.json",
   "grant_types_supported": [],
   "response_types_supported": [],
-  "scopes_supported": [],
+  "scopes_supported": ["public:read"],
   "token_endpoint_auth_methods_supported": [],
   "agent_auth": {
     "register_uri": "https://blog.js.gripe/auth.md",
-    "supported_identity_types": ["none"],
-    "credential_types": [],
+    "supported_identity_types": ["anonymous", "none"],
+    "credential_types": ["none"],
     "claims_uri": "https://blog.js.gripe/auth.md#authentication",
     "revocation_uri": "https://blog.js.gripe/auth.md#authentication"
   }
