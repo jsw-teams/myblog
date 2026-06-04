@@ -1,6 +1,6 @@
 {
   "resource": "https://blog.js.gripe/",
-  "authorization_servers": [],
+  "authorization_servers": ["https://blog.js.gripe/"],
   "scopes_supported": [],
   "bearer_methods_supported": [],
   "resource_documentation": "https://blog.js.gripe/auth.md"
