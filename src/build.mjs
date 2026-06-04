@@ -501,6 +501,8 @@ async function writeRobots(site) {
   const body = `# Claude is not welcome here because this site owner does not welcome
 # unethical AI crawlers that freely scrape sites while arbitrarily
 # banning user accounts.
+Content-Signal: ai-train=no, search=yes, ai-input=yes
+
 User-agent: ClaudeBot
 Disallow: /
 
@@ -563,8 +565,11 @@ async function writeCloudflareFiles() {
   const headers = `/*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), tools=(self)
   Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+/
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/agent-skills/index.json>; rel="service-desc"; type="application/json", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </auth.md>; rel="service-doc"; type="text/markdown"
 
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
