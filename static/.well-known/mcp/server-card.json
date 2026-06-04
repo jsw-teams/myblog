@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "0.1",
+  "serverInfo": {
+    "name": "Blog.js.gripe",
+    "version": "1.0.0"
+  },
+  "transports": [
+    {
+      "type": "webmcp",
+      "endpoint": "https://blog.js.gripe/"
+    }
+  ],
+  "capabilities": {
+    "tools": [
+      {
+        "name": "search_public_posts",
+        "description": "Search public blog posts by keyword."
+      },
+      {
+        "name": "list_discovery_resources",
+        "description": "List machine-readable discovery resources published by the site."
+      }
+    ],
+    "resources": [
+      "https://blog.js.gripe/llms.txt",
+      "https://blog.js.gripe/llms-full.txt",
+      "https://blog.js.gripe/.well-known/api-catalog"
+    ]
+  },
+  "auth": {
+    "type": "none",
+    "metadata": "https://blog.js.gripe/auth.md"
+  }
+}

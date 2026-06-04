@@ -1,0 +1,9 @@
+{
+  "issuer": "https://blog.js.gripe/",
+  "jwks_uri": "https://blog.js.gripe/.well-known/jwks.json",
+  "grant_types_supported": [],
+  "response_types_supported": [],
+  "scopes_supported": [],
+  "subject_types_supported": [],
+  "id_token_signing_alg_values_supported": []
+}

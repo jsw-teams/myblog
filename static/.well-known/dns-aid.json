@@ -1,0 +1,26 @@
+{
+  "note": "DNS-AID records must be published in the authoritative DNS zone for blog.js.gripe; this static file documents the records this site expects.",
+  "records": [
+    {
+      "owner": "_index._agents.blog.js.gripe",
+      "type": "HTTPS",
+      "svc_priority": 1,
+      "target_name": ".",
+      "svc_params": {
+        "alpn": ["h2", "http/1.1"],
+        "endpoint": "https://blog.js.gripe/.well-known/agent-skills/index.json"
+      }
+    },
+    {
+      "owner": "_mcp._agents.blog.js.gripe",
+      "type": "HTTPS",
+      "svc_priority": 1,
+      "target_name": ".",
+      "svc_params": {
+        "alpn": ["h2", "http/1.1"],
+        "endpoint": "https://blog.js.gripe/.well-known/mcp/server-card.json"
+      }
+    }
+  ],
+  "dnssec_required": true
+}

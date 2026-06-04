@@ -470,6 +470,98 @@
     });
   }
 
+  function setupWebMcp() {
+    var modelContext = navigator.modelContext;
+    if (!modelContext || typeof modelContext.provideContext !== "function") return;
+
+    function searchPublicPosts(input) {
+      var query = String(input && input.query || "").trim();
+      var locale = supported.indexOf(input && input.locale) >= 0 ? input.locale : preferredLocale();
+      if (!query) return Promise.resolve({ locale: locale, results: [] });
+
+      var tokens = normalizeText(query).split(" ").filter(Boolean);
+      return fetch("/assets/search-index." + encodeURIComponent(locale) + ".json", { credentials: "same-origin" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Search index request failed");
+          return response.json();
+        })
+        .then(function (data) {
+          var limit = Math.max(1, Math.min(Number(input && input.limit) || 10, 30));
+          var results = (Array.isArray(data) ? data : [])
+            .map(function (entry) {
+              return { entry: entry, score: scoreEntry(entry, tokens) };
+            })
+            .filter(function (item) {
+              return item.score > 0;
+            })
+            .sort(function (a, b) {
+              return b.score - a.score || String(b.entry.date).localeCompare(String(a.entry.date));
+            })
+            .slice(0, limit)
+            .map(function (item) {
+              return {
+                title: item.entry.title,
+                description: item.entry.description,
+                url: new URL(item.entry.url, window.location.origin).href,
+                date: item.entry.date,
+                category: item.entry.category,
+                tags: item.entry.tags || []
+              };
+            });
+          return { locale: locale, query: query, results: results };
+        });
+    }
+
+    try {
+      modelContext.provideContext({
+        name: "blog-js-gripe",
+        description: "Public blog discovery and search tools for blog.js.gripe.",
+        tools: [
+          {
+            name: "search_public_posts",
+            description: "Search public blog posts by keyword and return matching article URLs.",
+            inputSchema: {
+              type: "object",
+              properties: {
+                query: { type: "string", minLength: 1 },
+                locale: { type: "string", enum: supported },
+                limit: { type: "integer", minimum: 1, maximum: 30, default: 10 }
+              },
+              required: ["query"]
+            },
+            execute: searchPublicPosts
+          },
+          {
+            name: "list_discovery_resources",
+            description: "List machine-readable discovery resources published by this site.",
+            inputSchema: {
+              type: "object",
+              properties: {},
+              additionalProperties: false
+            },
+            execute: function () {
+              return Promise.resolve({
+                resources: [
+                  "/.well-known/api-catalog",
+                  "/.well-known/agent-skills/index.json",
+                  "/.well-known/mcp/server-card.json",
+                  "/.well-known/oauth-protected-resource",
+                  "/auth.md",
+                  "/llms.txt",
+                  "/llms-full.txt"
+                ].map(function (path) {
+                  return new URL(path, window.location.origin).href;
+                })
+              });
+            }
+          }
+        ]
+      });
+    } catch (error) {
+      return;
+    }
+  }
+
   function loadMirroredComments(root) {
     var status = root.querySelector("[data-comments-status]");
     var repo = root.getAttribute("data-utterances-repo") || "";
@@ -584,4 +676,5 @@
   setupArticleAudioTracks();
   setupArticleCaptionTracks();
   setupUtterancesComments();
+  setupWebMcp();
 })();

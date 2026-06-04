@@ -4,6 +4,9 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Content-Signal: ai-train=no, search=yes, ai-input=yes
 
+/
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/agent-skills/index.json>; rel="service-desc"; type="application/json", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </auth.md>; rel="service-doc"; type="text/markdown"
+
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
   X-Content-Type-Options: nosniff
@@ -21,3 +24,52 @@
 /llms-full.txt
   Content-Type: text/plain; charset=utf-8
   Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+/.well-known/api-catalog
+  Content-Type: application/linkset+json; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+/.well-known/oauth-authorization-server
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/.well-known/openid-configuration
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/.well-known/oauth-protected-resource
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/.well-known/mcp/server-card.json
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/.well-known/agent-skills/index.json
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/auth.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/openapi.json
+  Content-Type: application/vnd.oai.openapi+json; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/.well-known/status.json
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/.well-known/jwks.json
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/.well-known/dns-aid.json
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/.well-known/agent-skills/*.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Content-Type-Options: nosniff
