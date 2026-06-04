@@ -266,7 +266,7 @@ async function loadPosts() {
       markdownBody: parsed.content.replace(moreMarker, "").trim(),
       html: renderMarkdown(parsed.content, baseDir, contentKey),
       url: `/${locale}/posts/${slug}/`,
-      markdownUrl: `/markdown/${locale}/posts/${slug}.md`
+      markdownUrl: `/md/${locale}/posts/${slug}.md`
     });
   }
   return posts.sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title));
@@ -571,7 +571,7 @@ async function writeCloudflareFiles() {
   X-Content-Type-Options: nosniff
   Content-Signal: ai-train=no, search=yes, ai-input=yes
 
-/markdown/*
+/md/*
   Content-Type: text/markdown; charset=utf-8
   X-Content-Type-Options: nosniff
   Content-Signal: ai-train=no, search=yes, ai-input=yes

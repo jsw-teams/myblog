@@ -40,6 +40,12 @@ const headers = await fs.readFile(path.join(publicDir, "_headers"), "utf8");
 if (!hasHeaderBlock(headers, "/sitemap.xml", /^\s*Content-Type:\s*application\/xml;\s*charset=utf-8\s*$/im)) {
   throw new Error("_headers must serve /sitemap.xml as application/xml");
 }
+if (!hasHeaderBlock(headers, "/md/*", /^\s*Content-Type:\s*text\/markdown;\s*charset=utf-8\s*$/im)) {
+  throw new Error("_headers must serve /md/* as text/markdown");
+}
+if (headers.includes("/markdown/*")) {
+  throw new Error("_headers must not use the retired /markdown/* mirror path");
+}
 
 const redirects = await fs.readFile(path.join(publicDir, "_redirects"), "utf8");
 if (/\/\*\s+\/index\.html\s+200/.test(redirects)) {
@@ -65,6 +71,26 @@ for (const locale of locales) {
   if (!fsSync.existsSync(searchIndex)) throw new Error(`Missing search index for ${locale}`);
   const entries = JSON.parse(await fs.readFile(searchIndex, "utf8"));
   if (!Array.isArray(entries)) throw new Error(`Search index for ${locale} must be an array`);
+}
+
+const recoverySlug = "codex-desktop-browser-computer-use-sandbox-recovery";
+const llms = await fs.readFile(path.join(publicDir, "llms.txt"), "utf8");
+if (llms.includes("/markdown/")) {
+  throw new Error("llms.txt must not point at retired /markdown/ mirrors");
+}
+for (const locale of locales) {
+  const markdownPath = path.join(publicDir, "md", locale, "posts", `${recoverySlug}.md`);
+  if (!fsSync.existsSync(markdownPath)) {
+    throw new Error(`Missing markdown mirror: /md/${locale}/posts/${recoverySlug}.md`);
+  }
+  const markdown = await fs.readFile(markdownPath, "utf8");
+  if (!markdown.startsWith("# ")) {
+    throw new Error(`Markdown mirror has invalid content: /md/${locale}/posts/${recoverySlug}.md`);
+  }
+  const publicUrl = `https://blog.js.gripe/md/${locale}/posts/${recoverySlug}.md`;
+  if (!llms.includes(publicUrl)) {
+    throw new Error(`llms.txt missing markdown mirror URL: ${publicUrl}`);
+  }
 }
 
 console.log(`Checked ${htmlFiles.length} HTML files and required static outputs.`);

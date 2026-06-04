@@ -207,7 +207,7 @@ export async function loadPosts() {
       markdownBody: parsed.content.replace(moreMarker, "").trim(),
       html: renderMarkdown(parsed.content, baseDir, contentKey),
       url: `/${locale}/posts/${slug}/`,
-      markdownUrl: `/markdown/${locale}/posts/${slug}.md`
+      markdownUrl: `/md/${locale}/posts/${slug}.md`
     });
   }
   posts.sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title));

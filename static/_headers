@@ -9,7 +9,7 @@
   X-Content-Type-Options: nosniff
   Content-Signal: ai-train=no, search=yes, ai-input=yes
 
-/markdown/*
+/md/*
   Content-Type: text/markdown; charset=utf-8
   X-Content-Type-Options: nosniff
   Content-Signal: ai-train=no, search=yes, ai-input=yes
