@@ -1,4 +1,6 @@
-# Agent authentication
+# Auth.md
+
+Agent authentication and registration metadata for Blog.js.gripe.
 
 Blog.js.gripe is a public, read-only blog. Public pages, feeds, search indexes, `llms.txt`, and discovery metadata do not require agent registration or OAuth credentials.
 

@@ -471,9 +471,6 @@
   }
 
   function setupWebMcp() {
-    var modelContext = navigator.modelContext;
-    if (!modelContext || typeof modelContext.provideContext !== "function") return;
-
     function searchPublicPosts(input) {
       var query = String(input && input.query || "").trim();
       var locale = supported.indexOf(input && input.locale) >= 0 ? input.locale : preferredLocale();
@@ -512,54 +509,77 @@
         });
     }
 
+    var tools = [
+      {
+        name: "search_public_posts",
+        title: "Search public posts",
+        description: "Search public blog posts by keyword and return matching article URLs.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            query: { type: "string", minLength: 1 },
+            locale: { type: "string", enum: supported },
+            limit: { type: "integer", minimum: 1, maximum: 30, default: 10 }
+          },
+          required: ["query"]
+        },
+        annotations: { readOnlyHint: true, untrustedContentHint: true },
+        execute: searchPublicPosts
+      },
+      {
+        name: "list_discovery_resources",
+        title: "List discovery resources",
+        description: "List machine-readable discovery resources published by this site.",
+        inputSchema: {
+          type: "object",
+          properties: {},
+          additionalProperties: false
+        },
+        annotations: { readOnlyHint: true },
+        execute: function () {
+          return Promise.resolve({
+            resources: [
+              "/.well-known/api-catalog",
+              "/.well-known/agent-skills/index.json",
+              "/.well-known/mcp/server-card.json",
+              "/.well-known/oauth-protected-resource",
+              "/auth.md",
+              "/llms.txt",
+              "/llms-full.txt"
+            ].map(function (path) {
+              return new URL(path, window.location.origin).href;
+            })
+          });
+        }
+      }
+    ];
+    var registered = false;
+
     try {
-      modelContext.provideContext({
+      if (document.modelContext && typeof document.modelContext.registerTool === "function") {
+        tools.forEach(function (tool) {
+          document.modelContext.registerTool(tool);
+        });
+        registered = true;
+      }
+    } catch (error) {
+      registered = false;
+    }
+
+    try {
+      if (navigator.modelContext && typeof navigator.modelContext.provideContext === "function") {
+        navigator.modelContext.provideContext({
         name: "blog-js-gripe",
         description: "Public blog discovery and search tools for blog.js.gripe.",
-        tools: [
-          {
-            name: "search_public_posts",
-            description: "Search public blog posts by keyword and return matching article URLs.",
-            inputSchema: {
-              type: "object",
-              properties: {
-                query: { type: "string", minLength: 1 },
-                locale: { type: "string", enum: supported },
-                limit: { type: "integer", minimum: 1, maximum: 30, default: 10 }
-              },
-              required: ["query"]
-            },
-            execute: searchPublicPosts
-          },
-          {
-            name: "list_discovery_resources",
-            description: "List machine-readable discovery resources published by this site.",
-            inputSchema: {
-              type: "object",
-              properties: {},
-              additionalProperties: false
-            },
-            execute: function () {
-              return Promise.resolve({
-                resources: [
-                  "/.well-known/api-catalog",
-                  "/.well-known/agent-skills/index.json",
-                  "/.well-known/mcp/server-card.json",
-                  "/.well-known/oauth-protected-resource",
-                  "/auth.md",
-                  "/llms.txt",
-                  "/llms-full.txt"
-                ].map(function (path) {
-                  return new URL(path, window.location.origin).href;
-                })
-              });
-            }
-          }
-        ]
-      });
+          tools: tools
+        });
+        registered = true;
+      }
     } catch (error) {
-      return;
+      registered = false;
     }
+
+    window.JSGripeWebMcpReady = registered;
   }
 
   function loadMirroredComments(root) {

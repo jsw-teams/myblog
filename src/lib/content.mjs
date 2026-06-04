@@ -462,6 +462,8 @@ export function buildRobotsTxt(site) {
   return `# Claude is not welcome here because this site owner does not welcome
 # unethical AI crawlers that freely scrape sites while arbitrarily
 # banning user accounts.
+Content-Signal: ai-train=no, search=yes, ai-input=yes
+
 User-agent: ClaudeBot
 Disallow: /
 
@@ -470,8 +472,6 @@ Disallow: /
 
 User-agent: *
 Allow: /
-
-Content-Signal: ai-train=no, search=yes, ai-input=yes
 
 Sitemap: ${absoluteUrl(site, "/sitemap.xml")}
 `;
