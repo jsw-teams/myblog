@@ -47,6 +47,7 @@
 
   var preferred = preferredLocale();
   document.documentElement.setAttribute("data-preferred-locale", preferred);
+  setupWebMcp();
 
   if (document.body && document.body.getAttribute("data-root-language-picker") === "true") {
     var target = "/" + preferred + "/";
@@ -696,5 +697,4 @@
   setupArticleAudioTracks();
   setupArticleCaptionTracks();
   setupUtterancesComments();
-  setupWebMcp();
 })();
