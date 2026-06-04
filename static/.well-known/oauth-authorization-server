@@ -8,10 +8,14 @@
   "scopes_supported": ["public:read"],
   "token_endpoint_auth_methods_supported": [],
   "agent_auth": {
-    "register_uri": "https://blog.js.gripe/auth.md",
-    "supported_identity_types": ["anonymous", "none"],
-    "credential_types": ["none"],
-    "claims_uri": "https://blog.js.gripe/auth.md#authentication",
-    "revocation_uri": "https://blog.js.gripe/auth.md#authentication"
+    "skill": "https://workos.com/auth.md",
+    "register_uri": "https://blog.js.gripe/auth.md#standalone-registration-flow",
+    "claim_uri": "https://blog.js.gripe/auth.md#claims",
+    "revocation_uri": "https://blog.js.gripe/auth.md#revocation",
+    "identity_types_supported": ["anonymous"],
+    "anonymous": {
+      "credential_types_supported": ["none"]
+    },
+    "events_supported": []
   }
 }

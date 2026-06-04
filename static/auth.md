@@ -36,6 +36,8 @@ Protected resource metadata: https://blog.js.gripe/.well-known/oauth-protected-r
 
 Authorization server metadata: https://blog.js.gripe/.well-known/oauth-authorization-server
 
+Agent auth metadata: https://blog.js.gripe/.well-known/oauth-authorization-server#agent_auth
+
 Scopes supported:
 
 - `public:read`: read public blog pages, feeds, search indexes, and discovery metadata.
