@@ -181,7 +181,7 @@ export function renderLayout({
   <meta name="twitter:description" content="${escapeHtml(description)}">
   <meta name="twitter:image" content="${escapeHtml(imageUrl)}">
   <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}">
-  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/assets/site.css?v=20260605-video-controls">
   ${renderJsonLd(jsonLd)}
 </head>
 <body${renderAttributes(bodyAttrs)}>
