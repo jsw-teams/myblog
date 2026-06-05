@@ -36,6 +36,18 @@ function renderJsonLd(items = []) {
   return `<script type="application/ld+json">${escapeJson(flat.length === 1 ? flat[0] : flat)}</script>`;
 }
 
+function schemaDateTime(value, timezone = "+08:00") {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString();
+  }
+  const text = String(value || "").trim();
+  if (/^\d{4}-\d{2}-\d{2}T.+(?:Z|[+-]\d{2}:?\d{2})$/.test(text)) {
+    return text.replace(/([+-]\d{2})(\d{2})$/, "$1:$2");
+  }
+  const date = text.match(/^\d{4}-\d{2}-\d{2}/)?.[0];
+  return date ? `${date}T00:00:00${timezone}` : undefined;
+}
+
 function imageType(imageUrl = "") {
   const path = new URL(imageUrl, "https://example.invalid").pathname.toLowerCase();
   if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg";
@@ -400,7 +412,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
     "@type": "VideoObject",
     name: post.media.title || post.title,
     description: post.media.description || post.description,
-    uploadDate: post.date,
+    uploadDate: schemaDateTime(post.media.uploadDate || post.date),
     thumbnailUrl: post.media.poster ? absoluteUrl(site, post.media.poster) : absoluteUrl(site, post.ogImage),
     contentUrl: absoluteUrl(site, post.media.video),
     embedUrl: post.media.embed ? absoluteUrl(site, post.media.embed) : undefined,
