@@ -63,3 +63,11 @@ npm run serve
 推送到 `main` 后，GitHub Actions 会运行 `.github/workflows/pages.yml`，执行 `npm ci`、`npm run build` 和 `npm run check`，然后把 `public/` 发布到 GitHub Pages。
 
 GitHub Pages 的自定义域名为 `blog.js.gripe`，由 `static/CNAME` 写入构建输出。
+
+## Cloudflare CDN 缓存
+
+GitHub Pages 不支持通过仓库里的 `_headers` 文件设置响应头。若前面套 Cloudflare CDN，建议在 Cloudflare Cache Rules 中配置：
+
+- `blog.js.gripe/assets/*`、`blog.js.gripe/media/*`、`blog.js.gripe/md/*`：Cache Everything，Edge TTL 30 天或更长。
+- `blog.js.gripe/*.xml`、`blog.js.gripe/*.txt`、`blog.js.gripe/*.json`：Cache Everything，Edge TTL 1 小时到 1 天。
+- HTML 页面：保持默认或设置较短 Edge TTL，避免文章更新后长时间不刷新。
