@@ -58,31 +58,8 @@ npm run serve
 
 预览服务只按静态文件返回内容，不启用 SPA fallback。
 
-## 部署到 Cloudflare Pages
+## 部署到 GitHub Pages
 
-构建输出目录为 `public/`。可以直接上传 `public/`，也可以使用 Wrangler：
+推送到 `main` 后，GitHub Actions 会运行 `.github/workflows/pages.yml`，执行 `npm ci`、`npm run build` 和 `npm run check`，然后把 `public/` 发布到 GitHub Pages。
 
-```bash
-npm run deploy
-```
-
-`npm run deploy` 会先执行 `build` 和 `check`，然后把 `public/` 部署到 Cloudflare Pages 的 `main` 分支。当前 Pages 项目的生产分支也是 `main`。
-
-也可以显式执行同一个生产部署命令：
-
-```bash
-npm run deploy:production
-```
-
-Cloudflare Pages 的输出目录请设置为 `public`。
-
-如果使用 Cloudflare Pages 连接 GitHub 仓库自动部署，项目设置请填：
-
-```text
-Framework preset: Astro
-Build command: npm run pages:build
-Build output directory: public
-Root directory: /
-```
-
-不要把 Build command 设置成 `npm install`。Cloudflare Pages 会先自动安装依赖；Build command 必须生成 `public/`，否则会报 `Error: Output directory "public" not found.`。
+GitHub Pages 的自定义域名为 `blog.js.gripe`，由 `static/CNAME` 写入构建输出。

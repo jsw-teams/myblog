@@ -60,9 +60,6 @@ async function copyBaseFiles() {
   await ensureDir(publicAssetsDir);
   await fs.copyFile(path.join(__dirname, "styles.css"), path.join(publicAssetsDir, "site.css"));
   await fs.copyFile(path.join(__dirname, "client.js"), path.join(publicAssetsDir, "client.js"));
-  await fs.copyFile(path.join(__dirname, "privacy-plugin-loader.js"), path.join(publicAssetsDir, "privacy-plugin-loader.js"));
-  await fs.copyFile(path.join(__dirname, "privacy-plugins.json"), path.join(publicAssetsDir, "privacy-plugins.json"));
-  await fs.copyFile(path.join(__dirname, "privacy-plugin-banner.css"), path.join(publicAssetsDir, "privacy-plugin-banner.css"));
 }
 
 function normalizeDate(value, fallback = today) {

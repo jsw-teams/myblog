@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "assets": "node src/assets.mjs",
-    "sync:cookies": "node /opt/privacy-js-gripe/scripts/sync-to-projects.mjs",
     "prebuild": "node src/assets.mjs",
     "build": "astro build",
     "pages:build": "npm run build && npm run check",
@@ -15,11 +14,7 @@
     "news:mvp:upload-assets": "node scripts/news-mvp/upload-myfiles-assets.mjs",
     "postbuild": "node scripts/finalize-astro-build.mjs",
     "serve": "astro preview --host 127.0.0.1",
-    "check": "node scripts/check-build.mjs",
-    "predeploy": "npm run build && npm run check",
-    "deploy": "wrangler pages deploy public --project-name blog-js-gripe --branch main",
-    "predeploy:production": "npm run build && npm run check",
-    "deploy:production": "wrangler pages deploy public --project-name blog-js-gripe --branch main"
+    "check": "node scripts/check-build.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.18",
@@ -37,7 +32,6 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "wrangler": "^4.85.0"
+    "typescript": "^5.9.3"
   }
 }
