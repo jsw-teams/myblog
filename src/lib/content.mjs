@@ -10,6 +10,7 @@ import { DEFAULT_LOCALE, LOCALES, formatDate, localeLabel, t } from "../i18n.mjs
 import {
   absoluteUrl,
   escapeHtml,
+  basePath,
   renderAboutPage,
   renderArchivePage,
   renderHomePage,
@@ -318,7 +319,7 @@ export async function loadBlogData() {
 export async function buildHtmlPages() {
   const { site, posts, pages } = await loadBlogData();
   const routes = [];
-  const add = (url, html) => routes.push({ url, html });
+  const add = (url, html) => routes.push({ url, html: applyBasePath(html) });
 
   add("/", renderRootPage({ site }));
 
@@ -398,7 +399,15 @@ export async function buildHtmlPages() {
 
 export async function buildNotFoundHtml() {
   const site = await readSiteConfig();
-  return renderNotFoundPage({ site });
+  return applyBasePath(renderNotFoundPage({ site }));
+}
+
+function applyBasePath(html) {
+  if (!basePath) return html;
+  return html.replace(
+    /\b(href|src|poster|data-video-src|content)=("?)\/(?!\/|myblog\/)([^"#?][^"]*)/g,
+    (_match, attr, quote, pathValue) => `${attr}=${quote}${basePath}/${pathValue}`
+  );
 }
 
 function renderVisualSitemap({ site, routes }) {

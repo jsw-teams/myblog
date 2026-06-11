@@ -1,5 +1,14 @@
 import { formatDate, htmlLang, localeLabel, LOCALES, t } from "./i18n.mjs";
 
+export const basePath = process.env.GITHUB_PAGES === "true" ? "/myblog" : "";
+
+export function withBase(urlPath) {
+  const value = String(urlPath || "");
+  if (!basePath || !value.startsWith("/") || value.startsWith("//")) return value;
+  if (value === basePath || value.startsWith(`${basePath}/`)) return value;
+  return `${basePath}${value}`;
+}
+
 export function escapeHtml(value = "") {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -68,22 +77,22 @@ function renderNav(site, locale, current) {
   const searchCurrentAttr = current === "search" ? ' aria-current="page"' : "";
   const localeLinks = LOCALES.map((entryLocale) => {
     const currentAttr = entryLocale === locale ? ' aria-current="page"' : "";
-    return `<a href="/${entryLocale}/" data-locale-choice="${entryLocale}"${currentAttr}>${escapeHtml(localeLabel(entryLocale))}</a>`;
+    return `<a href="${withBase(`/${entryLocale}/`)}" data-locale-choice="${entryLocale}"${currentAttr}>${escapeHtml(localeLabel(entryLocale))}</a>`;
   }).join("");
 
   return `<header class="site-header">
-    <a class="brand" href="/${locale}/" data-locale-choice="${locale}">
+    <a class="brand" href="${withBase(`/${locale}/`)}" data-locale-choice="${locale}">
       <span class="brand-mark" aria-hidden="true">JS</span>
       <span>${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</span>
     </a>
     <nav class="site-nav" aria-label="${escapeHtml(t(locale, "home"))}">
       ${navItems.map(([key, href]) => {
         const currentAttr = current === key ? ' aria-current="page"' : "";
-        return `<a href="${href}"${currentAttr}>${escapeHtml(t(locale, key))}</a>`;
+        return `<a href="${withBase(href)}"${currentAttr}>${escapeHtml(t(locale, key))}</a>`;
       }).join("")}
     </nav>
     <nav class="utility-nav" aria-label="${escapeHtml(t(locale, "search"))}">
-      <a class="search-action" href="/${locale}/search/"${searchCurrentAttr}><span aria-hidden="true">⌕</span><span>${escapeHtml(t(locale, "search"))}</span></a>
+      <a class="search-action" href="${withBase(`/${locale}/search/`)}"${searchCurrentAttr}><span aria-hidden="true">⌕</span><span>${escapeHtml(t(locale, "search"))}</span></a>
     </nav>
     <nav class="language-nav" aria-label="${escapeHtml(t(locale, "languageSwitch"))}">
       ${localeLinks}
@@ -94,7 +103,7 @@ function renderNav(site, locale, current) {
 function renderFooter(site, locale) {
   return `<footer class="site-footer">
     <p>&copy; ${new Date().getUTCFullYear()} ${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</p>
-    <p><a href="/${locale}/feed.xml">${escapeHtml(t(locale, "feed"))}</a> <span aria-hidden="true">/</span> <a href="/sitemap/">${escapeHtml(t(locale, "sitemap"))}</a></p>
+    <p><a href="${withBase(`/${locale}/feed.xml`)}">${escapeHtml(t(locale, "feed"))}</a> <span aria-hidden="true">/</span> <a href="${withBase("/sitemap/")}">${escapeHtml(t(locale, "sitemap"))}</a></p>
   </footer>`;
 }
 
@@ -160,12 +169,12 @@ export function renderLayout({
   <meta name="description" content="${escapeHtml(description)}">
   <link rel="canonical" href="${escapeHtml(canonical)}">
   ${renderAlternateLinks(site, alternates)}
-  <link rel="icon" href="/assets/mascot-laptop.png" type="image/png">
-  <link rel="alternate icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" href="/favicon-32x32.png" type="image/png">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="alternate" type="application/rss+xml" title="${escapeHtml(siteName)}" href="/${locale}/feed.xml">
+  <link rel="icon" href="${withBase("/assets/mascot-laptop.png")}" type="image/png">
+  <link rel="alternate icon" href="${withBase("/favicon.ico")}" sizes="any">
+  <link rel="icon" href="${withBase("/favicon-32x32.png")}" type="image/png">
+  <link rel="apple-touch-icon" href="${withBase("/apple-touch-icon.png")}">
+  <link rel="manifest" href="${withBase("/site.webmanifest")}">
+  <link rel="alternate" type="application/rss+xml" title="${escapeHtml(siteName)}" href="${withBase(`/${locale}/feed.xml`)}">
   <meta property="og:title" content="${escapeHtml(fullTitle)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:type" content="${escapeHtml(ogType)}">
@@ -181,7 +190,8 @@ export function renderLayout({
   <meta name="twitter:description" content="${escapeHtml(description)}">
   <meta name="twitter:image" content="${escapeHtml(imageUrl)}">
   <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}">
-  <link rel="stylesheet" href="/assets/site.css?v=20260605-video-controls">
+  <script>window.JSGripeBasePath=${JSON.stringify(basePath)};</script>
+  <link rel="stylesheet" href="${withBase("/assets/site.css?v=20260605-video-controls")}">
   ${renderJsonLd(jsonLd)}
 </head>
 <body${renderAttributes(bodyAttrs)}>
@@ -189,7 +199,7 @@ export function renderLayout({
   ${renderNav(site, locale, current)}
   ${main}
   ${renderFooter(site, locale)}
-  <script src="/assets/client.js?v=20260603-region" defer></script>
+  <script src="${withBase("/assets/client.js?v=20260603-region")}" defer></script>
 </body>
 </html>`;
 }

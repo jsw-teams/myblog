@@ -36,6 +36,7 @@ const publicDir = path.join(rootDir, "public");
 const publicAssetsDir = path.join(publicDir, "assets");
 const moreMarker = /<!--\s*more\s*-->/i;
 const today = "2026-04-27";
+const basePath = process.env.GITHUB_PAGES === "true" ? "/myblog" : "";
 
 const generatedPages = [];
 
@@ -84,7 +85,7 @@ async function writeFileEnsured(file, contents) {
 
 async function writeHtml(urlPath, html, options = {}) {
   const output = routeToFile(urlPath);
-  const minified = await minify(html, {
+  const minified = await minify(applyBasePath(html), {
     collapseWhitespace: true,
     removeComments: true,
     minifyCSS: true,
@@ -100,6 +101,14 @@ async function writeHtml(urlPath, html, options = {}) {
       alternates: options.alternates ?? []
     });
   }
+}
+
+function applyBasePath(html) {
+  if (!basePath) return html;
+  return html.replace(
+    /\b(href|src|poster|data-video-src|content)=("?)\/(?!\/|myblog\/)([^"#?][^"]*)/g,
+    (_match, attr, quote, pathValue) => `${attr}=${quote}${basePath}/${pathValue}`
+  );
 }
 
 function isExternalUrl(value) {

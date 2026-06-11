@@ -1,6 +1,12 @@
 (function () {
   var supported = ["zh-CN", "zh-TW", "en"];
   var storageKey = "blog.js.gripe.locale";
+  var basePath = String(window.JSGripeBasePath || "").replace(/\/$/, "");
+
+  function withBase(path) {
+    if (!basePath || path.indexOf("/") !== 0 || path.indexOf(basePath + "/") === 0) return path;
+    return basePath + path;
+  }
 
   function storedLocale() {
     try {
@@ -50,7 +56,7 @@
   setupWebMcp();
 
   if (document.body && document.body.getAttribute("data-root-language-picker") === "true") {
-    var target = "/" + preferred + "/";
+    var target = withBase("/" + preferred + "/");
     window.location.replace(target);
   }
 
@@ -141,7 +147,7 @@
     }).join("");
     var meta = [formatDate(entry.date, locale), entry.category].filter(Boolean).map(escapeHtml).join(" · ");
     return '<article class="post-card search-card">' +
-      '<h3><a href="' + escapeHtml(entry.url) + '">' + escapeHtml(entry.title) + "</a></h3>" +
+      '<h3><a href="' + escapeHtml(withBase(entry.url)) + '">' + escapeHtml(entry.title) + "</a></h3>" +
       '<p class="post-card-meta">' + meta + "</p>" +
       '<p>' + escapeHtml(entry.description) + "</p>" +
       (tags ? '<div class="search-tags">' + tags + "</div>" : "") +
@@ -226,7 +232,7 @@
       input.value = query;
     }
 
-    fetch("/assets/search-index." + encodeURIComponent(locale) + ".json", { credentials: "same-origin" })
+    fetch(withBase("/assets/search-index." + encodeURIComponent(locale) + ".json"), { credentials: "same-origin" })
       .then(function (response) {
         if (!response.ok) throw new Error("Search index request failed");
         return response.json();
@@ -478,7 +484,7 @@
       if (!query) return Promise.resolve({ locale: locale, results: [] });
 
       var tokens = normalizeText(query).split(" ").filter(Boolean);
-      return fetch("/assets/search-index." + encodeURIComponent(locale) + ".json", { credentials: "same-origin" })
+      return fetch(withBase("/assets/search-index." + encodeURIComponent(locale) + ".json"), { credentials: "same-origin" })
         .then(function (response) {
           if (!response.ok) throw new Error("Search index request failed");
           return response.json();
@@ -500,7 +506,7 @@
               return {
                 title: item.entry.title,
                 description: item.entry.description,
-                url: new URL(item.entry.url, window.location.origin).href,
+                url: new URL(withBase(item.entry.url), window.location.origin).href,
                 date: item.entry.date,
                 category: item.entry.category,
                 tags: item.entry.tags || []

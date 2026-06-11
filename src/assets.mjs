@@ -8,6 +8,12 @@ const publicDir = path.join(rootDir, "static");
 const assetsDir = path.join(publicDir, "assets");
 const sourceDir = path.join(rootDir, "source-assets");
 const cacheDir = path.join(rootDir, ".cache");
+const basePath = process.env.GITHUB_PAGES === "true" ? "/myblog" : "";
+
+function withBase(urlPath) {
+  if (!basePath || !urlPath.startsWith("/")) return urlPath;
+  return `${basePath}${urlPath}`;
+}
 
 process.env.XDG_CACHE_HOME ??= cacheDir;
 process.env.FONTCONFIG_CACHE ??= path.join(cacheDir, "fontconfig");
@@ -182,18 +188,18 @@ async function writeManifest() {
   const manifest = {
     name: "技诉 Blog",
     short_name: "技诉",
-    start_url: "/",
+    start_url: withBase("/"),
     display: "minimal-ui",
     background_color: "#f8f4ec",
     theme_color: "#141414",
     icons: [
       {
-        src: "/assets/icon-192.png",
+        src: withBase("/assets/icon-192.png"),
         sizes: "192x192",
         type: "image/png"
       },
       {
-        src: "/assets/icon-512.png",
+        src: withBase("/assets/icon-512.png"),
         sizes: "512x512",
         type: "image/png"
       }
