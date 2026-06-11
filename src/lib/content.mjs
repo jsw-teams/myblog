@@ -319,7 +319,7 @@ export async function loadBlogData() {
 export async function buildHtmlPages() {
   const { site, posts, pages } = await loadBlogData();
   const routes = [];
-  const add = (url, html) => routes.push({ url, html: applyBasePath(html) });
+  const add = (url, html) => routes.push({ url, html: rewriteRelativePaths(html, url) });
 
   add("/", renderRootPage({ site }));
 
@@ -399,15 +399,17 @@ export async function buildHtmlPages() {
 
 export async function buildNotFoundHtml() {
   const site = await readSiteConfig();
-  return applyBasePath(renderNotFoundPage({ site }));
+  return rewriteRelativePaths(renderNotFoundPage({ site }), "/404.html");
 }
 
-function applyBasePath(html) {
-  if (!basePath) return html;
-  return html.replace(
-    /\b(href|src|poster|data-video-src|content)=("?)\/(?!\/|myblog\/)([^"#?][^"]*)/g,
-    (_match, attr, quote, pathValue) => `${attr}=${quote}${basePath}/${pathValue}`
-  );
+function rewriteRelativePaths(html, urlPath) {
+  const fromDir = urlPath.endsWith("/") ? urlPath : path.posix.dirname(urlPath);
+  return html.replace(/\b(href|src|poster|data-video-src)=["']\/(?!\/)([^"']+)["']/g, (match, attr, target) => {
+    const cleanTarget = target.replace(/^\/+/, "");
+    let prefix = path.posix.relative(fromDir.replace(/^\/|\/$/g, ""), path.posix.dirname(cleanTarget));
+    if (!prefix) prefix = ".";
+    return `${attr}="${prefix}/${path.posix.basename(cleanTarget)}"`;
+  });
 }
 
 function renderVisualSitemap({ site, routes }) {

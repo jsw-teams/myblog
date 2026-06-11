@@ -1,6 +1,6 @@
 import { formatDate, htmlLang, localeLabel, LOCALES, t } from "./i18n.mjs";
 
-export const basePath = process.env.GITHUB_PAGES === "true" ? "/myblog" : "";
+export const basePath = "";
 
 export function withBase(urlPath) {
   const value = String(urlPath || "");

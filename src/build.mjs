@@ -36,7 +36,7 @@ const publicDir = path.join(rootDir, "public");
 const publicAssetsDir = path.join(publicDir, "assets");
 const moreMarker = /<!--\s*more\s*-->/i;
 const today = "2026-04-27";
-const basePath = process.env.GITHUB_PAGES === "true" ? "/myblog" : "";
+const basePath = "";
 
 const generatedPages = [];
 
@@ -85,7 +85,7 @@ async function writeFileEnsured(file, contents) {
 
 async function writeHtml(urlPath, html, options = {}) {
   const output = routeToFile(urlPath);
-  const minified = await minify(applyBasePath(html), {
+  const minified = await minify(rewriteRelativePaths(html, urlPath), {
     collapseWhitespace: true,
     removeComments: true,
     minifyCSS: true,
@@ -103,12 +103,14 @@ async function writeHtml(urlPath, html, options = {}) {
   }
 }
 
-function applyBasePath(html) {
-  if (!basePath) return html;
-  return html.replace(
-    /\b(href|src|poster|data-video-src|content)=("?)\/(?!\/|myblog\/)([^"#?][^"]*)/g,
-    (_match, attr, quote, pathValue) => `${attr}=${quote}${basePath}/${pathValue}`
-  );
+function rewriteRelativePaths(html, urlPath) {
+  const fromDir = urlPath.endsWith("/") ? urlPath : path.posix.dirname(urlPath);
+  return html.replace(/\b(href|src|poster|data-video-src)=["']\/(?!\/)([^"']+)["']/g, (match, attr, target) => {
+    const cleanTarget = target.replace(/^\/+/, "");
+    let prefix = path.posix.relative(fromDir.replace(/^\/|\/$/g, ""), path.posix.dirname(cleanTarget));
+    if (!prefix) prefix = ".";
+    return `${attr}="${prefix}/${path.posix.basename(cleanTarget)}"`;
+  });
 }
 
 function isExternalUrl(value) {
