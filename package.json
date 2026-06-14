@@ -12,7 +12,7 @@
     "news:mvp:video": "node scripts/news-mvp/render-first-video.mjs",
     "news:mvp:tts": "node scripts/news-mvp/edge-worker-tts.mjs",
     "news:mvp:upload-assets": "node scripts/news-mvp/upload-myfiles-assets.mjs",
-    "postbuild": "node scripts/finalize-astro-build.mjs",
+    "postbuild": "node scripts/finalize-astro-build.mjs && node scripts/mirror-pages-prefix.mjs",
     "serve": "astro preview --host 127.0.0.1",
     "check": "node scripts/check-build.mjs"
   },
