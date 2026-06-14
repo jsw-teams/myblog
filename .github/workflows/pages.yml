@@ -12,6 +12,8 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  CLOUDFLARE_ZONE_ID: 70df319564ed9e3e276852543234048e
+  CLOUDFLARE_PURGE_HOST: blog.js.gripe
 
 concurrency:
   group: pages
@@ -57,3 +59,15 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify Cloudflare token
+        run: |
+          curl -fsS "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_CACHE_PURGE_TOKEN }}"
+
+      - name: Purge Cloudflare cache
+        run: |
+          curl -fsS -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_CACHE_PURGE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data "{\"hosts\":[\"${CLOUDFLARE_PURGE_HOST}\"]}"
