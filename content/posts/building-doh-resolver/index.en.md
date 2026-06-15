@@ -47,7 +47,7 @@ Root system resilience and neutrality of everyday recursive answers are related 
 
 ![DNS layers and common misconceptions: root zone, ccTLD governance, recursive resolution path, and client devices are different layers](https://files.js.gripe/files/fil_iz9HBdW6dkkgw8TB6iIUERG2.png)
 
-### “No Root Servers In China” Needs Precision
+### Put Root Server Claims Back Into The Right Layer
 
 An old claim in Chinese-language Internet debates says that China has no root servers, so the domain system could fail overnight under foreign pressure. There is historical context behind that claim, but the wording is too coarse.
 
@@ -60,26 +60,7 @@ More precisely, the DNS root server system has 13 root server identifiers, from 
 
 When these layers are mixed together, “no root identifier operation” becomes “no root servers,” ccTLD governance issues become “root servers can erase a country,” and path-level pollution becomes “the root zone was rewritten.” That sounds dramatic, but it is technically inaccurate.
 
-### `.iq` And `.ly` Are Governance Cases
-
-The Iraqi `.iq` domain is often cited in early “network sovereignty” debates. It is sometimes simplified as “the United States controlled root servers and could make a country disappear.” A better reading is that `.iq` suffered from a long-running ccTLD governance and operational problem.
-
-IANA’s `.iq` delegation record shows that the domain was later redelegated to the Iraq National Communications and Media Commission. The lesson is not that root servers were switched off. The lesson is that a country-code top-level domain can become fragile when registry operation, technical contacts, and authoritative DNS are outside normal local governance or operational continuity.
-
-Libya’s `.ly` is another example of ccTLD fragility. A country-code domain depends on a stable registry, authoritative DNS, technical contacts, and governance process. If the authoritative DNS for `.ly` fails, names under `.ly` may fail even if the root system itself is healthy.
-
-For ordinary readers, think of three layers:
-
-```text
-Root zone:
-  Tells resolvers which authoritative servers handle .ly.
-
-.ly authoritative DNS:
-  Tells resolvers where example.ly points.
-
-Website servers:
-  Actually provide web, mail, or API service.
-```
+The Iraqi `.iq` and Libyan `.ly` cases are better understood as ccTLD governance, authoritative DNS, technical contact, and operational-continuity problems. They are useful reminders that ccTLD governance matters, but they should not be compressed into “root servers can erase a country.” The fuller discussion of root-zone governance, ICANN, legal jurisdiction, and network sovereignty belongs later in the afterword.
 
 ### DNS Answers Are Not Always Neutral
 
@@ -280,6 +261,52 @@ DoH does not guarantee:
 
 That is why resolver transparency matters. Instead of promising “absolute privacy,” say which segment is protected, what is logged, what is not logged, what came from local rules, and what came from upstream.
 
+## Afterword: Root Servers, ICANN, And “Network Hegemony”
+
+In Chinese-language DNS debates, one sometimes sees claims such as “whoever controls root servers controls the lifeline of the Internet” or “the United States can erase certain websites from the Earth.” The 2021 discussion around 36 Iran-related websites seized by the United States is often pulled into this framing.
+
+There is a real issue underneath: when a domain registrar, registry, hosting provider, CDN, or payment compliance provider is under a certain legal jurisdiction, court orders and sanctions can affect domains and services. But technically, translating that directly into “the United States used root servers to erase websites with one button” is an oversimplification.
+
+The 2021 case is more accurately described as a U.S. Justice Department seizure of specific domain names under court orders. It affected those domains’ registration and resolution services. It did not remove Iran’s `.ir` country-code top-level domain from the root zone, nor did ICANN reclaim a country-code TLD. Some affected outlets later continued online using `.ir` domains, which is a good clue: the event happened mainly at the specific-domain and legal-jurisdiction layer, not at the layer of removing an entire ccTLD from the public root.
+
+It helps to split the layers:
+
+```text
+Individual domain seizure:
+  A specific .com domain is locked, redirected, or taken over by a registrar,
+  registry, or court order.
+
+TLD delegation change:
+  The root zone changes delegation data such as NS, DS, or glue records for a TLD.
+
+ccTLD governance issue:
+  A country-code TLD has problems with registry operation, authoritative DNS,
+  technical contacts, or local governance process.
+
+Root server instance:
+  An anycast node deployed around the world, serving the same root-zone data.
+
+Recursive resolution path:
+  The ISP resolver, public DNS resolver, DoH resolver, and caches actually used
+  by ordinary users.
+```
+
+If only a specific domain is seized, the root zone usually does not need to change, and the TLD authoritative servers continue to work. Users may see that domain redirected to a seizure page, fail to resolve, or become locked, while other names under the same TLD remain unaffected.
+
+If a TLD-level redelegation really happens, then the root zone is involved. For example, if the manager of a ccTLD changes, the NS, DS, and glue records in the root zone are updated. Root server instances then serve the updated root-zone data. Once recursive resolver caches expire, resolvers follow the new delegation to the new TLD authoritative servers. Old authoritative servers may still run, but they are no longer part of the standard public DNS path.
+
+If a ccTLD is retired and eventually removed from the root zone, the effect is clearer: the public root no longer tells recursive resolvers where to ask for that TLD. Old authoritative servers can technically keep answering direct queries, but ordinary public DNS resolution will not naturally reach them. Unless a network uses an alternate root, a private root, or pinned old data, that TLD is no longer part of the globally consistent public namespace.
+
+So the attitude toward IANA and ICANN does not need to swing between two extremes. They should not be portrayed as a pure technical utopia with no historical baggage. They also should not be portrayed as a button that one country can casually press to turn off the Internet. A more accurate view is that the public DNS root zone is a global coordination mechanism with history, political controversy, public processes, accountability mechanisms, and community participation.
+
+After the IANA stewardship transition completed in 2016, the U.S. government’s IANA functions contract with ICANN ended. ICANN now operates through a multistakeholder model in which governments, ccTLD communities, technical communities, registrars, registries, commercial and noncommercial users, and end users participate through different organizations and committees. ICANN also has accountability mechanisms such as Reconsideration, Independent Review Process, Ombudsman, and the Empowered Community. None of this proves the system is perfect, but it does show that public root-zone governance is not a one-way command chain.
+
+If someone asks whether IANA or ICANN material is trustworthy, the better answer is not “trust the institution.” It is to make the claim verifiable: root-zone registrations can be checked, the root-zone file can be downloaded, root servers can be measured from different networks, DNSSEC can validate the chain of trust, ccTLD redelegation and retirement procedures are public, and third-party academic measurements and operator observations can cross-check the picture.
+
+Reasonable “independence” should be more about resilience and governance participation: building local recursive capability, deploying root server instances, maintaining caches, validating DNSSEC, operating incident-response and measurement systems, and participating in ICANN, IETF, RIR, ccNSO, and GAC processes. Those things improve resilience. By contrast, a root system incompatible with the public root would make the same name point to different answers in different networks, damaging one of the Internet’s most important properties: roughly the same public namespace everywhere.
+
+Those “network hegemony” articles can still be useful reminders that domain names are affected by law, sanctions, registrars, registries, and international governance. They just should not be read as “root servers can shut down the Internet with one click.” For a DoH resolver, the more important task is neither repeating conspiracy theories nor pretending DNS is perfectly neutral. It is to explain where an answer came from: root-zone delegation, TLD authority, upstream recursion, local rules, cache hits, regional policy, seizure, blocking, or pollution.
+
 ## Afterword: DNS Transport Methods Will Keep Changing
 
 DNS transport has been moving from “trust the network by default” toward “minimize exposed surfaces.”
@@ -318,9 +345,13 @@ That is what this rebuild was really about.
 - [RFC 9230: Oblivious DNS over HTTPS](https://www.rfc-editor.org/rfc/rfc9230)
 - [RFC 7725: An HTTP Status Code to Report Legal Obstacles](https://www.rfc-editor.org/rfc/rfc7725)
 - [IANA Root Servers](https://www.iana.org/domains/root/servers)
+- [IANA Root Zone Files](https://www.iana.org/domains/root/files)
 - [Root Server Technical Operations Association](https://root-servers.org/)
 - [IANA Delegation Record for .IQ](https://www.iana.org/domains/root/db/iq.html)
 - [IANA Delegation Record for .LY](https://www.iana.org/domains/root/db/ly.html)
+- [Reuters: U.S. seizes websites tied to Iranian disinformation](https://www.reuters.com/world/middle-east/us-seizes-websites-tied-iranian-disinformation-us-officials-say-2021-06-22/)
+- [ICANN: Stewardship of IANA Functions Transitions to Global Internet Community](https://www.icann.org/en/announcements/details/stewardship-of-iana-functions-transitions-to-global-internet-community-as-contract-with-us-government-ends-1-10-2016-en)
+- [ICANN Accountability Mechanisms](https://www.icann.org/resources/pages/accountability-mechanisms-2012-02-25-en)
 - [The Rambling Firewall of China](https://www.wired.com/2010/03/the-rambling-firewall-of-china/)
 - [VeriSign to Shut Down Site Finder](https://www.wired.com/2003/10/verisign-to-shut-down-site-finder/)
 - [Google Public DNS: Censorship in Turkey](https://en.wikipedia.org/wiki/Google_Public_DNS#Censorship_in_Turkey)

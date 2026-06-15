@@ -47,7 +47,7 @@ dquery 仍处在小规模测试和持续完善阶段，所以本文不会提供�
 
 ![DNS 分层与常见误解：根区、国家顶级域、递归解析路径和用户设备不是同一层问题](https://files.js.gripe/files/fil_5QHvwcoDD3K020uG9Md046v8.png)
 
-### “中国没有根服务器”要拆开看
+### 根服务器问题要放回正确层级
 
 早期中文互联网里，经常能看到一种说法：“中国没有根服务器，所以如果被美国制裁，域名系统可能一夜失效。”这类说法有历史背景，但表述过于粗糙。
 
@@ -62,26 +62,7 @@ dquery 仍处在小规模测试和持续完善阶段，所以本文不会提供�
 
 早期舆论常常把这几层合在一起讲，于是“没有根标识运营权”被说成“没有根服务器”，“国家顶级域管理异常”被说成“根服务器让一个国家消失”，“运营商路径污染”又被说成“根区被改写”。这会让讨论变得很吓人，但技术上并不准确。
 
-### `.iq` 和 `.ly` 更像顶级域治理问题
-
-伊拉克 `.iq` 是早期“网络主权”讨论里很常被引用的案例。它经常被简化成“美国控制根服务器，所以可以让一个国家的域名消失”。但更准确地说，这不是根服务器被关闭，而是国家顶级域名的管理权和运营责任长期异常。
-
-IANA 的 `.iq` 委派记录显示，`.iq` 后来重新委派给 Iraq National Communications and Media Commission。这个案例说明的是：如果一个国家顶级域名的管理者不在本国、运营不活跃、技术联系人失联或卷入司法问题，这个国家的互联网标识就会陷入尴尬状态。它涉及的是 ccTLD 的委派和重新委派，而不是普通用户日常递归解析里的 DNS 污染。
-
-利比亚 `.ly` 也常被拿来说明国家顶级域的脆弱性。更准确地说，这类问题通常出在顶级域的注册局、权威 DNS、技术联系人和治理流程上。对普通读者来说，可以把它理解成三层：
-
-```text
-根区：
-  告诉你 .ly 应该问哪些 .ly 权威服务器。
-
-.ly 权威 DNS：
-  告诉你 example.ly 应该去哪里。
-
-具体网站服务器：
-  真正提供网页、邮件或 API 服务。
-```
-
-如果 `.ly` 权威 DNS 出问题，即使根服务器仍然正常，`.ly` 下的域名也可能解析失败。
+伊拉克 `.iq` 和利比亚 `.ly` 更像是国家顶级域治理、权威 DNS、技术联系人和运营连续性问题。它们能提醒我们 ccTLD 治理很重要，但不应该被简化成“根服务器一键让国家消失”。更完整的根区、ICANN、司法辖区和网络主权争议，放到后面的“茶后闲谈”里再展开。
 
 ### DNS 答案不总是中立的
 
@@ -288,6 +269,49 @@ DoH 加密的是客户端到 DoH 解析器之间的传输链路。它能防止�
 
 这也是为什么解析器要透明。与其宣传“绝对隐私”，不如明确告诉用户：我们保护哪一段，记录什么，不记录什么，哪些结果来自本地规则，哪些结果来自上游。
 
+## 茶后闲谈：根服务器、ICANN 和“网络霸权”的说法
+
+国内讨论 DNS 时，偶尔会看到类似“控制根服务器就控制互联网命脉”“美国可以把某些网站从地球上抹除”的说法。2021 年国内媒体围绕 36 个伊朗相关网站被查封的讨论，就常被放进这类叙事里。
+
+这类说法抓住了一个真实问题：如果域名注册商、注册局、托管服务、CDN 或支付合规服务处在某个国家的司法辖区内，当地法院命令和制裁规则确实可能影响这些域名或服务。但从 DNS 技术层面看，把它直接说成“美国通过根服务器一键抹除网站”，就过度简化了。
+
+2021 年那次事件，更准确地说，是美国司法部门依据法院命令查封了一批具体域名。它影响的是这些域名的注册和解析服务，而不是把伊朗国家顶级域 `.ir` 从根区删除，也不是 ICANN 回收了某个国家顶级域。事实上，一些受影响媒体后来改用 `.ir` 域名继续上线，这也说明事件主要发生在具体域名和司法管辖层面，而不是整个国家顶级域被根区移除。
+
+这里需要把几层拆开：
+
+```text
+单个域名查封：
+  例如某个 .com 域名被注册商、注册局或法院命令锁定、改指向或接管。
+
+TLD 委派变化：
+  根区里某个顶级域的 NS、DS、glue 等委派数据发生变化。
+
+ccTLD 治理问题：
+  某个国家顶级域的注册局、权威 DNS、技术联系人或本地治理流程出问题。
+
+根服务器实例：
+  全球各地部署的 anycast 节点，负责对外提供同一份根区数据。
+
+递归解析路径：
+  普通用户真正使用的运营商 DNS、公共 DNS、DoH 解析器和缓存路径。
+```
+
+如果只是查封一个具体域名，根区通常不需要变化，TLD 权威服务器也仍然正常工作。用户看到的是这个具体域名被跳转到查封页、无法解析，或被锁定，但同一个 TLD 下的其他域名不受影响。
+
+如果真的发生 TLD 层面的重新委派，那影响才会进入根区。比如某个 ccTLD 的管理者被更换，根区里的 NS、DS、glue 等数据会更新。根服务器实例随后同步新的根区数据；递归解析器在缓存过期后，会按照新的根区委派去找新的 TLD 权威服务器。旧的 TLD 权威服务器即使还在运行，也不再是公共 DNS 标准路径的一部分。
+
+如果某个 ccTLD 被退休并最终从根区移除，情况更明显：公共根区不再告诉递归解析器“这个 TLD 应该去问谁”。旧权威服务器在技术上仍然可以继续回答直接查询，但普通公共 DNS 链路不会自然走到那里。除非某些网络使用替代根、私有根或固定旧数据，否则这个 TLD 就不再属于全球公共 DNS 的一致命名空间。
+
+所以，对 IANA/ICANN 的态度也不必走向两个极端。一边不能把它们描述成完全没有历史包袱的纯技术乌托邦；另一边也不应该把它们说成某个国家随手关闭互联网的按钮。更准确的理解是：公共 DNS 根区是一套有历史背景、有政治争议、但也有公开流程、问责机制和社区参与结构的全球协调机制。
+
+2016 年 IANA stewardship transition 完成后，美国政府与 ICANN 的 IANA 职能合同已经结束。今天的 ICANN 采用多利益相关方模式，政府、ccTLD 社群、技术社群、注册商、注册局、商业和非商业用户、普通终端用户都可以通过不同组织和委员会参与。它也有 Reconsideration、Independent Review Process、Ombudsman、Empowered Community 等问责机制。它们不能保证这套机制完美无缺，但至少说明公共根区治理不是一条单向命令链。
+
+如果有人质疑“IANA/ICANN 的资料可信吗”，最好的回应不是要求对方相信某个机构，而是把问题变成可验证链条：根区登记可以查，根区文件可以下载，根服务器可以从不同网络测量，DNSSEC 可以验证信任链，ccTLD 重新委派和退休流程有公开文档，第三方学术测量和运营商观测也能交叉印证。
+
+合理的“独立自主”，应该更多放在韧性建设和治理参与上：建设本地递归解析能力、部署根服务器实例、做好缓存、启用 DNSSEC 验证、建立故障应急和测量系统、参与 ICANN、IETF、RIR、ccNSO、GAC 等国际机制。这些都能提高网络韧性。相反，如果另建一套与公共根区不兼容的替代根，让同一个域名在不同网络里指向不同结果，反而会破坏全球互联网最重要的特性：同一个名字在全球大体指向同一套公共命名空间。
+
+所以，那类文章适合用来提醒我们：域名系统确实会受到法律、制裁、注册商、注册局和国际治理结构影响。但它不适合被直接解读成“根服务器一键关闭互联网”。对一个 DoH 解析器来说，真正重要的不是复述阴谋论，也不是假装 DNS 完全中立，而是尽量把答案来源讲清楚：它来自根区委派、TLD 权威、上游递归、本地规则、缓存命中、区域策略，还是某种查封、拦截或污染。
+
 ## 茶后坦言：DNS 查询方式还会继续变
 
 DNS 查询方式的演进，基本是一条从“默认信任网络”走向“尽量减少暴露面”的路。
@@ -326,9 +350,13 @@ DNS 服务很容易被做成一个“能返回答案”的小程序。真正难�
 - [RFC 9230: Oblivious DNS over HTTPS](https://www.rfc-editor.org/rfc/rfc9230)
 - [RFC 7725: An HTTP Status Code to Report Legal Obstacles](https://www.rfc-editor.org/rfc/rfc7725)
 - [IANA Root Servers](https://www.iana.org/domains/root/servers)
+- [IANA Root Zone Files](https://www.iana.org/domains/root/files)
 - [Root Server Technical Operations Association](https://root-servers.org/)
 - [IANA Delegation Record for .IQ](https://www.iana.org/domains/root/db/iq.html)
 - [IANA Delegation Record for .LY](https://www.iana.org/domains/root/db/ly.html)
+- [Reuters: U.S. seizes websites tied to Iranian disinformation](https://www.reuters.com/world/middle-east/us-seizes-websites-tied-iranian-disinformation-us-officials-say-2021-06-22/)
+- [ICANN: Stewardship of IANA Functions Transitions to Global Internet Community](https://www.icann.org/en/announcements/details/stewardship-of-iana-functions-transitions-to-global-internet-community-as-contract-with-us-government-ends-1-10-2016-en)
+- [ICANN Accountability Mechanisms](https://www.icann.org/resources/pages/accountability-mechanisms-2012-02-25-en)
 - [The Rambling Firewall of China](https://www.wired.com/2010/03/the-rambling-firewall-of-china/)
 - [VeriSign to Shut Down Site Finder](https://www.wired.com/2003/10/verisign-to-shut-down-site-finder/)
 - [Google Public DNS: Censorship in Turkey](https://en.wikipedia.org/wiki/Google_Public_DNS#Censorship_in_Turkey)
