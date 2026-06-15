@@ -28,6 +28,7 @@ import {
   renderTermIndexPage,
   renderTermPage
 } from "./templates.mjs";
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, makeOgImageFromCover } from "./og-images.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
@@ -257,6 +258,9 @@ async function loadPosts() {
     const updated = normalizeDate(parsed.data.updated, date);
     const description = plainSummary(parsed.content, parsed.data.description);
     const cover = parsed.data.cover ? copyContentAsset(String(parsed.data.cover), baseDir, contentKey) : "";
+    const generatedOgImage = cover
+      ? await makeOgImageFromCover(cover, { publicDir, contentKey })
+      : null;
     posts.push({
       slug,
       locale,
@@ -270,7 +274,9 @@ async function loadPosts() {
       tags: Array.isArray(parsed.data.tags) ? parsed.data.tags.map(String) : [],
       category: parsed.data.category ? String(parsed.data.category) : "Notes",
       cover,
-      ogImage: cover || "/assets/og-default.png",
+      ogImage: generatedOgImage?.url || cover || "/assets/og-default.png",
+      ogImageWidth: generatedOgImage?.width || OG_IMAGE_WIDTH,
+      ogImageHeight: generatedOgImage?.height || OG_IMAGE_HEIGHT,
       markdownBody: parsed.content.replace(moreMarker, "").trim(),
       html: renderMarkdown(parsed.content, baseDir, contentKey),
       url: `/${locale}/posts/${slug}/`,

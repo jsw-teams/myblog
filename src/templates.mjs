@@ -157,6 +157,8 @@ export function renderLayout({
   jsonLd = [],
   ogType = "website",
   ogImage = "/assets/og-default.png",
+  ogImageWidth = 1200,
+  ogImageHeight = 630,
   bodyAttrs = {}
 }) {
   const siteName = site.siteName[locale] ?? site.siteName["zh-CN"];
@@ -179,6 +181,12 @@ export function renderLayout({
   <link rel="apple-touch-icon" href="${withBase("/apple-touch-icon.png")}">
   <link rel="manifest" href="${withBase("/site.webmanifest")}">
   <link rel="alternate" type="application/rss+xml" title="${escapeHtml(siteName)}" href="${withBase(`/${locale}/feed.xml`)}">
+  <link rel="image_src" href="${escapeHtml(imageUrl)}">
+  <meta itemprop="name" content="${escapeHtml(fullTitle)}">
+  <meta itemprop="description" content="${escapeHtml(description)}">
+  <meta itemprop="image" content="${escapeHtml(imageUrl)}">
+  <meta property="og:site_name" content="${escapeHtml(siteName)}">
+  <meta property="og:locale" content="${escapeHtml(htmlLang(locale).replace("-", "_"))}">
   <meta property="og:title" content="${escapeHtml(fullTitle)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:type" content="${escapeHtml(ogType)}">
@@ -186,8 +194,8 @@ export function renderLayout({
   <meta property="og:image" content="${escapeHtml(imageUrl)}">
   <meta property="og:image:secure_url" content="${escapeHtml(imageUrl)}">
   <meta property="og:image:type" content="${escapeHtml(imageType(imageUrl))}">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:image:width" content="${escapeHtml(ogImageWidth)}">
+  <meta property="og:image:height" content="${escapeHtml(ogImageHeight)}">
   <meta property="og:image:alt" content="${escapeHtml(imageAlt)}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHtml(fullTitle)}">
@@ -477,7 +485,9 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
     alternates,
     jsonLd: [baseJsonLd(site, locale), articleJson, videoJson, breadcrumb],
     ogType: "article",
-    ogImage: post.ogImage
+    ogImage: post.ogImage,
+    ogImageWidth: post.ogImageWidth,
+    ogImageHeight: post.ogImageHeight
   });
 }
 
