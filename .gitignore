@@ -10,6 +10,8 @@ static/site.webmanifest
 .npm-cache/
 .wrangler/
 .publish-myblog/
+current
+releases/
 myfiles-assets/
 .env
 .env.*
