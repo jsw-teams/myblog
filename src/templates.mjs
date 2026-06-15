@@ -102,8 +102,12 @@ function renderNav(site, locale, current) {
 
 function renderFooter(site, locale) {
   return `<footer class="site-footer">
-    <p>&copy; ${new Date().getUTCFullYear()} ${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</p>
-    <p><a href="${withBase(`/${locale}/feed.xml`)}">${escapeHtml(t(locale, "feed"))}</a> <span aria-hidden="true">/</span> <a href="${withBase(`/${locale}/about/`)}">${escapeHtml(t(locale, "privacy"))}</a> <span aria-hidden="true">/</span> <a href="${withBase("/sitemap/")}">${escapeHtml(t(locale, "sitemap"))}</a></p>
+    <p class="footer-brand">&copy; ${new Date().getUTCFullYear()} ${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</p>
+    <nav class="footer-links" aria-label="${escapeHtml(t(locale, "sitemap"))}">
+      <a href="${withBase(`/${locale}/feed.xml`)}">${escapeHtml(t(locale, "feed"))}</a>
+      <a href="${withBase(`/${locale}/about/`)}">${escapeHtml(t(locale, "privacy"))}</a>
+      <a href="${withBase("/sitemap/")}">${escapeHtml(t(locale, "sitemap"))}</a>
+    </nav>
   </footer>`;
 }
 
