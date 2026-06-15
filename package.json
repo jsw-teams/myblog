@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "assets": "node src/assets.mjs",
-    "prebuild": "node src/assets.mjs",
+    "prebuild": "node src/prebuild.mjs",
     "build": "astro build",
     "pages:build": "npm run build && npm run check",
     "news:mvp": "node scripts/news-mvp/generate-weekly-news.mjs",
