@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { DEFAULT_OG_IMAGE } from "./og-images.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
@@ -239,7 +240,7 @@ async function writeOgImage() {
     <path d="M92 526H438" stroke="#d7ccbd" stroke-width="16" stroke-linecap="round"/>
   </svg>`;
 
-  await sharp({
+  const image = sharp({
     create: {
       width: 1200,
       height: 630,
@@ -250,9 +251,15 @@ async function writeOgImage() {
     .composite([
       { input: Buffer.from(svg), top: 0, left: 0 },
       { input: mascot, top: 152, left: 730 }
-    ])
+    ]);
+
+  await image.clone()
     .png({ compressionLevel: 9, adaptiveFiltering: true })
     .toFile(path.join(assetsDir, "og-default.png"));
+
+  await image.clone()
+    .jpeg({ quality: 86, mozjpeg: true })
+    .toFile(path.join(publicDir, DEFAULT_OG_IMAGE.replace(/^\/+/, "")));
 }
 
 export async function generateAssets() {

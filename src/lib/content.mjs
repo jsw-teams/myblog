@@ -22,7 +22,7 @@ import {
   renderTermIndexPage,
   renderTermPage
 } from "../templates.mjs";
-import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, makeOgImageFromCover } from "../og-images.mjs";
+import { DEFAULT_OG_IMAGE, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, makeOgImageFromCover } from "../og-images.mjs";
 
 const rootDir = process.cwd();
 const contentDir = path.join(rootDir, "content");
@@ -208,7 +208,7 @@ export async function loadPosts() {
       category: parsed.data.category ? String(parsed.data.category) : "Notes",
       cover,
       media,
-      ogImage: generatedOgImage?.url || cover || "/assets/og-default.png",
+      ogImage: generatedOgImage?.url || DEFAULT_OG_IMAGE,
       ogImageWidth: generatedOgImage?.width || OG_IMAGE_WIDTH,
       ogImageHeight: generatedOgImage?.height || OG_IMAGE_HEIGHT,
       markdownBody: parsed.content.replace(moreMarker, "").trim(),

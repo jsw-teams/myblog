@@ -156,7 +156,7 @@ export function renderLayout({
   alternates = [],
   jsonLd = [],
   ogType = "website",
-  ogImage = "/assets/og-default.png",
+  ogImage = "/assets/og-default.jpg",
   ogImageWidth = 1200,
   ogImageHeight = 630,
   bodyAttrs = {}
