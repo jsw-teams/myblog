@@ -7,7 +7,7 @@ translationKey: "claude-fable-mythos-5-export-control-rumor"
 tags: ["AI Safety", "Claude", "Anthropic", "Export Controls", "Influence Operations"]
 category: "AI Commentary"
 draft: false
-cover: "https://files.js.gripe/files/fil_Am7n9MIP8GDxSsVv5eZydQnO.jpg"
+cover: "https://files.js.gripe/files/raw/fil_Am7n9MIP8GDxSsVv5eZydQnO.jpg"
 ---
 
 If a commercial AI model goes live and is globally shut down three days later on national-security and export-control grounds, that is not just a product incident. The brief life of Claude Fable 5 / Mythos 5 looks more like a rehearsal for a new kind of AI conflict: once frontier-model capability enters the gray zone of cyber operations, critical infrastructure, and intelligence risk, the fate of a model may be decided less by benchmark charts than by the relationship between cloud platforms, national-security agencies, and export-control authorities.
@@ -150,6 +150,6 @@ The most important thing about the Claude Fable 5 / Mythos 5 shutdown is not the
 - [Business Insider: Inside the whirlwind 24 hours that led the White House to slap export controls on Anthropic](https://www.businessinsider.com/why-white-house-ordered-export-controls-anthropic-mythos-fable-2026-6)
 - [Reuters via The Economic Times: Amazon CEO raised concerns about Anthropic AI models before Trump crackdown](https://m.economictimes.com/tech/artificial-intelligence/amazon-ceo-raised-concerns-about-anthropic-ai-models-before-trump-crackdown-report/amp_articleshow/131708526.cms)
 - [TechTimes: Amazon Triggered Claude Fable 5 Shutdown](https://www.techtimes.com/articles/318350/20260614/amazon-triggered-claude-fable-5-shutdown-investor-cloud-host-now-regulator.htm)
-- [OpenAI June 2026 Threat Report](https://files.js.gripe/files/fil_14A_JP9rnDi4GVX_P8ArKUnR.pdf)
-- [Claude 5 rumor-analysis PDF, Chinese-language source material](https://files.js.gripe/files/fil_rDyn6xRPnixAfUm_Dkhz2M-z.pdf)
+- [OpenAI June 2026 Threat Report](https://files.js.gripe/files/raw/fil_14A_JP9rnDi4GVX_P8ArKUnR.pdf)
+- [Claude 5 rumor-analysis PDF, Chinese-language source material](https://files.js.gripe/files/raw/fil_rDyn6xRPnixAfUm_Dkhz2M-z.pdf)
 - Cover image: [Datacenter.jpg](https://commons.wikimedia.org/wiki/File:Datacenter.jpg), Wil Weterings / Wikimedia Commons, Public Domain

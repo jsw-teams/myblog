@@ -133,7 +133,7 @@ Nutch 的行為非常誠實：你給它種子，它從種子出發；頁面裡�
 
 下面這張截圖就是很典型的現場：一邊要求別人尊重規則，一邊自己抓取時毫不客氣。說得直白一點，真是不知羞恥。
 
-![不受歡迎的抓取行為截圖](https://files.js.gripe/files/fil_AFcHWSmTpO_GAPUQE6LPXm7A.png)
+![不受歡迎的抓取行為截圖](https://files.js.gripe/files/raw/fil_AFcHWSmTpO_GAPUQE6LPXm7A.png)
 
 換句話說，現在的路線不是「自架搜尋引擎成功了」，而是「承認搜尋核心先交給 SearXNG，自己只維護一個公開、可控、對 LLM 友善的搜尋入口」。
 

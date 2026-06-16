@@ -133,7 +133,7 @@ Public access does not mean unlimited access. Clients that do not respect site b
 
 The screenshot below is a fairly typical scene: asking others to respect boundaries while crawling with little restraint yourself. Put plainly, there is a real shamelessness to it.
 
-![Screenshot of unwelcome crawling behavior](https://files.js.gripe/files/fil_AFcHWSmTpO_GAPUQE6LPXm7A.png)
+![Screenshot of unwelcome crawling behavior](https://files.js.gripe/files/raw/fil_AFcHWSmTpO_GAPUQE6LPXm7A.png)
 
 So the current line is not "we successfully built a search engine." It is closer to: "let SearXNG handle the search core, and maintain a public, controllable, LLM-friendly search entrance."
 

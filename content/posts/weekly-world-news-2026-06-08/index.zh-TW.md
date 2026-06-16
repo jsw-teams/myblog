@@ -23,7 +23,7 @@ cover: "./news-images/northern-arabian-sea-rescue-dvids-2026-06-14.jpg"
 
 GPT 報告把 30 條入選新聞歸為六類：安全 7 條，占 23%；經濟 6 條，占 20%；政治和文化各 5 條，各占 17%；科技 4 條，占 13%；環境 3 條，占 10%。這說明本週不是一條戰爭新聞壓倒一切，而是安全、價格、平台技術和區域治理同時搶占議程。
 
-![2026 年 6 月 14 日，北阿拉伯海救援現場中的商船與海空救援畫面](https://files.js.gripe/files/fil_iLrPHm_x6fa1JwAn8mT3cyEz.jpg)
+![2026 年 6 月 14 日，北阿拉伯海救援現場中的商船與海空救援畫面](https://files.js.gripe/files/raw/fil_iLrPHm_x6fa1JwAn8mT3cyEz.jpg)
 
 圖片補充：北阿拉伯海救援現場用於承接本週海灣航道、荷莫茲與美印阿曼灣摩擦的海上風險背景。圖片來源：DVIDS / U.S. Navy public domain，2026-06-14。
 
@@ -49,7 +49,7 @@ GPT 報告把美國 5 月 CPI 排在美國榜單第二，新加坡榜單第四�
 
 6 月 8 日這一天，GPT 時間軸上同時出現三件科技相關事件：Apple WWDC 發布 Siri AI，五角大樓更新中國涉軍企業名單，聯合國發布第三次世界海洋評估。科技、國家安全和環境治理並排出現，是本週很有代表性的畫面。
 
-![Apple 在 WWDC26 展示 Apple Intelligence、Siri AI 與多平台軟體更新](https://files.js.gripe/files/fil_UWkwfpPpxMwC0aS1kbqTzTzU.jpg)
+![Apple 在 WWDC26 展示 Apple Intelligence、Siri AI 與多平台軟體更新](https://files.js.gripe/files/raw/fil_UWkwfpPpxMwC0aS1kbqTzTzU.jpg)
 
 圖片補充：Apple Newsroom 發布的 WWDC26 官方圖，用於呈現本週科技平台與 AI 終端體驗的新聞線。圖片來源：Apple Newsroom，2026-06-08。
 
@@ -61,7 +61,7 @@ Apple 的新聞在美國排第四、台灣和新加坡都排第五。美國看�
 
 GPT 的繁中台灣榜單裡，台灣最顯著的獨有事件是「中國灰帶壓力與太平島事件」，排第二。報告把它解釋為台灣媒體對主權與安全的高敏感排序。也就是說，本週台灣讀者不是只看美伊、通膨或 AI，而是在問：區域壓力如何進入台灣自己的安全日常。
 
-![中國公務船三沙執法 301 出現在太平島周邊海域](https://files.js.gripe/files/fil_kU3GvucKpzbgReBEYG8FjD0u.jpg)
+![中國公務船三沙執法 301 出現在太平島周邊海域](https://files.js.gripe/files/raw/fil_kU3GvucKpzbgReBEYG8FjD0u.jpg)
 
 圖片補充：這張由台灣海巡署提供、Focus Taiwan/CNA 發布的現場圖，對應本週太平島禁限制水域事件。圖片來源：Focus Taiwan / CNA，CGA photo，2026-06-11。
 
@@ -73,7 +73,7 @@ Gemini 報告則把鏡頭轉向內部制度：2026 年中央政府總預算卡�
 
 Gemini 報告對新加坡的處理最成體系。它把新加坡寫成科技、金融、交通與水資源四條線共同構成的中立節點。
 
-![SuperAI Singapore 2026 在新加坡舉行，現場展示參會規模與 AI 產業聚集](https://files.js.gripe/files/fil_qqVgCEFVZZl287bkX7JPoS4c.jpg)
+![SuperAI Singapore 2026 在新加坡舉行，現場展示參會規模與 AI 產業聚集](https://files.js.gripe/files/raw/fil_qqVgCEFVZZl287bkX7JPoS4c.jpg)
 
 圖片補充：SuperAI Singapore 2026 會場資料圖，用於承接新加坡 AI 週、會展平台和中立技術節點敘事。圖片來源：PR Newswire / SuperAI，2026-06-09。
 
@@ -101,5 +101,5 @@ GPT 報告把 48 隊世界盃開幕、聯合國海洋評估、反 G7 示威和�
 
 ### 本期報告下載
 
-- [ChatGPT Deep Research：2026-06-08 至 2026-06-14 全球新聞熱點三語觀察](https://files.js.gripe/files/fil_q8aWRc5e7QrUXen5g-BKWNk3.pdf)
-- [Gemini DeepSearch：全球政治經濟博弈、制度轉型與科技前沿深度研究報告](https://files.js.gripe/files/fil_QJS42tlmMKsTIY44HUYIQcAC.pdf)
+- [ChatGPT Deep Research：2026-06-08 至 2026-06-14 全球新聞熱點三語觀察](https://files.js.gripe/files/raw/fil_q8aWRc5e7QrUXen5g-BKWNk3.pdf)
+- [Gemini DeepSearch：全球政治經濟博弈、制度轉型與科技前沿深度研究報告](https://files.js.gripe/files/raw/fil_QJS42tlmMKsTIY44HUYIQcAC.pdf)

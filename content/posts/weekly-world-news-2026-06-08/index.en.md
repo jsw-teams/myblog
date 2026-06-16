@@ -23,7 +23,7 @@ I did not rely only on the PDF text layer. I converted both PDFs into page image
 
 The GPT report classifies 30 ranked items into six themes: security 7 items, or 23%; economy 6, or 20%; politics and culture 5 each, or 17% each; technology 4, or 13%; and environment 3, or 10%. This was not a week of one war headline crowding out everything else. Security, prices, platform technology, and regional governance all competed for attention.
 
-![A merchant vessel and rescue aircraft during the June 14, 2026 Northern Arabian Sea rescue](https://files.js.gripe/files/fil_iLrPHm_x6fa1JwAn8mT3cyEz.jpg)
+![A merchant vessel and rescue aircraft during the June 14, 2026 Northern Arabian Sea rescue](https://files.js.gripe/files/raw/fil_iLrPHm_x6fa1JwAn8mT3cyEz.jpg)
 
 Image note: this Northern Arabian Sea rescue photo grounds the week's maritime-risk thread, from Gulf routes and Hormuz to U.S.-India friction around the Gulf of Oman. Source: DVIDS / U.S. Navy public domain, 2026-06-14.
 
@@ -49,7 +49,7 @@ Singapore's early CDC voucher claims are the most local item in the trilingual m
 
 June 8 carries three very different items in the GPT timeline: Apple WWDC and Siri AI, the Pentagon's updated list of Chinese military-linked companies, and the UN's Third World Ocean Assessment. Platform technology, national security, and environmental governance landed on the same day.
 
-![Apple showcases Apple Intelligence, Siri AI, and cross-platform software updates at WWDC26](https://files.js.gripe/files/fil_UWkwfpPpxMwC0aS1kbqTzTzU.jpg)
+![Apple showcases Apple Intelligence, Siri AI, and cross-platform software updates at WWDC26](https://files.js.gripe/files/raw/fil_UWkwfpPpxMwC0aS1kbqTzTzU.jpg)
 
 Image note: Apple Newsroom's WWDC26 official image anchors the platform-technology and AI-device thread. Source: Apple Newsroom, 2026-06-08.
 
@@ -63,7 +63,7 @@ The GPT report also ranked CrowdStrike's China cyber warning ninth for U.S. read
 
 In the Traditional Chinese Taiwan ranking, the most distinctive Taiwan-specific item is Chinese gray-zone pressure and the Taiping Island incident, ranked second. The report reads this as a sign of Taiwan media's high sensitivity to sovereignty and security.
 
-![Chinese official vessel Sansha Zhifa 301 near Taiping Island waters](https://files.js.gripe/files/fil_kU3GvucKpzbgReBEYG8FjD0u.jpg)
+![Chinese official vessel Sansha Zhifa 301 near Taiping Island waters](https://files.js.gripe/files/raw/fil_kU3GvucKpzbgReBEYG8FjD0u.jpg)
 
 Image note: this Focus Taiwan/CNA image, provided by Taiwan's Coast Guard Administration, corresponds to the Taiping Island restricted-waters incident. Source: Focus Taiwan / CNA, CGA photo, 2026-06-11.
 
@@ -75,7 +75,7 @@ Read together, the two reports make the Taiwan line clearer. Externally, Taiwan 
 
 Gemini's Singapore section is the most systematized part of the report. It presents Singapore as a neutral node built across technology, finance, transport, and water resilience.
 
-![SuperAI Singapore 2026 conference scene showing the event's scale and AI-industry gathering](https://files.js.gripe/files/fil_qqVgCEFVZZl287bkX7JPoS4c.jpg)
+![SuperAI Singapore 2026 conference scene showing the event's scale and AI-industry gathering](https://files.js.gripe/files/raw/fil_qqVgCEFVZZl287bkX7JPoS4c.jpg)
 
 Image note: the SuperAI Singapore 2026 event photo supports the Singapore AI Week, conference-platform, and neutral technology-node thread. Source: PR Newswire / SuperAI, 2026-06-09.
 
@@ -103,5 +103,5 @@ Both PDFs were converted into page images for reading, then cross-checked with `
 
 ### Report Downloads
 
-- [ChatGPT Deep Research: Trilingual Global News Observation, 2026-06-08 to 2026-06-14](https://files.js.gripe/files/fil_q8aWRc5e7QrUXen5g-BKWNk3.pdf)
-- [Gemini DeepSearch: Global Political-Economy, Institutional Change, and Technology Frontier Report](https://files.js.gripe/files/fil_QJS42tlmMKsTIY44HUYIQcAC.pdf)
+- [ChatGPT Deep Research: Trilingual Global News Observation, 2026-06-08 to 2026-06-14](https://files.js.gripe/files/raw/fil_q8aWRc5e7QrUXen5g-BKWNk3.pdf)
+- [Gemini DeepSearch: Global Political-Economy, Institutional Change, and Technology Frontier Report](https://files.js.gripe/files/raw/fil_QJS42tlmMKsTIY44HUYIQcAC.pdf)

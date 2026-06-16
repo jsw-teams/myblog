@@ -7,7 +7,7 @@ translationKey: "codex-desktop-browser-computer-use-sandbox-recovery"
 tags: ["Codex", "Windows", "Browser", "Computer Use", "Sandbox"]
 category: "Developer Productivity"
 draft: false
-cover: "https://files.js.gripe/files/fil_yiHUhkElTdS8edM9WnqWBQow.png"
+cover: "https://files.js.gripe/files/raw/fil_yiHUhkElTdS8edM9WnqWBQow.png"
 ---
 
 After Windows woke from sleep, Codex Desktop was still open, but Browser and Computer Use were gone. Settings still loaded, Browser showed that the in-app browser plugin was unavailable, and Computer Use could not connect. Closing and reopening Codex Desktop once did not fix it.
@@ -16,11 +16,11 @@ This note is for two readers: the user who just hit the failure, and the Codex i
 
 The original failure screenshots stay here because they are the clearest evidence:
 
-![Codex Desktop Browser shows the in-app browser plugin is unavailable](https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
+![Codex Desktop Browser shows the in-app browser plugin is unavailable](https://files.js.gripe/files/raw/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
 
-![Codex Desktop still shows Browser unavailable in local host mode](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
+![Codex Desktop still shows Browser unavailable in local host mode](https://files.js.gripe/files/raw/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
-![Codex recovery flow: routine fixes run, risky actions ask first](https://files.js.gripe/files/fil_yiHUhkElTdS8edM9WnqWBQow.png)
+![Codex recovery flow: routine fixes run, risky actions ask first](https://files.js.gripe/files/raw/fil_yiHUhkElTdS8edM9WnqWBQow.png)
 
 ## Hand The Scene To Codex
 

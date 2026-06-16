@@ -7,7 +7,7 @@ translationKey: "codex-desktop-browser-computer-use-sandbox-recovery"
 tags: ["Codex", "Windows", "Browser", "Computer Use", "Sandbox"]
 category: "开发效率"
 draft: false
-cover: "https://files.js.gripe/files/fil_R1Au-JpxT6nAKZ0Mjc3cbptX.png"
+cover: "https://files.js.gripe/files/raw/fil_R1Au-JpxT6nAKZ0Mjc3cbptX.png"
 ---
 
 一觉醒来，Windows 还在，Codex Desktop 也还在，但 Browser 和 Computer Use 都不在了。设置页能打开，浏览器页上只有“应用内浏览器插件不可用”，电脑操控也连不上。更扎心的是，关掉 Codex Desktop 再打开一次，还是没好。
@@ -16,11 +16,11 @@ cover: "https://files.js.gripe/files/fil_R1Au-JpxT6nAKZ0Mjc3cbptX.png"
 
 原始故障截图保留在这里，因为它们比任何描述都直接：
 
-![Codex Desktop Browser 显示应用内浏览器插件不可用](https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
+![Codex Desktop Browser 显示应用内浏览器插件不可用](https://files.js.gripe/files/raw/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
 
-![Codex Desktop 本地主机模式下 Browser 仍显示不可用](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
+![Codex Desktop 本地主机模式下 Browser 仍显示不可用](https://files.js.gripe/files/raw/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
-![Codex 接手修复链路：常规动作直接做，高风险动作再问](https://files.js.gripe/files/fil_R1Au-JpxT6nAKZ0Mjc3cbptX.png)
+![Codex 接手修复链路：常规动作直接做，高风险动作再问](https://files.js.gripe/files/raw/fil_R1Au-JpxT6nAKZ0Mjc3cbptX.png)
 
 ## 先把现场交给 Codex
 

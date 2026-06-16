@@ -7,7 +7,7 @@ translationKey: "building-doh-resolver"
 tags: ["DNS", "DoH", "dquery", "Resolver", "Network Services"]
 category: "Network Services"
 draft: false
-cover: "https://files.js.gripe/files/fil_iz9HBdW6dkkgw8TB6iIUERG2.png"
+cover: "https://files.js.gripe/files/raw/fil_iz9HBdW6dkkgw8TB6iIUERG2.png"
 ---
 
 DNS looks like one of the simplest parts of the Internet: give it a name, get back an address.
@@ -45,7 +45,7 @@ Root servers tell recursive resolvers where to find top-level domains such as `.
 
 Root system resilience and neutrality of everyday recursive answers are related questions, but they are not the same question.
 
-![DNS layers and common misconceptions: root zone, ccTLD governance, recursive resolution path, and client devices are different layers](https://files.js.gripe/files/fil_iz9HBdW6dkkgw8TB6iIUERG2.png)
+![DNS layers and common misconceptions: root zone, ccTLD governance, recursive resolution path, and client devices are different layers](https://files.js.gripe/files/raw/fil_iz9HBdW6dkkgw8TB6iIUERG2.png)
 
 ### Put Root Server Claims Back Into The Right Layer
 
@@ -82,7 +82,7 @@ A public DNS service that returns answers without explaining where they came fro
 
 dquery’s goal is not to be a mysterious “universal DNS.” The goal is to split resolution into explainable stages.
 
-![dquery recursive resolver processing pipeline: entry classification, policy, local rules, normalized cache, upstream recursion, and DNS response](https://files.js.gripe/files/fil_YIB4AsOoaYzm7BUELYKXLhmM.png)
+![dquery recursive resolver processing pipeline: entry classification, policy, local rules, normalized cache, upstream recursion, and DNS response](https://files.js.gripe/files/raw/fil_YIB4AsOoaYzm7BUELYKXLhmM.png)
 
 ```text
 Client request
@@ -159,7 +159,7 @@ RFC 8484 is aware of this and recommends ID=0 in cache-friendly situations. In p
 
 The server has to handle it.
 
-![DNS Transaction ID makes DoH caching difficult: dquery normalizes cache keys and restores the response ID after a cache HIT](https://files.js.gripe/files/fil_8vIZ5csdSkx5-w6iAhmal_ZI.png)
+![DNS Transaction ID makes DoH caching difficult: dquery normalizes cache keys and restores the response ID after a cache HIT](https://files.js.gripe/files/raw/fil_8vIZ5csdSkx5-w6iAhmal_ZI.png)
 
 ## Why Not Put All Normalization At The Edge
 

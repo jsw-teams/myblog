@@ -10,10 +10,10 @@ category: "Codex 觀瀾週報"
 draft: false
 cover: "/news/weekly-world-news-2026-05-25.zh-TW.webp"
 media:
-  video: "https://files.js.gripe/files/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
+  video: "https://files.js.gripe/files/raw/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
   type: "video/mp4"
   poster: "/news/weekly-world-news-2026-05-25.zh-TW.webp"
-  embed: "https://files.js.gripe/files/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
+  embed: "https://files.js.gripe/files/raw/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
   captions:
     - src: "/news/weekly-world-news-2026-05-25.zh-TW.vtt"
       lang: "zh-TW"

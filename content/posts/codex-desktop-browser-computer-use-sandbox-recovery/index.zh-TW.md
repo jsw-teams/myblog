@@ -7,7 +7,7 @@ translationKey: "codex-desktop-browser-computer-use-sandbox-recovery"
 tags: ["Codex", "Windows", "Browser", "Computer Use", "Sandbox"]
 category: "開發效率"
 draft: false
-cover: "https://files.js.gripe/files/fil_swPhoelH0iPoZvfZDp71USKn.png"
+cover: "https://files.js.gripe/files/raw/fil_swPhoelH0iPoZvfZDp71USKn.png"
 ---
 
 一覺醒來，Windows 還在，Codex Desktop 也還在，但 Browser 和 Computer Use 都不在了。設定頁能開，瀏覽器頁面只剩「應用內瀏覽器外掛不可用」，電腦操控也連不上。
@@ -16,11 +16,11 @@ cover: "https://files.js.gripe/files/fil_swPhoelH0iPoZvfZDp71USKn.png"
 
 原始故障截圖保留如下：
 
-![Codex Desktop Browser 顯示應用內瀏覽器外掛不可用](https://files.js.gripe/files/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
+![Codex Desktop Browser 顯示應用內瀏覽器外掛不可用](https://files.js.gripe/files/raw/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
 
-![Codex Desktop 本地主機模式下 Browser 仍顯示不可用](https://files.js.gripe/files/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
+![Codex Desktop 本地主機模式下 Browser 仍顯示不可用](https://files.js.gripe/files/raw/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
-![接手排障檢查清單：替我審批模式](https://files.js.gripe/files/fil_swPhoelH0iPoZvfZDp71USKn.png)
+![接手排障檢查清單：替我審批模式](https://files.js.gripe/files/raw/fil_swPhoelH0iPoZvfZDp71USKn.png)
 
 ## 先把現場交給 Codex
 
