@@ -159,7 +159,8 @@ export function renderLayout({
   ogImage = "/assets/og-default.jpg",
   ogImageWidth = 1200,
   ogImageHeight = 630,
-  bodyAttrs = {}
+  bodyAttrs = {},
+  robots = "index,follow"
 }) {
   const siteName = site.siteName[locale] ?? site.siteName["zh-CN"];
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
@@ -173,6 +174,7 @@ export function renderLayout({
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(fullTitle)}</title>
   <meta name="description" content="${escapeHtml(description)}">
+  <meta name="robots" content="${escapeHtml(robots)}">
   <link rel="canonical" href="${escapeHtml(canonical)}">
   ${renderAlternateLinks(site, alternates)}
   <link rel="icon" href="${withBase("/assets/mascot-laptop.png")}" type="image/png">
@@ -508,6 +510,7 @@ export function renderTermIndexPage({ site, locale, titleKey, descriptionKey, te
     current,
     main,
     alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/${current}/` })).concat({ hreflang: "x-default", url: `/zh-CN/${current}/` }),
+    robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
       { name: t(locale, titleKey), url }
@@ -539,6 +542,7 @@ export function renderSearchPage({ site, locale }) {
     current: "search",
     main,
     alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/search/` })).concat({ hreflang: "x-default", url: "/zh-CN/search/" }),
+    robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
       { name: t(locale, "search"), url: `/${locale}/search/` }
@@ -562,6 +566,7 @@ export function renderTermPage({ site, locale, title, description, posts, url, c
     url,
     current,
     main,
+    robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
       { name: t(locale, parentKey), url: `/${locale}/${current}/` },
@@ -594,6 +599,7 @@ export function renderArchivePage({ site, locale, groups }) {
     current: "archive",
     main,
     alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/archive/` })).concat({ hreflang: "x-default", url: "/zh-CN/archive/" }),
+    robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
       { name: t(locale, "archive"), url: `/${locale}/archive/` }

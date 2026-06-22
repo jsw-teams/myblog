@@ -432,26 +432,6 @@ export async function buildSitemapXml() {
 
   add("/", siteUpdated);
 
-  for (const locale of LOCALES) {
-    const localePosts = groupByLocale(posts, locale);
-    const categoryMap = buildTermMap(posts, locale, "categories");
-    const tagMap = buildTermMap(posts, locale, "tags");
-    const localeUpdated = latestDate(localePosts, siteUpdated);
-
-    add(`/${locale}/`, localeUpdated);
-    add(`/${locale}/archive/`, localeUpdated);
-    add(`/${locale}/categories/`, localeUpdated);
-    add(`/${locale}/tags/`, localeUpdated);
-    add(`/${locale}/search/`, localeUpdated);
-
-    for (const term of categoryMap.values()) {
-      add(term.url, latestDate(term.posts, localeUpdated));
-    }
-    for (const term of tagMap.values()) {
-      add(term.url, latestDate(term.posts, localeUpdated));
-    }
-  }
-
   const postsByTranslation = groupBy(posts, (post) => post.translationKey);
   for (const group of postsByTranslation.values()) {
     const alternates = translationsFor(group);
@@ -467,8 +447,6 @@ export async function buildSitemapXml() {
       add(page.url, page.updated, alternates);
     }
   }
-
-  add("/sitemap/", siteUpdated);
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -522,7 +500,8 @@ function renderVisualSitemap({ site, routes }) {
     title: "Sitemap",
     description: "Human-readable sitemap for blog.js.gripe.",
     url: "/sitemap/",
-    main
+    main,
+    robots: "noindex,follow"
   });
 }
 
