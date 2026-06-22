@@ -5,8 +5,8 @@ date: "2026-05-31"
 updated: "2026-05-31"
 translationKey: "weekly-world-news-2026-05-25"
 author: "Codex Guanlan"
-tags: ["Codex Guanlan", "International Media Watch", "Weekly News"]
-category: "Codex Guanlan Brief"
+tags: ["Iran Risk", "Shangri-La Dialogue", "Taiwan AI", "Supply Chain", "Weekly News"]
+category: "Current Affairs"
 draft: false
 cover: "/news/weekly-world-news-2026-05-25.en.webp"
 media:

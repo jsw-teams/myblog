@@ -5,8 +5,8 @@ date: "2026-05-31"
 updated: "2026-05-31"
 translationKey: "weekly-world-news-2026-05-25"
 author: "Codex 觀瀾"
-tags: ["Codex 觀瀾", "國際媒體觀察", "Weekly News"]
-category: "Codex 觀瀾週報"
+tags: ["伊朗風險", "香格里拉對話", "台灣 AI", "供應鏈", "Weekly News"]
+category: "熱點時事"
 draft: false
 cover: "/news/weekly-world-news-2026-05-25.zh-TW.webp"
 media:

@@ -4,8 +4,8 @@ description: "圍繞 Claude Fable 5 / Mythos 5 被迫暫停存取事件的一次
 date: "2026-06-15"
 updated: "2026-06-15"
 translationKey: "claude-fable-mythos-5-export-control-rumor"
-tags: ["AI 安全", "Claude", "Anthropic", "出口管制", "輿論操縱"]
-category: "AI 觀察"
+tags: ["Claude", "Anthropic", "AI 安全", "出口管制", "輿論操縱"]
+category: "熱點時事"
 draft: false
 cover: "https://files.js.gripe/files/raw/fil_Am7n9MIP8GDxSsVv5eZydQnO.jpg"
 ---

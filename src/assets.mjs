@@ -9,7 +9,7 @@ const publicDir = path.join(rootDir, "static");
 const assetsDir = path.join(publicDir, "assets");
 const sourceDir = path.join(rootDir, "source-assets");
 const cacheDir = path.join(rootDir, ".cache");
-const basePath = process.env.GITHUB_PAGES === "true" ? "/myblog" : "";
+const basePath = "";
 
 function withBase(urlPath) {
   if (!basePath || !urlPath.startsWith("/")) return urlPath;

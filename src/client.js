@@ -2,10 +2,6 @@
   var supported = ["zh-CN", "zh-TW", "en"];
   var storageKey = "blog.js.gripe.locale";
   var basePath = String(window.JSGripeBasePath || "").replace(/\/$/, "");
-  if (!basePath && /(^|\.)github\.io$/i.test(window.location.hostname)) {
-    var firstSegment = window.location.pathname.split("/").filter(Boolean)[0];
-    if (firstSegment === "myblog") basePath = "/myblog";
-  }
 
   function withBase(path) {
     if (!basePath || path.indexOf("/") !== 0 || path.indexOf(basePath + "/") === 0) return path;

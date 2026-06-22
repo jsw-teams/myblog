@@ -5,8 +5,8 @@ date: "2026-05-24"
 updated: "2026-05-24"
 translationKey: "weekly-world-news-2026-05-18"
 author: "Codex 觀瀾"
-tags: ["Codex 觀瀾", "國際媒體觀察", "Weekly News"]
-category: "Codex 觀瀾週報"
+tags: ["伊朗談判", "基輔空襲", "台灣軍售", "AI 晶片", "Weekly News"]
+category: "熱點時事"
 draft: false
 cover: "/news/weekly-world-news-2026-05-18.zh-TW.webp"
 media:

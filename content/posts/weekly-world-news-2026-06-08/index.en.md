@@ -5,8 +5,8 @@ date: "2026-06-15"
 updated: "2026-06-15"
 translationKey: "weekly-world-news-2026-06-08"
 author: "ChatGPT Deep Research; Gemini DeepSearch; Codex Guanlan"
-tags: ["Codex Guanlan", "International Media Watch", "Weekly News"]
-category: "Codex Guanlan Brief"
+tags: ["US-Iran", "Inflation", "Apple AI", "Taiwan Gray Zone", "Weekly News"]
+category: "Current Affairs"
 draft: false
 cover: "./news-images/northern-arabian-sea-rescue-dvids-2026-06-14.jpg"
 ---

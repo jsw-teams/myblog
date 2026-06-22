@@ -5,7 +5,7 @@ date: "2026-04-27"
 updated: "2026-04-27"
 translationKey: "welcome"
 tags: ["站點公告", "寫作"]
-category: "公告"
+category: "站點公告"
 draft: false
 cover: ""
 ---

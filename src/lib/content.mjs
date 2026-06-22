@@ -403,6 +403,84 @@ export async function buildHtmlPages() {
   return routes;
 }
 
+function escapeXml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function latestDate(items, fallback = today) {
+  return items.reduce((latest, item) => {
+    const updated = normalizeDate(item.updated ?? item.date, fallback);
+    return updated > latest ? updated : latest;
+  }, fallback);
+}
+
+export async function buildSitemapXml() {
+  const { site, posts, pages } = await loadBlogData();
+  const entries = [];
+  const add = (url, updated, alternates = []) => {
+    entries.push({
+      url,
+      updated: normalizeDate(updated, today),
+      alternates
+    });
+  };
+  const siteUpdated = latestDate([...posts, ...pages]);
+
+  add("/", siteUpdated);
+
+  for (const locale of LOCALES) {
+    const localePosts = groupByLocale(posts, locale);
+    const categoryMap = buildTermMap(posts, locale, "categories");
+    const tagMap = buildTermMap(posts, locale, "tags");
+    const localeUpdated = latestDate(localePosts, siteUpdated);
+
+    add(`/${locale}/`, localeUpdated);
+    add(`/${locale}/archive/`, localeUpdated);
+    add(`/${locale}/categories/`, localeUpdated);
+    add(`/${locale}/tags/`, localeUpdated);
+    add(`/${locale}/search/`, localeUpdated);
+
+    for (const term of categoryMap.values()) {
+      add(term.url, latestDate(term.posts, localeUpdated));
+    }
+    for (const term of tagMap.values()) {
+      add(term.url, latestDate(term.posts, localeUpdated));
+    }
+  }
+
+  const postsByTranslation = groupBy(posts, (post) => post.translationKey);
+  for (const group of postsByTranslation.values()) {
+    const alternates = translationsFor(group);
+    for (const post of group) {
+      add(post.url, post.updated, alternates);
+    }
+  }
+
+  const pagesByTranslation = groupBy(pages, (page) => page.translationKey);
+  for (const group of pagesByTranslation.values()) {
+    const alternates = translationsFor(group);
+    for (const page of group) {
+      add(page.url, page.updated, alternates);
+    }
+  }
+
+  add("/sitemap/", siteUpdated);
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${entries.map((entry) => `  <url>
+    <loc>${escapeXml(absoluteUrl(site, entry.url))}</loc>
+    <lastmod>${escapeXml(entry.updated)}</lastmod>
+${entry.alternates.map((alt) => `    <xhtml:link rel="alternate" hreflang="${escapeXml(alt.locale)}" href="${escapeXml(absoluteUrl(site, alt.url))}" />`).join("\n")}
+  </url>`).join("\n")}
+</urlset>
+`;
+}
+
 export async function buildNotFoundHtml() {
   const site = await readSiteConfig();
   return rewriteRelativePaths(renderNotFoundPage({ site }), "/404.html");

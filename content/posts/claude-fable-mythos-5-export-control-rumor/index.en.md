@@ -4,8 +4,8 @@ description: "A close look at the forced suspension of Claude Fable 5 / Mythos 5
 date: "2026-06-15"
 updated: "2026-06-15"
 translationKey: "claude-fable-mythos-5-export-control-rumor"
-tags: ["AI Safety", "Claude", "Anthropic", "Export Controls", "Influence Operations"]
-category: "AI Commentary"
+tags: ["Claude", "Anthropic", "AI Safety", "Export Controls", "Influence Operations"]
+category: "Current Affairs"
 draft: false
 cover: "https://files.js.gripe/files/raw/fil_Am7n9MIP8GDxSsVv5eZydQnO.jpg"
 ---

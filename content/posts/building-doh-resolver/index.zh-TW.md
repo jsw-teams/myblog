@@ -5,7 +5,7 @@ date: "2026-06-15"
 updated: "2026-06-15"
 translationKey: "building-doh-resolver"
 tags: ["DNS", "DoH", "dquery", "解析器", "網路服務"]
-category: "網路服務"
+category: "技術實作"
 draft: false
 cover: "https://files.js.gripe/files/raw/fil_URqoWfEq4-y7JbJVYu95nxVC.png"
 ---

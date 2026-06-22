@@ -5,8 +5,8 @@ date: "2026-05-18"
 updated: "2026-05-18"
 translationKey: "weekly-world-news-2026-05-11"
 author: "Codex 觀瀾"
-tags: ["Codex 觀瀾", "國際媒體觀察", "Weekly News"]
-category: "Codex 觀瀾週報"
+tags: ["中美貿易", "荷莫茲", "俄烏戰爭", "AI 晶片", "Weekly News"]
+category: "熱點時事"
 draft: false
 cover: "/news/weekly-world-news-2026-05-11.zh-TW.webp"
 media:

@@ -5,7 +5,7 @@ date: "2026-05-31"
 updated: "2026-05-31"
 translationKey: "searchme-search-engine-from-start-to-give-up"
 tags: ["SearchMe", "SearXNG", "Nutch", "Search Engine"]
-category: "Search Services"
+category: "Technical Practice"
 draft: false
 cover: ""
 ---

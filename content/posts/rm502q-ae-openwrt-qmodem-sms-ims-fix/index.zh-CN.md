@@ -5,7 +5,7 @@ date: "2026-04-29"
 updated: "2026-04-29"
 translationKey: "rm502q-ae-openwrt-qmodem-sms-ims-fix"
 tags: ["OpenWrt", "QModem", "IMS", "SMS"]
-category: "排障记录"
+category: "技术实践"
 draft: false
 cover: ""
 ---

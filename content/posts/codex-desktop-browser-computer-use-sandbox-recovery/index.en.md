@@ -5,7 +5,7 @@ date: "2026-06-03"
 updated: "2026-06-03"
 translationKey: "codex-desktop-browser-computer-use-sandbox-recovery"
 tags: ["Codex", "Windows", "Browser", "Computer Use", "Sandbox"]
-category: "Developer Productivity"
+category: "Development Efficiency"
 draft: false
 cover: "https://files.js.gripe/files/raw/fil_yiHUhkElTdS8edM9WnqWBQow.png"
 ---

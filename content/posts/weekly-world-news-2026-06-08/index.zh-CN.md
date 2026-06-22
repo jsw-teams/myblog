@@ -5,8 +5,8 @@ date: "2026-06-15"
 updated: "2026-06-15"
 translationKey: "weekly-world-news-2026-06-08"
 author: "ChatGPT Deep Research；Gemini DeepSearch；Codex 观澜"
-tags: ["Codex 观澜", "国际媒体观察", "Weekly News"]
-category: "Codex 观澜周报"
+tags: ["美伊停火", "通胀", "Apple AI", "台湾灰色地带", "Weekly News"]
+category: "热点时事"
 draft: false
 cover: "./news-images/northern-arabian-sea-rescue-dvids-2026-06-14.jpg"
 ---

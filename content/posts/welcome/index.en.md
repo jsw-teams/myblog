@@ -5,7 +5,7 @@ date: "2026-04-27"
 updated: "2026-04-27"
 translationKey: "welcome"
 tags: ["Announcement", "Writing"]
-category: "Notes"
+category: "Site Notes"
 draft: false
 cover: ""
 ---

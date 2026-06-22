@@ -5,7 +5,7 @@ date: "2026-05-10"
 updated: "2026-06-02"
 translationKey: "github-webhook-blog-redeploy"
 tags: ["GitHub", "Webhook", "自动化"]
-category: "部署自动化"
+category: "技术实践"
 draft: false
 cover: ""
 ---
