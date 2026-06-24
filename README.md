@@ -50,6 +50,7 @@ themes/default/style.css        # 全局主题 CSS
 themes/default/styles/*.css     # 页面/功能级 CSS
 themes/default/templates/*.html # 页面布局模板
 themes/default/scripts/*.js     # consent 入口与按需功能脚本
+themes/default/source-assets/   # 主题最终图片源文件，构建时原样输出 favicon、OG 与 mascot 资源
 ```
 
 ## 内容写作
