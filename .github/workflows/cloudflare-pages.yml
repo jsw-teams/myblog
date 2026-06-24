@@ -43,10 +43,18 @@ jobs:
       - name: Check output
         run: pnpm run check
 
+      - name: Create Cloudflare Pages project if missing
+        uses: cloudflare/wrangler-action@v3
+        continue-on-error: true
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create ${{ env.CLOUDFLARE_PAGES_PROJECT_NAME }} --production-branch=main
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy public --project-name=${{ env.CLOUDFLARE_PAGES_PROJECT_NAME }}
+          command: pages deploy public --project-name=${{ env.CLOUDFLARE_PAGES_PROJECT_NAME }} --commit-dirty=true
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
