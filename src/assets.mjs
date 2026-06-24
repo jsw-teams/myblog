@@ -168,10 +168,19 @@ async function writeCrop(sourceKey, crop, outputName, width) {
 }
 
 async function makeIconPng(size, output, source = null) {
-  if (!source && !hasSource("daily") && fsSync.existsSync(output)) return;
-  const image = source
-    ? sharp(source)
-    : await transparentCrop("daily", cropConfig.daily.crops.laptop);
+  let image;
+  if (source) {
+    image = sharp(source);
+  } else if (hasSource("daily")) {
+    image = await transparentCrop("daily", cropConfig.daily.crops.laptop);
+  } else {
+    const fontSize = Math.max(14, Math.round(size * 0.38));
+    image = sharp(Buffer.from(`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="${size}" height="${size}" fill="#141414"/>
+      <rect x="${Math.max(2, Math.round(size * 0.08))}" y="${Math.max(2, Math.round(size * 0.08))}" width="${Math.round(size * 0.84)}" height="${Math.round(size * 0.84)}" fill="none" stroke="#d99a27" stroke-width="${Math.max(2, Math.round(size * 0.06))}"/>
+      <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="${fontSize}" font-weight="700" fill="#ffffff">JS</text>
+    </svg>`));
+  }
   await image
     .resize(size, size, {
       fit: "contain",
@@ -286,13 +295,30 @@ async function copyThemeFiles(site) {
 
 async function writeOgImage() {
   if (!hasSource("daily")) {
-    const outputs = [
-      path.join(assetsDir, "og-default.png"),
-      path.join(publicDir, DEFAULT_OG_IMAGE.replace(/^\/+/, ""))
-    ];
-    if (outputs.every((file) => fsSync.existsSync(file))) return;
-    throw new Error(`Missing theme source asset: ${sourceFiles.daily}`);
+    const svg = `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1200" height="630" fill="#f8f4ec"/>
+      <rect x="54" y="54" width="1092" height="522" rx="28" fill="#fffdfa" stroke="#241f1a" stroke-width="4"/>
+      <rect x="92" y="138" width="360" height="42" rx="6" fill="#161616"/>
+      <rect x="92" y="212" width="520" height="22" rx="4" fill="#2f6f68"/>
+      <rect x="92" y="260" width="450" height="22" rx="4" fill="#d99a27"/>
+      <rect x="92" y="346" width="78" height="78" rx="8" fill="#2f6f68"/>
+      <rect x="190" y="346" width="78" height="78" rx="8" fill="#d99a27"/>
+      <rect x="288" y="346" width="78" height="78" rx="8" fill="#b94b4b"/>
+      <rect x="386" y="346" width="78" height="78" rx="8" fill="#241f1a"/>
+      <text x="790" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="156" font-weight="700" fill="#141414">JS</text>
+      <path d="M92 486H560" stroke="#d7ccbd" stroke-width="16" stroke-linecap="round"/>
+      <path d="M92 526H438" stroke="#d7ccbd" stroke-width="16" stroke-linecap="round"/>
+    </svg>`;
+    const image = sharp(Buffer.from(svg));
+    await image.clone()
+      .png({ compressionLevel: 9, adaptiveFiltering: true })
+      .toFile(path.join(assetsDir, "og-default.png"));
+    await image.clone()
+      .jpeg({ quality: 86, mozjpeg: true })
+      .toFile(path.join(publicDir, DEFAULT_OG_IMAGE.replace(/^\/+/, "")));
+    return;
   }
+
   const mascot = await (await transparentCrop("daily", cropConfig.daily.crops.reading))
     .resize({ width: 390 })
     .png()
