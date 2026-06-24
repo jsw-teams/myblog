@@ -25,6 +25,14 @@ export const localeMeta = {
   }
 };
 
+let themeI18n = {};
+let themeLocaleMeta = {};
+
+export function configureThemeI18n(i18n = {}) {
+  themeI18n = i18n?.messages && typeof i18n.messages === "object" ? i18n.messages : {};
+  themeLocaleMeta = i18n?.locales && typeof i18n.locales === "object" ? i18n.locales : {};
+}
+
 const dictionaries = {
   "zh-CN": {
     home: "首页",
@@ -211,22 +219,27 @@ export function normalizeLocale(locale) {
 
 export function t(locale, key) {
   const normalized = normalizeLocale(locale);
-  return dictionaries[normalized]?.[key] ?? dictionaries[DEFAULT_LOCALE][key] ?? key;
+  return themeI18n[normalized]?.[key]
+    ?? themeI18n[DEFAULT_LOCALE]?.[key]
+    ?? dictionaries[normalized]?.[key]
+    ?? dictionaries[DEFAULT_LOCALE][key]
+    ?? key;
 }
 
 export function localeLabel(locale) {
-  return localeMeta[locale]?.label ?? locale;
+  return themeLocaleMeta[locale]?.label ?? localeMeta[locale]?.label ?? locale;
 }
 
 export function htmlLang(locale) {
-  return localeMeta[locale]?.htmlLang ?? locale;
+  return themeLocaleMeta[locale]?.htmlLang ?? localeMeta[locale]?.htmlLang ?? locale;
 }
 
 export function formatDate(value, locale) {
   if (!value) return "";
   const date = value instanceof Date ? value : new Date(`${value}T00:00:00Z`);
   if (Number.isNaN(date.getTime())) return String(value);
-  return new Intl.DateTimeFormat(localeMeta[normalizeLocale(locale)].dateLocale, {
+  const normalized = normalizeLocale(locale);
+  return new Intl.DateTimeFormat(themeLocaleMeta[normalized]?.dateLocale ?? localeMeta[normalized].dateLocale, {
     year: "numeric",
     month: "short",
     day: "numeric",

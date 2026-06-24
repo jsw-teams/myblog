@@ -7,7 +7,6 @@ translationKey: "building-doh-resolver"
 tags: ["DNS", "DoH", "dquery", "解析器", "网络服务"]
 category: "技术实践"
 draft: false
-cover: "https://files.js.gripe/files/raw/fil_5QHvwcoDD3K020uG9Md046v8.png"
 ---
 
 DNS 看起来像互联网里最朴素的一环：给一个域名，拿一个地址。
@@ -45,7 +44,6 @@ dquery 仍处在小规模测试和持续完善阶段，所以本文不会提供�
 
 所以，“根服务器系统是否稳定”和“用户日常拿到的 DNS 答案是否中立”，是两个相关但不同的问题。
 
-![DNS 分层与常见误解：根区、国家顶级域、递归解析路径和用户设备不是同一层问题](https://files.js.gripe/files/raw/fil_5QHvwcoDD3K020uG9Md046v8.png)
 
 ### 根服务器问题要放回正确层级
 
@@ -84,7 +82,6 @@ dquery 仍处在小规模测试和持续完善阶段，所以本文不会提供�
 
 dquery 的目标不是做一个神秘的“万能 DNS”，而是把解析过程拆成几个可以理解的步骤：
 
-![dquery 递归解析器处理流程：入口判断、区域与账户策略、本地规则、归一化缓存、上游递归和返回响应](https://files.js.gripe/files/raw/fil_WilAr7Dx9VQVBtrZAeKDNNSi.png)
 
 ```text
 客户端请求
@@ -161,7 +158,6 @@ DoH 的 GET 请求会把 DNS wire message 经过 Base64URL 编码后放进 URL �
 
 所以，服务端必须自己处理这个问题。
 
-![DNS Transaction ID 导致 DoH 缓存困难：后端归一化缓存键并在命中后改回当前响应 ID](https://files.js.gripe/files/raw/fil_iMgHM2yIplJRI-6wbedAoCgs.png)
 
 ## 为什么不把归一化全部放在边缘脚本
 

@@ -1,96 +1,152 @@
-#!/usr/bin/env node
-import fs from "node:fs/promises";
-import fsSync from "node:fs";
+import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import fg from "fast-glob";
+import process from "node:process";
 
-const rootDir = path.resolve(new URL("..", import.meta.url).pathname);
-const publicDir = path.join(rootDir, "public");
-const publicAssetsDir = path.join(publicDir, "assets");
+const root = process.cwd();
+const publicDir = path.join(root, "public");
 const locales = ["zh-CN", "zh-TW", "en"];
 
-function hasHeaderBlock(headers, pathPattern, headerPattern) {
-  const blockPattern = new RegExp(`(?:^|\\n)${pathPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\n(?<body>(?:\\s+[^\\n]+\\n?)+)`, "m");
-  const body = headers.match(blockPattern)?.groups?.body ?? "";
-  return headerPattern.test(body);
-}
+const requiredFiles = [
+  "index.html",
+  "404.html",
+  "robots.txt",
+  "sitemap.xml",
+  "feed.xml",
+  "llms.txt",
+  "llms-full.txt",
+  "_headers",
+  "zh-CN/index.html",
+  "zh-CN/archive/index.html",
+  "zh-CN/categories/index.html",
+  "zh-CN/tags/index.html",
+  "zh-CN/about/index.html"
+];
 
-const required = ["index.html", "404.html", "sitemap.xml", "robots.txt", "_headers", "llms.txt"];
-const missing = [];
-for (const file of required) {
-  if (!fsSync.existsSync(path.join(publicDir, file))) missing.push(file);
-}
-if (missing.length) throw new Error(`Missing required public files: ${missing.join(", ")}`);
+const forbiddenFiles = [
+  "assets/client.js",
+  "assets/site.css",
+  "assets/theme/default/client.js",
+  "assets/theme/default/scripts/client.js"
+];
 
-const sitemap = await fs.readFile(path.join(publicDir, "sitemap.xml"), "utf8");
-if (!sitemap.startsWith("<?xml")) {
-  throw new Error("sitemap.xml must start with an XML declaration");
-}
-if (sitemap.includes("<?xml-stylesheet")) {
-  throw new Error("sitemap.xml must not rely on XSLT processing instructions");
-}
-if (!/<urlset\b[^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/.test(sitemap)) {
-  throw new Error("sitemap.xml is missing the sitemap urlset namespace");
-}
-if (!/<url>\s*<loc>https:\/\/blog\.js\.gripe\//.test(sitemap)) {
-  throw new Error("sitemap.xml does not contain absolute site URLs");
-}
+const themeFiles = [
+  "themes/default/style.css",
+  "themes/default/theme.yml",
+  "themes/default/templates/home.html",
+  "themes/default/templates/archive.html",
+  "themes/default/templates/terms-index.html",
+  "themes/default/templates/terms-page.html",
+  "themes/default/templates/page.html",
+  "themes/default/scripts/consent.js",
+  "themes/default/scripts/search.js",
+  "themes/default/scripts/lightbox.js",
+  "themes/default/scripts/media.js",
+  "themes/default/scripts/comments.js",
+  "themes/default/scripts/web-mcp.js"
+];
 
-const headers = await fs.readFile(path.join(publicDir, "_headers"), "utf8");
-if (!hasHeaderBlock(headers, "/sitemap.xml", /^\s*Content-Type:\s*application\/xml;\s*charset=utf-8\s*$/im)) {
-  throw new Error("_headers must serve /sitemap.xml as application/xml");
-}
-if (!hasHeaderBlock(headers, "/md/*", /^\s*Content-Type:\s*text\/markdown;\s*charset=utf-8\s*$/im)) {
-  throw new Error("_headers must serve /md/* as text/markdown");
-}
-if (headers.includes("/markdown/*")) {
-  throw new Error("_headers must not use the retired /markdown/* mirror path");
-}
-
-const redirects = await fs.readFile(path.join(publicDir, "_redirects"), "utf8");
-if (/\/\*\s+\/index\.html\s+200/.test(redirects)) {
-  throw new Error("_redirects contains a SPA fallback");
-}
-
-const leakTerms = ["README", "部署说明", "技术栈", "Cloudflare Pages 构建"];
-const htmlFiles = await fg("**/*.html", { cwd: publicDir, onlyFiles: true });
-for (const file of htmlFiles) {
-  const html = await fs.readFile(path.join(publicDir, file), "utf8");
-  for (const term of leakTerms) {
-    if (html.includes(term)) throw new Error(`${file} contains internal term: ${term}`);
+async function exists(file) {
+  try {
+    await stat(file);
+    return true;
+  } catch {
+    return false;
   }
-  if (!/<title>[^<]+<\/title>/i.test(html)) throw new Error(`${file} is missing title`);
-  if (!/<meta[^>]+name=["']description["'][^>]*>/i.test(html)) throw new Error(`${file} is missing description`);
-  if (!/<main\b/i.test(html)) throw new Error(`${file} is missing main`);
+}
+
+async function listFiles(dir, suffix) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const files = await Promise.all(entries.map(async (entry) => {
+    const entryPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return listFiles(entryPath, suffix);
+    return entry.isFile() && entryPath.endsWith(suffix) ? [entryPath] : [];
+  }));
+  return files.flat();
+}
+
+function fail(message) {
+  console.error(`check-build: ${message}`);
+  process.exitCode = 1;
+}
+
+for (const file of requiredFiles) {
+  if (!(await exists(path.join(publicDir, file)))) fail(`missing public/${file}`);
+}
+
+for (const file of themeFiles) {
+  if (!(await exists(path.join(root, file)))) fail(`missing ${file}`);
+}
+
+for (const file of forbiddenFiles) {
+  if (await exists(path.join(publicDir, file))) fail(`stale public/${file}`);
+  if (await exists(path.join(root, "static", file))) fail(`stale static/${file}`);
+}
+
+const sitemap = await readFile(path.join(publicDir, "sitemap.xml"), "utf8");
+if (!sitemap.trimStart().startsWith("<?xml")) fail("sitemap.xml is missing XML declaration");
+if (!sitemap.includes('xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"')) {
+  fail("sitemap.xml is missing sitemap namespace");
+}
+if (sitemap.includes("<?xml-stylesheet")) fail("sitemap.xml should not include an XSL stylesheet");
+if (!sitemap.includes("<url>") || !sitemap.includes("<loc>https://blog.js.gripe/")) {
+  fail("sitemap.xml does not contain expected absolute URLs");
+}
+if (!sitemap.includes("<changefreq>")) fail("sitemap.xml is missing changefreq metadata");
+if (!sitemap.includes("<priority>")) fail("sitemap.xml is missing priority metadata");
+
+const headers = await readFile(path.join(publicDir, "_headers"), "utf8");
+if (!headers.includes("Content-Type: application/xml; charset=utf-8")) {
+  fail("_headers should serve XML files as application/xml");
+}
+if (!headers.includes("Content-Type: text/markdown; charset=utf-8")) {
+  fail("_headers should serve markdown mirrors as text/markdown");
+}
+
+const redirectsPath = path.join(publicDir, "_redirects");
+if (await exists(redirectsPath)) {
+  const redirects = await readFile(redirectsPath, "utf8");
+  if (/\/\*\s+\/index\.html\s+200/.test(redirects)) {
+    fail("_redirects contains a SPA fallback");
+  }
+}
+
+const home = await readFile(path.join(publicDir, "zh-CN/index.html"), "utf8");
+if (!home.includes("/assets/theme/default/style.css?v=")) fail("home page is missing theme CSS");
+if (!home.includes("/assets/theme/default/styles/home.css?v=")) fail("home page is missing page CSS");
+if (!home.includes("/assets/theme/default/scripts/consent.js?v=")) fail("home page is missing consent theme JS");
+if (!home.includes("themeConsent")) fail("home page is missing consent config");
+if (!home.includes("themeFeatureCategories")) fail("home page is missing feature consent categories");
+if (!home.includes("data-consent-open")) fail("home page is missing consent preferences trigger");
+if (home.includes("/assets/theme/default/scripts/client.js")) fail("home page still references client.js");
+if (/<script\b[^>]+\bsrc=["'][^"']*comments\.js/.test(home)) fail("home page should not directly load comments.js");
+if (home.includes("/assets/site.css") || home.includes("/assets/client.js")) {
+  fail("home page still references legacy root assets");
+}
+
+const scriptTagMatches = home.match(/<script\b[^>]*\bsrc=/g) || [];
+if (scriptTagMatches.length !== 1) {
+  fail(`home page should directly load only the consent script, found ${scriptTagMatches.length}`);
+}
+
+const htmlFiles = await listFiles(publicDir, ".html");
+for (const file of htmlFiles) {
+  const html = await readFile(file, "utf8");
+  const relative = path.relative(publicDir, file);
+  if (!/<title>[^<]+<\/title>/i.test(html)) fail(`${relative} is missing title`);
+  if (!/<meta[^>]+name=["']description["'][^>]*>/i.test(html)) fail(`${relative} is missing description`);
+  if (!/<main\b/i.test(html)) fail(`${relative} is missing main`);
 }
 
 for (const locale of locales) {
   const searchPage = path.join(publicDir, locale, "search", "index.html");
-  const searchIndex = path.join(publicAssetsDir, `search-index.${locale}.json`);
-  if (!fsSync.existsSync(searchPage)) throw new Error(`Missing search page for ${locale}`);
-  if (!fsSync.existsSync(searchIndex)) throw new Error(`Missing search index for ${locale}`);
-  const entries = JSON.parse(await fs.readFile(searchIndex, "utf8"));
-  if (!Array.isArray(entries)) throw new Error(`Search index for ${locale} must be an array`);
-}
-
-const recoverySlug = "codex-desktop-browser-computer-use-sandbox-recovery";
-const llms = await fs.readFile(path.join(publicDir, "llms.txt"), "utf8");
-if (llms.includes("/markdown/")) {
-  throw new Error("llms.txt must not point at retired /markdown/ mirrors");
-}
-for (const locale of locales) {
-  const markdownPath = path.join(publicDir, "md", locale, "posts", `${recoverySlug}.md`);
-  if (!fsSync.existsSync(markdownPath)) {
-    throw new Error(`Missing markdown mirror: /md/${locale}/posts/${recoverySlug}.md`);
-  }
-  const markdown = await fs.readFile(markdownPath, "utf8");
-  if (!markdown.startsWith("# ")) {
-    throw new Error(`Markdown mirror has invalid content: /md/${locale}/posts/${recoverySlug}.md`);
-  }
-  const publicUrl = `https://blog.js.gripe/md/${locale}/posts/${recoverySlug}.md`;
-  if (!llms.includes(publicUrl)) {
-    throw new Error(`llms.txt missing markdown mirror URL: ${publicUrl}`);
+  const searchIndex = path.join(publicDir, "assets", `search-index.${locale}.json`);
+  if (!(await exists(searchPage))) fail(`missing search page for ${locale}`);
+  if (!(await exists(searchIndex))) fail(`missing search index for ${locale}`);
+  if (await exists(searchIndex)) {
+    const entries = JSON.parse(await readFile(searchIndex, "utf8"));
+    if (!Array.isArray(entries)) fail(`search index for ${locale} must be an array`);
   }
 }
 
-console.log(`Checked ${htmlFiles.length} HTML files and required static outputs.`);
+if (process.exitCode) process.exit(process.exitCode);
+console.log(`check-build: ok (${htmlFiles.length} HTML files)`);

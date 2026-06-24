@@ -33,6 +33,11 @@ function renderAttributes(attrs = {}) {
     .join("");
 }
 
+function localConfigText(value, locale, site) {
+  if (value && typeof value === "object" && !Array.isArray(value)) return localText(value, locale, site);
+  return value == null ? "" : String(value);
+}
+
 function renderAlternateLinks(site, alternates = []) {
   return alternates
     .map((item) => `<link rel="alternate" hreflang="${escapeHtml(item.hreflang)}" href="${escapeHtml(absoluteUrl(site, item.url))}">`)
@@ -43,6 +48,115 @@ function renderJsonLd(items = []) {
   const flat = items.flat().filter(Boolean);
   if (!flat.length) return "";
   return `<script type="application/ld+json">${escapeJson(flat.length === 1 ? flat[0] : flat)}</script>`;
+}
+
+export function siteLocales(site) {
+  return Array.isArray(site.locales) && site.locales.length ? site.locales : LOCALES;
+}
+
+export function siteDefaultLocale(site) {
+  return site.defaultLocale || siteLocales(site)[0] || "zh-CN";
+}
+
+export function localText(values, locale, site) {
+  return values?.[locale] ?? values?.[siteDefaultLocale(site)] ?? values?.[LOCALES[0]] ?? "";
+}
+
+function renderStyleLinks(site, pageStyles = []) {
+  const hrefs = [
+    ...(site.theme?.css || []),
+    ...(site.theme?.styles || []),
+    ...pageStyles
+  ];
+  return hrefs
+    .filter(Boolean)
+    .map((href) => `<link rel="stylesheet" href="${escapeHtml(withBase(href))}">`)
+    .join("\n  ");
+}
+
+function renderHeadMeta(site, locale) {
+  return (site.head?.meta || [])
+    .filter((meta) => meta && meta.enabled !== false)
+    .map((meta) => {
+      const attrs = { ...meta };
+      delete attrs.enabled;
+      if (attrs.content) attrs.content = localConfigText(attrs.content, locale, site);
+      return `<meta${renderAttributes(attrs)}>`;
+    })
+    .join("\n  ");
+}
+
+function renderHeadLinks(site, locale) {
+  return (site.head?.links || [])
+    .filter((link) => link && link.enabled !== false)
+    .map((link) => {
+      const attrs = { ...link };
+      delete attrs.enabled;
+      if (attrs.href) attrs.href = withBase(String(attrs.href).replaceAll(":locale", locale));
+      return `<link${renderAttributes(attrs)}>`;
+    })
+    .join("\n  ");
+}
+
+function renderScriptTag(script) {
+  const attrs = typeof script === "string" ? { src: script } : { ...script };
+  if (!attrs || typeof attrs !== "object") return "";
+  const consent = attrs.consent || attrs.category;
+  delete attrs.consent;
+  delete attrs.category;
+  if (attrs.src) attrs.src = withBase(attrs.src);
+  if (consent && attrs.src) {
+    attrs["data-consent-category"] = consent;
+    attrs["data-consent-src"] = attrs.src;
+    attrs.type = "text/plain";
+    delete attrs.src;
+  }
+  return `<script${renderAttributes(attrs)}></script>`;
+}
+
+function renderScripts(scripts = []) {
+  return scripts.map(renderScriptTag).filter(Boolean).join("\n  ");
+}
+
+function headScripts(site) {
+  return [
+    ...(site.theme?.scripts?.head || []),
+    ...(site.scripts?.head || [])
+  ];
+}
+
+function bodyEndScripts(site, pageScripts = []) {
+  return [
+    ...(site.theme?.js || []),
+    ...(site.theme?.scripts?.bodyEnd || []),
+    ...pageScripts,
+    ...(site.scripts?.bodyEnd || [])
+  ];
+}
+
+function siteIcons(site) {
+  return {
+    favicon: site.icons?.favicon || "/favicon.ico",
+    icon32: site.icons?.icon32 || "/favicon-32x32.png",
+    appleTouchIcon: site.icons?.appleTouchIcon || "/apple-touch-icon.png",
+    manifest: site.icons?.manifest || "/site.webmanifest"
+  };
+}
+
+function clientConfig(site) {
+  return {
+    basePath,
+    locales: siteLocales(site),
+    defaultLocale: siteDefaultLocale(site),
+    storageKey: site.client?.storageKey || `${new URL(site.siteUrl).hostname}.locale`,
+    mcpName: site.client?.mcpName || new URL(site.siteUrl).hostname.replace(/\W+/g, "-"),
+    mcpDescription: site.client?.mcpDescription || "Public site discovery and search tools.",
+    themeFeatures: site.theme?.features || {},
+    themeFeatureScripts: site.theme?.featureScripts || {},
+    themeFeatureStyles: site.theme?.featureStyles || {},
+    themeFeatureCategories: site.theme?.featureCategories || {},
+    themeConsent: site.theme?.consent || {}
+  };
 }
 
 function schemaDateTime(value, timezone = "+08:00") {
@@ -66,53 +180,74 @@ function imageType(imageUrl = "") {
   return "image/png";
 }
 
+function themedLinks(entries, locale, site) {
+  return (Array.isArray(entries) ? entries : [])
+    .filter((link) => link && link.enabled !== false)
+    .map((link) => ({
+      key: String(link.key || ""),
+      href: withBase(String(link.href || "").replaceAll(":locale", locale)),
+      icon: link.icon == null ? "" : String(link.icon),
+      label: localConfigText(link.label, locale, site) || (link.key ? t(locale, link.key) : "")
+    }))
+    .filter((link) => link.href && link.label);
+}
+
 function renderNav(site, locale, current) {
-  const navItems = [
-    ["home", `/${locale}/`],
-    ["archive", `/${locale}/archive/`],
-    ["categories", `/${locale}/categories/`],
-    ["tags", `/${locale}/tags/`],
-    ["about", `/${locale}/about/`]
+  const fallbackNavLinks = [
+    { key: "home", href: "/:locale/", label: t(locale, "home") },
+    { key: "archive", href: "/:locale/archive/", label: t(locale, "archive") },
+    { key: "categories", href: "/:locale/categories/", label: t(locale, "categories") },
+    { key: "tags", href: "/:locale/tags/", label: t(locale, "tags") },
+    { key: "about", href: "/:locale/about/", label: t(locale, "about") }
   ];
-  const searchCurrentAttr = current === "search" ? ' aria-current="page"' : "";
-  const localeLinks = LOCALES.map((entryLocale) => {
-    const currentAttr = entryLocale === locale ? ' aria-current="page"' : "";
-    return `<a href="${withBase(`/${entryLocale}/`)}" data-locale-choice="${entryLocale}"${currentAttr}>${escapeHtml(localeLabel(entryLocale))}</a>`;
-  }).join("");
+  const fallbackUtilityLinks = [
+    { key: "search", href: "/:locale/search/", icon: "⌕", label: t(locale, "search") }
+  ];
+  const navConfig = site.theme?.nav || {};
+  const navLinks = themedLinks(navConfig.links || fallbackNavLinks, locale, site);
+  const utilityLinks = themedLinks(navConfig.utilityLinks || fallbackUtilityLinks, locale, site);
 
   return `<header class="site-header">
     <a class="brand" href="${withBase(`/${locale}/`)}" data-locale-choice="${locale}">
       <span class="brand-mark" aria-hidden="true">JS</span>
-      <span>${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</span>
+      <span>${escapeHtml(localText(site.siteName, locale, site))}</span>
     </a>
     <nav class="site-nav" aria-label="${escapeHtml(t(locale, "home"))}">
-      ${navItems.map(([key, href]) => {
-        const currentAttr = current === key ? ' aria-current="page"' : "";
-        return `<a href="${withBase(href)}"${currentAttr}>${escapeHtml(t(locale, key))}</a>`;
+      ${navLinks.map((link) => {
+        const currentAttr = current === link.key ? ' aria-current="page"' : "";
+        return `<a href="${link.href}"${currentAttr}>${escapeHtml(link.label)}</a>`;
       }).join("")}
     </nav>
     <nav class="utility-nav" aria-label="${escapeHtml(t(locale, "search"))}">
-      <a class="search-action" href="${withBase(`/${locale}/search/`)}"${searchCurrentAttr}><span aria-hidden="true">⌕</span><span>${escapeHtml(t(locale, "search"))}</span></a>
-    </nav>
-    <nav class="language-nav" aria-label="${escapeHtml(t(locale, "languageSwitch"))}">
-      ${localeLinks}
+      ${utilityLinks.map((link) => {
+        const currentAttr = current === link.key ? ' aria-current="page"' : "";
+        const icon = link.icon ? `<span aria-hidden="true">${escapeHtml(link.icon)}</span>` : "";
+        return `<a href="${link.href}"${currentAttr}>${icon}<span>${escapeHtml(link.label)}</span></a>`;
+      }).join("")}
     </nav>
   </header>`;
 }
 
 function renderFooter(site, locale) {
+  const configuredLinks = Array.isArray(site.footer?.links) ? site.footer.links : [];
+  const links = configuredLinks.length
+    ? configuredLinks
+    : [
+      { href: `/${locale}/feed.xml`, label: t(locale, "feed") },
+      { href: `/${locale}/about/`, label: t(locale, "privacy") },
+      { href: "/sitemap/", label: t(locale, "sitemap") }
+    ];
   return `<footer class="site-footer">
-    <p class="footer-brand">&copy; ${new Date().getUTCFullYear()} ${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</p>
+    <p class="footer-brand">&copy; ${new Date().getUTCFullYear()} ${escapeHtml(localText(site.siteName, locale, site))}</p>
     <nav class="footer-links" aria-label="${escapeHtml(t(locale, "sitemap"))}">
-      <a href="${withBase(`/${locale}/feed.xml`)}">${escapeHtml(t(locale, "feed"))}</a>
-      <a href="${withBase(`/${locale}/about/`)}">${escapeHtml(t(locale, "privacy"))}</a>
-      <a href="${withBase("/sitemap/")}">${escapeHtml(t(locale, "sitemap"))}</a>
+      ${links.map((link) => `<a href="${withBase(String(link.href || "").replaceAll(":locale", locale))}">${escapeHtml(localConfigText(link.label, locale, site))}</a>`).join("")}
+      ${site.theme?.consent?.enabled === false ? "" : `<button class="footer-link-button" type="button" data-consent-open>${escapeHtml(t(locale, "consentManage"))}</button>`}
     </nav>
   </footer>`;
 }
 
 export function baseJsonLd(site, locale) {
-  const siteName = site.siteName[locale] ?? site.siteName["zh-CN"];
+  const siteName = localText(site.siteName, locale, site);
   return [
     {
       "@context": "https://schema.org",
@@ -126,7 +261,7 @@ export function baseJsonLd(site, locale) {
       "@type": "Blog",
       name: siteName,
       url: absoluteUrl(site, `/${locale}/`),
-      description: site.description[locale] ?? site.description["zh-CN"],
+      description: localText(site.description, locale, site),
       inLanguage: locale
     }
   ];
@@ -160,13 +295,17 @@ export function renderLayout({
   ogImageWidth = 1200,
   ogImageHeight = 630,
   bodyAttrs = {},
-  robots = "index,follow"
+  languageLinks = null,
+  robots = "index,follow",
+  styles = [],
+  scripts = []
 }) {
-  const siteName = site.siteName[locale] ?? site.siteName["zh-CN"];
+  const siteName = localText(site.siteName, locale, site);
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
   const canonical = absoluteUrl(site, url);
   const imageUrl = absoluteUrl(site, ogImage);
   const imageAlt = `${title} | ${siteName}`;
+  const icons = siteIcons(site);
   return `<!doctype html>
 <html lang="${escapeHtml(htmlLang(locale))}">
 <head>
@@ -175,13 +314,15 @@ export function renderLayout({
   <title>${escapeHtml(fullTitle)}</title>
   <meta name="description" content="${escapeHtml(description)}">
   <meta name="robots" content="${escapeHtml(robots)}">
+  <base href="${withBase(url)}">
+  ${renderHeadMeta(site, locale)}
   <link rel="canonical" href="${escapeHtml(canonical)}">
   ${renderAlternateLinks(site, alternates)}
-  <link rel="icon" href="${withBase("/assets/mascot-laptop.png")}" type="image/png">
-  <link rel="alternate icon" href="${withBase("/favicon.ico")}" sizes="any">
-  <link rel="icon" href="${withBase("/favicon-32x32.png")}" type="image/png">
-  <link rel="apple-touch-icon" href="${withBase("/apple-touch-icon.png")}">
-  <link rel="manifest" href="${withBase("/site.webmanifest")}">
+  ${renderHeadLinks(site, locale)}
+  <link rel="icon" href="${withBase(icons.icon32)}" type="image/png">
+  <link rel="alternate icon" href="${withBase(icons.favicon)}" sizes="any">
+  <link rel="apple-touch-icon" href="${withBase(icons.appleTouchIcon)}">
+  <link rel="manifest" href="${withBase(icons.manifest)}">
   <link rel="alternate" type="application/rss+xml" title="${escapeHtml(siteName)}" href="${withBase(`/${locale}/feed.xml`)}">
   <link rel="image_src" href="${escapeHtml(imageUrl)}">
   <meta itemprop="name" content="${escapeHtml(fullTitle)}">
@@ -204,8 +345,9 @@ export function renderLayout({
   <meta name="twitter:description" content="${escapeHtml(description)}">
   <meta name="twitter:image" content="${escapeHtml(imageUrl)}">
   <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}">
-  <script>window.JSGripeBasePath=${JSON.stringify(basePath)};</script>
-  <link rel="stylesheet" href="${withBase("/assets/site.css?v=20260623")}">
+  <script>window.JSGripeConfig=${escapeJson(clientConfig(site))};window.JSGripeBasePath=window.JSGripeConfig.basePath;</script>
+  ${renderScripts(headScripts(site))}
+  ${renderStyleLinks(site, styles)}
   ${renderJsonLd(jsonLd)}
 </head>
 <body${renderAttributes(bodyAttrs)}>
@@ -213,7 +355,7 @@ export function renderLayout({
   ${renderNav(site, locale, current)}
   ${main}
   ${renderFooter(site, locale)}
-  <script src="${withBase("/assets/client.js?v=20260623")}" defer></script>
+  ${renderScripts(bodyEndScripts(site, scripts))}
 </body>
 </html>`;
 }
@@ -310,11 +452,17 @@ function renderMediaPlayer(post, locale) {
   </section>`;
 }
 
-function renderCommentSection(post, locale) {
+function renderCommentSection(site, post, locale) {
+  const comments = site.plugins?.comments || {};
+  if (comments.enabled === false || comments.provider === false || comments.provider === "none") return "";
+  if ((comments.provider || "twikoo") !== "twikoo") return "";
+  const envId = comments.envId || "";
+  const script = comments.script || "";
+  if (!envId || !script) return "";
   return `<section class="article-comments"
     data-comments-root
-    data-twikoo-env-id="https://api-comments.js.gripe"
-    data-twikoo-script="https://registry.npmmirror.com/twikoo/1.7.13/files/dist/twikoo.min.js"
+    data-twikoo-env-id="${escapeHtml(envId)}"
+    data-twikoo-script="${escapeHtml(script)}"
     data-comments-readonly="${escapeHtml(t(locale, "commentsReadOnlyMainland"))}"
     data-comments-loading="${escapeHtml(t(locale, "commentsLoading"))}"
     data-comments-empty="${escapeHtml(t(locale, "commentsEmpty"))}"
@@ -328,24 +476,40 @@ function renderCommentSection(post, locale) {
   </section>`;
 }
 
-function renderTermLinks(terms, emptyText) {
+export function renderTermLinks(terms, emptyText) {
   if (!terms.length) return `<p class="empty">${escapeHtml(emptyText)}</p>`;
   return `<ul class="term-grid">
     ${terms.map((term) => `<li><a href="${term.url}"><span>${escapeHtml(term.name)}</span><strong>${term.count}</strong></a></li>`).join("")}
   </ul>`;
 }
 
-function renderPostList(posts, locale) {
+export function renderPostList(posts, locale) {
   if (!posts.length) return `<p class="empty">${escapeHtml(t(locale, "noPosts"))}</p>`;
   return `<div class="post-list">${posts.map((post) => renderPostCard(post, locale)).join("")}</div>`;
 }
 
-export function renderHomePage({ site, locale, posts }) {
-  const description = site.description[locale] ?? site.description["zh-CN"];
+export function renderPagination({ locale, page, totalPages, pageUrl }) {
+  if (totalPages <= 1) return "";
+  const previous = page > 1 ? pageUrl(page - 1) : "";
+  const next = page < totalPages ? pageUrl(page + 1) : "";
+  const label = locale === "en" ? `Page ${page} of ${totalPages}` : `第 ${page} / ${totalPages} 页`;
+  const previousLabel = locale === "en" ? "Newer posts" : "较新文章";
+  const nextLabel = locale === "en" ? "Older posts" : "较旧文章";
+  return `<nav class="pagination" aria-label="${escapeHtml(label)}">
+    ${previous ? `<a class="button-link button-link-secondary" href="${withBase(previous)}">${escapeHtml(previousLabel)}</a>` : `<span></span>`}
+    <span>${escapeHtml(label)}</span>
+    ${next ? `<a class="button-link button-link-secondary" href="${withBase(next)}">${escapeHtml(nextLabel)}</a>` : `<span></span>`}
+  </nav>`;
+}
+
+export function renderHomePage({ site, locale, posts, page = 1, totalPages = 1, pageUrl = (number) => number === 1 ? `/${locale}/` : `/${locale}/${"older/".repeat(number - 1)}` }) {
+  const locales = siteLocales(site);
+  const description = localText(site.description, locale, site);
+  const siteName = localText(site.siteName, locale, site);
   const main = `<main id="main" class="page-main home-main">
     <section class="home-hero" aria-labelledby="home-title">
       <div>
-        <h1 id="home-title">${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</h1>
+        <h1 id="home-title">${escapeHtml(siteName)}</h1>
         <p class="lead">${escapeHtml(t(locale, "siteIntro"))}</p>
       </div>
       <img class="hero-mascot pixel-art" src="/assets/mascot-laptop.png" alt="" width="280" height="301">
@@ -355,25 +519,27 @@ export function renderHomePage({ site, locale, posts }) {
         <h2 id="latest-posts">${escapeHtml(t(locale, "latestPosts"))}</h2>
       </div>
       ${renderPostList(posts, locale)}
+      ${renderPagination({ locale, page, totalPages, pageUrl })}
     </section>
   </main>`;
   return renderLayout({
     site,
     locale,
-    title: site.siteName[locale] ?? site.siteName["zh-CN"],
+    title: siteName,
     description,
-    url: `/${locale}/`,
+    url: pageUrl(page),
     current: "home",
     main,
-    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/` })).concat({ hreflang: "x-default", url: "/" }),
+    alternates: locales.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/` })).concat({ hreflang: "x-default", url: "/" }),
     jsonLd: baseJsonLd(site, locale)
   });
 }
 
 export function renderRootPage({ site }) {
-  const locale = "zh-CN";
+  const locales = siteLocales(site);
+  const locale = siteDefaultLocale(site);
   const description = "选择语言入口开始阅读。選擇語言入口開始閱讀。 Choose a language to start reading.";
-  const languageButtons = LOCALES.map((entryLocale, index) => {
+  const languageButtons = locales.map((entryLocale, index) => {
     const className = index === 0 ? "button-link" : "button-link button-link-secondary";
     return `<a class="${className}" href="/${entryLocale}/" data-locale-choice="${entryLocale}">${escapeHtml(localeLabel(entryLocale))}</a>`;
   }).join("");
@@ -381,7 +547,7 @@ export function renderRootPage({ site }) {
     <section class="language-choice" aria-labelledby="root-title">
       <img src="/assets/mascot-reading.png" alt="" width="230" height="345">
       <div>
-        <h1 id="root-title">${escapeHtml(site.siteName["zh-CN"])} / ${escapeHtml(site.siteName.en)}</h1>
+        <h1 id="root-title">${escapeHtml(localText(site.siteName, locale, site))}</h1>
         <p class="lead">${escapeHtml(description)}</p>
         <div class="language-choice-links">
           ${languageButtons}
@@ -392,12 +558,12 @@ export function renderRootPage({ site }) {
   return renderLayout({
     site,
     locale,
-    title: `${site.siteName["zh-CN"]} / ${site.siteName.en}`,
+    title: localText(site.siteName, locale, site),
     description,
     url: "/",
     current: "",
     main,
-    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/` })).concat({ hreflang: "x-default", url: "/" }),
+    alternates: locales.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/` })).concat({ hreflang: "x-default", url: "/" }),
     jsonLd: baseJsonLd(site, locale),
     bodyAttrs: { "data-root-language-picker": "true" }
   });
@@ -421,7 +587,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
     inLanguage: locale,
     author: {
       "@type": "Person",
-      name: site.author?.[locale] ?? site.author?.["zh-CN"] ?? site.siteName[locale]
+      name: localText(site.author, locale, site) || localText(site.siteName, locale, site)
     },
     mainEntityOfPage: absoluteUrl(site, post.url),
     image: absoluteUrl(site, post.ogImage),
@@ -456,7 +622,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
       <div class="prose">
         ${post.html}
       </div>
-      ${renderCommentSection(post, locale)}
+      ${renderCommentSection(site, post, locale)}
       <footer class="article-footer">
         <div class="article-end">
           <img src="/assets/mascot-happy.png" alt="" width="130" height="174">
@@ -472,7 +638,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
   </main>`;
   const alternates = translations
     .map((entry) => ({ hreflang: entry.locale, url: entry.url }))
-    .concat({ hreflang: "x-default", url: translations.find((entry) => entry.locale === "zh-CN")?.url ?? translations[0].url });
+    .concat({ hreflang: "x-default", url: translations.find((entry) => entry.locale === siteDefaultLocale(site))?.url ?? translations[0].url });
   return renderLayout({
     site,
     locale,
@@ -481,6 +647,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
     url: post.url,
     current: "archive",
     main,
+    languageLinks: translations,
     alternates,
     jsonLd: [baseJsonLd(site, locale), articleJson, videoJson, breadcrumb],
     ogType: "article",
@@ -491,6 +658,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
 }
 
 export function renderTermIndexPage({ site, locale, titleKey, descriptionKey, terms, url, current }) {
+  const locales = siteLocales(site);
   const main = `<main id="main" class="page-main list-main">
     <header class="page-heading">
       <h1>${escapeHtml(t(locale, titleKey))}</h1>
@@ -506,7 +674,7 @@ export function renderTermIndexPage({ site, locale, titleKey, descriptionKey, te
     url,
     current,
     main,
-    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/${current}/` })).concat({ hreflang: "x-default", url: `/zh-CN/${current}/` }),
+    alternates: locales.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/${current}/` })).concat({ hreflang: "x-default", url: `/${siteDefaultLocale(site)}/${current}/` }),
     robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
@@ -516,6 +684,7 @@ export function renderTermIndexPage({ site, locale, titleKey, descriptionKey, te
 }
 
 export function renderSearchPage({ site, locale }) {
+  const locales = siteLocales(site);
   const main = `<main id="main" class="page-main list-main">
     <header class="page-heading">
       <h1>${escapeHtml(t(locale, "search"))}</h1>
@@ -538,7 +707,7 @@ export function renderSearchPage({ site, locale }) {
     url: `/${locale}/search/`,
     current: "search",
     main,
-    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/search/` })).concat({ hreflang: "x-default", url: "/zh-CN/search/" }),
+    alternates: locales.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/search/` })).concat({ hreflang: "x-default", url: `/${siteDefaultLocale(site)}/search/` }),
     robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
@@ -573,6 +742,7 @@ export function renderTermPage({ site, locale, title, description, posts, url, c
 }
 
 export function renderArchivePage({ site, locale, groups }) {
+  const locales = siteLocales(site);
   const main = `<main id="main" class="page-main list-main">
     <header class="page-heading">
       <h1>${escapeHtml(t(locale, "archive"))}</h1>
@@ -595,7 +765,7 @@ export function renderArchivePage({ site, locale, groups }) {
     url: `/${locale}/archive/`,
     current: "archive",
     main,
-    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/archive/` })).concat({ hreflang: "x-default", url: "/zh-CN/archive/" }),
+    alternates: locales.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/archive/` })).concat({ hreflang: "x-default", url: `/${siteDefaultLocale(site)}/archive/` }),
     robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
@@ -618,7 +788,7 @@ export function renderAboutPage({ site, locale, page, translations }) {
   </main>`;
   const alternates = translations
     .map((entry) => ({ hreflang: entry.locale, url: entry.url }))
-    .concat({ hreflang: "x-default", url: translations.find((entry) => entry.locale === "zh-CN")?.url ?? translations[0].url });
+    .concat({ hreflang: "x-default", url: translations.find((entry) => entry.locale === siteDefaultLocale(site))?.url ?? translations[0].url });
   return renderLayout({
     site,
     locale,
@@ -627,6 +797,7 @@ export function renderAboutPage({ site, locale, page, translations }) {
     url: page.url,
     current: "about",
     main,
+    languageLinks: translations,
     alternates,
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
@@ -636,7 +807,7 @@ export function renderAboutPage({ site, locale, page, translations }) {
 }
 
 export function renderNotFoundPage({ site }) {
-  const locale = "zh-CN";
+  const locale = siteDefaultLocale(site);
   const description = "页面不存在。頁面不存在。 This page was not found.";
   const main = `<main id="main" class="page-main not-found-main">
     <section class="not-found-panel" data-i18n-panel="zh-CN" aria-labelledby="not-found-zh">
@@ -690,3 +861,16 @@ export function renderNotFoundPage({ site }) {
     bodyAttrs: { "data-not-found": "true" }
   });
 }
+
+export const defaultTemplates = {
+  renderAboutPage,
+  renderArchivePage,
+  renderHomePage,
+  renderLayout,
+  renderNotFoundPage,
+  renderPostPage,
+  renderRootPage,
+  renderSearchPage,
+  renderTermIndexPage,
+  renderTermPage
+};

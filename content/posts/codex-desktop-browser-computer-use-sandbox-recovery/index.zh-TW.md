@@ -7,7 +7,6 @@ translationKey: "codex-desktop-browser-computer-use-sandbox-recovery"
 tags: ["Codex", "Windows", "Browser", "Computer Use", "Sandbox"]
 category: "開發效率"
 draft: false
-cover: "https://files.js.gripe/files/raw/fil_swPhoelH0iPoZvfZDp71USKn.png"
 ---
 
 一覺醒來，Windows 還在，Codex Desktop 也還在，但 Browser 和 Computer Use 都不在了。設定頁能開，瀏覽器頁面只剩「應用內瀏覽器外掛不可用」，電腦操控也連不上。
@@ -16,17 +15,13 @@ cover: "https://files.js.gripe/files/raw/fil_swPhoelH0iPoZvfZDp71USKn.png"
 
 原始故障截圖保留如下：
 
-![Codex Desktop Browser 顯示應用內瀏覽器外掛不可用](https://files.js.gripe/files/raw/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
 
-![Codex Desktop 本地主機模式下 Browser 仍顯示不可用](https://files.js.gripe/files/raw/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
 
-![接手排障檢查清單：替我審批模式](https://files.js.gripe/files/raw/fil_swPhoelH0iPoZvfZDp71USKn.png)
 
 ## 修復腳本下載
 
 如果你想先嘗試常規修復，可以下載這個 Windows 批次檔：
 
-- [修复Codex Browser和ComputerUse.cmd](https://files.js.gripe/files/fil_nd7GSxvz4mQMLwvBQIpzF5hI.cmd)
 
 請在 Windows 上按右鍵選擇「以系統管理員身分執行」。溫馨提示：腳本會關閉 Google Chrome，請先保存瀏覽器裡的工作內容、表單和未送出的頁面。腳本不會重裝 Codex；它主要用於恢復 bundled 外掛資源、修復 Browser / Computer Use 相關設定和 helper，並在結束後提示你重啟 Codex Desktop、重新開啟設定頁觸發外掛枚舉。
 

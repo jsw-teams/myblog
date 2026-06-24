@@ -1,8 +1,9 @@
 import rss from "@astrojs/rss";
-import { LOCALES, absoluteUrl, groupByLocale, loadBlogData } from "../../lib/content.mjs";
+import { absoluteUrl, groupByLocale, readSiteConfig, loadBlogData } from "../../lib/content.mjs";
 
-export function getStaticPaths() {
-  return LOCALES.map((locale) => ({ params: { locale } }));
+export async function getStaticPaths() {
+  const site = await readSiteConfig();
+  return site.locales.map((locale) => ({ params: { locale } }));
 }
 
 export async function GET(context) {

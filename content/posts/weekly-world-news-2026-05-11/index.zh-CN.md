@@ -10,10 +10,8 @@ category: "热点时事"
 draft: false
 cover: "/news/weekly-world-news-2026-05-11.zh-CN.webp"
 media:
-  video: "https://files.js.gripe/files/raw/fil_kY2cr9nq1DiRIL30xtIsKOxZ.mp4"
   type: "video/mp4"
   poster: "/news/weekly-world-news-2026-05-11.zh-CN.webp"
-  embed: "https://files.js.gripe/files/raw/fil_kY2cr9nq1DiRIL30xtIsKOxZ.mp4"
   mainlandNotice: "视频媒体托管在境外文件服务，中国大陆网络可能无法播放；正文已补充现实图片与来源，方便在视频不可用时阅读。"
   captions:
     - src: "/news/weekly-world-news-2026-05-11.zh-CN.vtt"
@@ -38,7 +36,6 @@ Reuters 报道称，特朗普 5 月 13–15 日访华，中美会晤重点落在
 
 综合判断：这不是单纯的农产品新闻，而是中美试图为贸易战降温的信号。农业采购适合做成港口、农场、冷链、集装箱和商品价格的视觉段落；但它不能被解读成结构性缓和，因为台湾、安全和技术限制仍在同一张谈判桌旁边。
 
-![联合国安理会会议厅与国际议题讨论场景](https://files.js.gripe/files/raw/fil_i41ppBM35PWTjZyiqVK7C-aG.jpeg)
 
 图片补充：用于呈现中美谈判、台湾与国际组织议题交织时的多边会议语境。图片来源：Wikimedia Commons，UN Security Council Chamber。
 
@@ -54,7 +51,6 @@ Reuters 报道称，5 月 17 日阿联酋巴拉卡核电站周边遭无人机袭
 
 综合判断：这条新闻的关键不是“核电站是否受损”，而是无人机、能源通道、核设施周边安全和油价预期被绑在一起。它适合做成视频中段的风险放大器：从巴拉卡核电站外景切到油轮、霍尔木兹海峡地图和油价曲线。
 
-![海上能源运输与全球航运场景](https://files.js.gripe/files/raw/fil_N9ieijBStH92KuIiJFZ2sLWQ.jpg)
 
 图片补充：用于辅助说明霍尔木兹海峡、海湾能源通道与油价风险之间的关系。图片来源：Wikimedia Commons，Strait of Hormuz。
 
@@ -76,7 +72,6 @@ WHO 5 月 17 日宣布，刚果民主共和国和乌干达的 Bundibugyo 病毒�
 
 综合判断：公共健康段落不一定放进主视频全部展开，但很适合作为结尾快切：全球风险不只来自战争和贸易，也来自疾病、气候和跨境流动。
 
-![公共卫生简报与疫情风险说明场景](https://files.js.gripe/files/raw/fil_QiCQMCC2njk868jv-xZ5reBa.jpg)
 
 图片补充：用于承接 WHO、埃博拉与跨境公共卫生风险的段落。图片来源：Yann Forget / Wikimedia Commons，WHO headquarters, Geneva。
 

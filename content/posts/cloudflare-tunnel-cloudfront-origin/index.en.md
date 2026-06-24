@@ -7,7 +7,6 @@ translationKey: "cloudflare-tunnel-cloudfront-origin"
 tags: ["Cloudflare Tunnel", "CloudFront", "OpenResty", "AWS", "Origin"]
 category: "Technical Practice"
 draft: false
-cover: "https://r2.files.js.gripe/files/fil_3H6W_AeNx74WyvrYGyjWNGOq.png"
 ---
 
 This migration did not start with a decision to use CloudFront plus Cloudflare Tunnel.

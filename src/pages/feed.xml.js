@@ -1,11 +1,11 @@
 import rss from "@astrojs/rss";
-import { absoluteUrl, loadBlogData, DEFAULT_LOCALE } from "../lib/content.mjs";
+import { absoluteUrl, loadBlogData } from "../lib/content.mjs";
 
 export async function GET(context) {
   const { site, posts } = await loadBlogData();
   return rss({
-    title: "技诉 Blog / Blog.js.gripe",
-    description: site.description[DEFAULT_LOCALE],
+    title: site.feed?.title || site.siteName[site.defaultLocale],
+    description: site.feed?.description || site.description[site.defaultLocale],
     site: context.site ?? site.siteUrl,
     items: posts.map((post) => ({
       title: post.title,

@@ -1,0 +1,11 @@
+.home-main {
+  gap: 4rem;
+}
+
+.home-hero {
+  background: var(--surface);
+}
+
+.home-section .post-list {
+  margin-top: 1.5rem;
+}

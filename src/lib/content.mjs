@@ -1,28 +1,21 @@
 import fs from "node:fs/promises";
 import fsSync from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import crypto from "node:crypto";
 import fg from "fast-glob";
 import matter from "gray-matter";
 import MarkdownIt from "markdown-it";
 import anchor from "markdown-it-anchor";
-import { DEFAULT_LOCALE, LOCALES, formatDate, localeLabel, t } from "../i18n.mjs";
+import { DEFAULT_LOCALE, LOCALES, configureThemeI18n, formatDate, localeLabel, t } from "../i18n.mjs";
 import {
   absoluteUrl,
   escapeHtml,
   basePath,
-  renderAboutPage,
-  renderArchivePage,
-  renderHomePage,
-  renderLayout,
-  renderNotFoundPage,
-  renderPostPage,
-  renderRootPage,
-  renderSearchPage,
-  renderTermIndexPage,
-  renderTermPage
+  defaultTemplates
 } from "../templates.mjs";
-import { DEFAULT_OG_IMAGE, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, makeOgImageFromCover } from "../og-images.mjs";
+import { loadHtmlThemeTemplates } from "./theme-html.mjs";
+import { DEFAULT_OG_IMAGE, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from "../og-images.mjs";
 
 const rootDir = process.cwd();
 const contentDir = path.join(rootDir, "content");
@@ -33,8 +26,198 @@ const today = "2026-04-27";
 
 export { DEFAULT_LOCALE, LOCALES, absoluteUrl };
 
+async function loadThemeTemplates(site) {
+  const themeName = site.theme?.name || "default";
+  const themeDir = path.join(rootDir, "themes", themeName);
+  const templateTarget = site.theme?.templates || "templates";
+  const templatePath = path.join(themeDir, templateTarget);
+  if (!fsSync.existsSync(templatePath)) return defaultTemplates;
+  if (fsSync.statSync(templatePath).isDirectory()) {
+    const overrides = loadHtmlThemeTemplates(site, themeDir, templateTarget);
+    return Object.fromEntries(Object.entries({ ...defaultTemplates, ...overrides }).map(([key, fn]) => [
+      key,
+      typeof fn === "function"
+        ? (...args) => fn(...args) ?? defaultTemplates[key](...args)
+        : fn
+    ]));
+  }
+  const themeModule = await import(pathToFileURL(templatePath).href);
+  const overrides = themeModule.templates || themeModule;
+  return { ...defaultTemplates, ...overrides };
+}
+
+async function readConfigFile(file) {
+  const raw = await fs.readFile(file, "utf8");
+  if (file.endsWith(".json")) return JSON.parse(raw);
+  return matter(`---\n${raw}\n---`).data;
+}
+
+function mergePlainDefaults(defaults, overrides) {
+  if (!defaults || typeof defaults !== "object" || Array.isArray(defaults)) return overrides ?? defaults;
+  const merged = { ...defaults };
+  if (!overrides || typeof overrides !== "object" || Array.isArray(overrides)) return merged;
+  for (const [key, value] of Object.entries(overrides)) {
+    if (
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      merged[key] &&
+      typeof merged[key] === "object" &&
+      !Array.isArray(merged[key])
+    ) {
+      merged[key] = mergePlainDefaults(merged[key], value);
+    } else {
+      merged[key] = value;
+    }
+  }
+  return merged;
+}
+
+function themeAssetVersion(themeName, filename) {
+  if (!filename || /^(?:[a-z][a-z0-9+.-]*:|\/\/|\/)/i.test(String(filename))) return "";
+  const file = path.join(rootDir, "themes", themeName, String(filename));
+  if (!fsSync.existsSync(file)) return "";
+  return crypto.createHash("sha1").update(fsSync.readFileSync(file)).digest("hex").slice(0, 10);
+}
+
+function themeAssetUrl(themeName, filename) {
+  const version = themeAssetVersion(themeName, filename);
+  const clean = String(filename).replace(/^\/+/, "");
+  return `/assets/theme/${themeName}/${clean}${version ? `?v=${version}` : ""}`;
+}
+
+async function readThemeConfig(config) {
+  const themeRef = typeof config.theme === "string" ? { name: config.theme } : config.theme || {};
+  const themeName = themeRef.name || "default";
+  const themeFile = path.join(rootDir, "themes", themeName, "theme.yml");
+  const themeDefaults = fsSync.existsSync(themeFile) ? await readConfigFile(themeFile) : {};
+  if (typeof themeDefaults.i18n === "string") {
+    const i18nFile = path.join(rootDir, "themes", themeName, themeDefaults.i18n);
+    themeDefaults.i18n = fsSync.existsSync(i18nFile) ? await readConfigFile(i18nFile) : {};
+  }
+  const theme = mergePlainDefaults(themeDefaults, themeRef);
+  theme.name = theme.name || themeName;
+  return theme;
+}
+
+function normalizeSiteConfig(config) {
+  const site = { ...config };
+  site.defaultLocale = site.defaultLocale ? String(site.defaultLocale) : DEFAULT_LOCALE;
+  site.activeLocales = Array.isArray(site.activeLocales)
+    ? site.activeLocales.map(String).filter(Boolean)
+    : LOCALES;
+  if (!site.activeLocales.length) site.activeLocales = [site.defaultLocale];
+  if (!site.activeLocales.includes(site.defaultLocale)) site.activeLocales.unshift(site.defaultLocale);
+  site.locales = site.activeLocales;
+  site.siteName ??= {};
+  site.description ??= {};
+  site.author ??= {};
+  site.theme = typeof site.theme === "string" ? { name: site.theme } : site.theme;
+  site.theme ??= {};
+  site.theme.name = site.theme.name || "default";
+  site.plugins = mergePlainDefaults(site.theme.plugins || {}, site.plugins || {});
+  if (!site.plugins.comments && site.comments) site.plugins.comments = site.comments;
+  configureThemeI18n(site.theme.i18n || {});
+  const themeCss = Array.isArray(site.theme.css) ? site.theme.css : [];
+  const themeJs = Array.isArray(site.theme.js) ? site.theme.js : [];
+  if (!themeCss.length && site.theme.style) themeCss.push(themeAssetUrl(site.theme.name, site.theme.style));
+  if (!themeJs.length && site.theme.script) {
+    themeJs.push({ src: themeAssetUrl(site.theme.name, site.theme.script), defer: true });
+  }
+  site.theme.css = themeCss;
+  site.theme.js = themeJs;
+  const pageStyleFiles = site.theme.pageStyles && typeof site.theme.pageStyles === "object" && !Array.isArray(site.theme.pageStyles)
+    ? site.theme.pageStyles
+    : {};
+  site.theme.pageStyleFiles = pageStyleFiles;
+  site.theme.pageStyles = Object.fromEntries(Object.entries(pageStyleFiles).map(([key, value]) => [
+    key,
+    Array.isArray(value)
+      ? value.map((file) => themeAssetUrl(site.theme.name, file))
+      : value ? [themeAssetUrl(site.theme.name, value)] : []
+  ]));
+  const pageScriptFiles = site.theme.pageScripts && typeof site.theme.pageScripts === "object" && !Array.isArray(site.theme.pageScripts)
+    ? site.theme.pageScripts
+    : {};
+  site.theme.pageScriptFiles = pageScriptFiles;
+  site.theme.pageScripts = Object.fromEntries(Object.entries(pageScriptFiles).map(([key, value]) => [
+    key,
+    Array.isArray(value)
+      ? value.map((script) => typeof script === "string"
+        ? { src: themeAssetUrl(site.theme.name, script), defer: true }
+        : { ...script, src: script?.src && /^(?:[a-z][a-z0-9+.-]*:|\/\/|\/)/i.test(String(script.src)) ? script.src : themeAssetUrl(site.theme.name, script.src), defer: script?.defer ?? true })
+      : value ? [{ src: themeAssetUrl(site.theme.name, value), defer: true }] : []
+  ]));
+  const featureScriptFiles = site.theme.featureScripts && typeof site.theme.featureScripts === "object" && !Array.isArray(site.theme.featureScripts)
+    ? site.theme.featureScripts
+    : {};
+  site.theme.featureScriptFiles = featureScriptFiles;
+  site.theme.featureScripts = Object.fromEntries(Object.entries(featureScriptFiles).map(([key, value]) => [
+    key,
+    /^(?:[a-z][a-z0-9+.-]*:|\/\/|\/)/i.test(String(value)) ? value : themeAssetUrl(site.theme.name, value)
+  ]));
+  const featureStyleFiles = site.theme.featureStyles && typeof site.theme.featureStyles === "object" && !Array.isArray(site.theme.featureStyles)
+    ? site.theme.featureStyles
+    : {};
+  site.theme.featureStyleFiles = featureStyleFiles;
+  site.theme.featureStyles = Object.fromEntries(Object.entries(featureStyleFiles).map(([key, value]) => [
+    key,
+    Array.isArray(value)
+      ? value.map((file) => themeAssetUrl(site.theme.name, file))
+      : value ? [themeAssetUrl(site.theme.name, value)] : []
+  ]));
+  site.theme.features = site.theme.features && typeof site.theme.features === "object" && !Array.isArray(site.theme.features)
+    ? site.theme.features
+    : {};
+  site.theme.styles = Array.isArray(site.theme.styles) ? site.theme.styles : [];
+  site.theme.scripts ??= {};
+  site.theme.scripts.head = Array.isArray(site.theme.scripts.head) ? site.theme.scripts.head : [];
+  site.theme.scripts.bodyEnd = Array.isArray(site.theme.scripts.bodyEnd) ? site.theme.scripts.bodyEnd : [];
+  const cloudflareWebAnalytics = site.plugins.analytics?.cloudflareWebAnalytics;
+  if (cloudflareWebAnalytics?.enabled && cloudflareWebAnalytics.token) {
+    const beacon = {
+      token: String(cloudflareWebAnalytics.token),
+      ...(cloudflareWebAnalytics.beacon && typeof cloudflareWebAnalytics.beacon === "object" ? cloudflareWebAnalytics.beacon : {})
+    };
+    site.theme.scripts.bodyEnd.push({
+      src: cloudflareWebAnalytics.src || "https://static.cloudflareinsights.com/beacon.min.js",
+      defer: cloudflareWebAnalytics.defer ?? true,
+      consent: cloudflareWebAnalytics.consent || "analytics",
+      "data-cf-beacon": JSON.stringify(beacon)
+    });
+  }
+  site.scripts ??= {};
+  site.scripts.head = Array.isArray(site.scripts.head) ? site.scripts.head : [];
+  site.scripts.bodyEnd = Array.isArray(site.scripts.bodyEnd) ? site.scripts.bodyEnd : [];
+  return site;
+}
+
 export async function readSiteConfig() {
-  return JSON.parse(await fs.readFile(path.join(contentDir, "site.config.json"), "utf8"));
+  const candidates = [
+    path.join(rootDir, "config.yml"),
+    path.join(rootDir, "_config.yml"),
+    path.join(rootDir, "config", "site.yml"),
+    path.join(contentDir, "site.config.json")
+  ];
+  for (const file of candidates) {
+    if (!fsSync.existsSync(file)) continue;
+    const rootConfig = await readConfigFile(file);
+    const themeConfig = await readThemeConfig(rootConfig);
+    const mergedConfig = mergePlainDefaults({
+      theme: themeConfig,
+      pagination: themeConfig.pagination,
+      icons: themeConfig.icons,
+      pwa: themeConfig.pwa,
+      head: themeConfig.head,
+      footer: themeConfig.footer,
+      plugins: themeConfig.plugins
+    }, {
+      ...rootConfig,
+      theme: mergePlainDefaults(themeConfig, typeof rootConfig.theme === "string" ? { name: rootConfig.theme } : rootConfig.theme)
+    });
+    return normalizeSiteConfig(mergedConfig);
+  }
+  throw new Error("Missing site config: expected config.yml, _config.yml, config/site.yml, or content/site.config.json");
 }
 
 function normalizeDate(value, fallback = today) {
@@ -172,12 +355,13 @@ function localeFromPostFilename(file) {
   return match?.[1] ?? "";
 }
 
-export async function loadPosts() {
+export async function loadPosts(site = null) {
+  const locales = site?.locales ?? LOCALES;
   const files = await fg("content/posts/*/index.*.md", { cwd: rootDir, onlyFiles: true });
   const posts = [];
   for (const file of files) {
     const locale = localeFromPostFilename(file);
-    if (!LOCALES.includes(locale)) continue;
+    if (!locales.includes(locale)) continue;
     const sourcePath = path.join(rootDir, file);
     const raw = await fs.readFile(sourcePath, "utf8");
     const parsed = matter(raw);
@@ -190,9 +374,6 @@ export async function loadPosts() {
     const updated = normalizeDate(parsed.data.updated, date);
     const description = plainSummary(parsed.content, parsed.data.description);
     const cover = parsed.data.cover ? copyContentAsset(String(parsed.data.cover), baseDir, contentKey) : "";
-    const generatedOgImage = cover
-      ? await makeOgImageFromCover(cover, { publicDir: staticDir, contentKey })
-      : null;
     const media = parsed.data.media && typeof parsed.data.media === "object" ? parsed.data.media : null;
     posts.push({
       slug,
@@ -208,9 +389,10 @@ export async function loadPosts() {
       category: parsed.data.category ? String(parsed.data.category) : "Notes",
       cover,
       media,
-      ogImage: generatedOgImage?.url || DEFAULT_OG_IMAGE,
-      ogImageWidth: generatedOgImage?.width || OG_IMAGE_WIDTH,
-      ogImageHeight: generatedOgImage?.height || OG_IMAGE_HEIGHT,
+      sitemap: parsed.data.sitemap,
+      ogImage: DEFAULT_OG_IMAGE,
+      ogImageWidth: OG_IMAGE_WIDTH,
+      ogImageHeight: OG_IMAGE_HEIGHT,
       markdownBody: parsed.content.replace(moreMarker, "").trim(),
       html: renderMarkdown(parsed.content, baseDir, contentKey),
       url: `/${locale}/posts/${slug}/`,
@@ -222,14 +404,15 @@ export async function loadPosts() {
   return posts;
 }
 
-export async function loadPages() {
+export async function loadPages(site = null) {
+  const locales = site?.locales ?? LOCALES;
   const files = await fg("content/pages/*.md", { cwd: rootDir, onlyFiles: true });
   const pages = [];
   for (const file of files) {
     const match = path.basename(file).match(/^(.+)\.(.+)\.md$/);
     if (!match) continue;
     const [, slug, locale] = match;
-    if (!LOCALES.includes(locale)) continue;
+    if (!locales.includes(locale)) continue;
     const sourcePath = path.join(rootDir, file);
     const raw = await fs.readFile(sourcePath, "utf8");
     const parsed = matter(raw);
@@ -242,6 +425,7 @@ export async function loadPages() {
       title: parsed.data.title || slug,
       description: plainSummary(parsed.content, parsed.data.description),
       updated: normalizeDate(parsed.data.updated),
+      sitemap: parsed.data.sitemap,
       html: renderMarkdown(parsed.content, baseDir, contentKey),
       url: `/${locale}/${slug}/`
     });
@@ -308,8 +492,8 @@ function groupBy(items, keyFn) {
   return map;
 }
 
-function translationsFor(group, localePath = (item) => item.url) {
-  return LOCALES
+function translationsFor(group, localePath = (item) => item.url, locales = LOCALES) {
+  return locales
     .map((locale) => group.find((item) => item.locale === locale))
     .filter(Boolean)
     .map((item) => ({ locale: item.locale, url: localePath(item), title: item.title }));
@@ -317,26 +501,41 @@ function translationsFor(group, localePath = (item) => item.url) {
 
 export async function loadBlogData() {
   const site = await readSiteConfig();
-  const posts = await loadPosts();
-  const pages = await loadPages();
+  const posts = await loadPosts(site);
+  const pages = await loadPages(site);
   return { site, posts, pages };
 }
 
 export async function buildHtmlPages() {
   const { site, posts, pages } = await loadBlogData();
+  const templates = await loadThemeTemplates(site);
+  const locales = site.locales;
+  const defaultLocale = site.defaultLocale;
   const routes = [];
   const add = (url, html) => routes.push({ url, html: rewriteRelativePaths(html, url) });
+  const homePageSize = Math.max(1, Number(site.pagination?.homePageSize || 8));
 
-  add("/", renderRootPage({ site }));
+  add("/", templates.renderRootPage({ site }));
 
-  for (const locale of LOCALES) {
+  for (const locale of locales) {
     const localePosts = groupByLocale(posts, locale);
     const categoryMap = buildTermMap(posts, locale, "categories");
     const tagMap = buildTermMap(posts, locale, "tags");
 
-    add(`/${locale}/`, renderHomePage({ site, locale, posts: localePosts.slice(0, 8) }));
-    add(`/${locale}/archive/`, renderArchivePage({ site, locale, groups: archiveGroups(posts, locale) }));
-    add(`/${locale}/categories/`, renderTermIndexPage({
+    const totalHomePages = Math.max(1, Math.ceil(localePosts.length / homePageSize));
+    const homePageUrl = (page) => page === 1 ? `/${locale}/` : `/${locale}/${"older/".repeat(page - 1)}`;
+    for (let page = 1; page <= totalHomePages; page += 1) {
+      add(homePageUrl(page), templates.renderHomePage({
+        site,
+        locale,
+        posts: localePosts.slice((page - 1) * homePageSize, page * homePageSize),
+        page,
+        totalPages: totalHomePages,
+        pageUrl: homePageUrl
+      }));
+    }
+    add(`/${locale}/archive/`, templates.renderArchivePage({ site, locale, groups: archiveGroups(posts, locale) }));
+    add(`/${locale}/categories/`, templates.renderTermIndexPage({
       site,
       locale,
       titleKey: "allCategories",
@@ -345,7 +544,7 @@ export async function buildHtmlPages() {
       url: `/${locale}/categories/`,
       current: "categories"
     }));
-    add(`/${locale}/tags/`, renderTermIndexPage({
+    add(`/${locale}/tags/`, templates.renderTermIndexPage({
       site,
       locale,
       titleKey: "allTags",
@@ -354,7 +553,7 @@ export async function buildHtmlPages() {
       url: `/${locale}/tags/`,
       current: "tags"
     }));
-    add(`/${locale}/search/`, renderSearchPage({ site, locale }));
+    add(`/${locale}/search/`, templates.renderSearchPage({ site, locale }));
 
     for (const term of categoryMap.values()) {
       const title = `${t(locale, "postsInCategory")}: ${term.name}`;
@@ -363,7 +562,7 @@ export async function buildHtmlPages() {
         : locale === "zh-TW"
           ? `查看「${term.name}」分類下的文章。`
           : `Posts filed under ${term.name}.`;
-      add(term.url, renderTermPage({ site, locale, title, description, posts: term.posts, url: term.url, current: "categories", parentKey: "categories" }));
+      add(term.url, templates.renderTermPage({ site, locale, title, description, posts: term.posts, url: term.url, current: "categories", parentKey: "categories" }));
     }
 
     for (const term of tagMap.values()) {
@@ -373,100 +572,47 @@ export async function buildHtmlPages() {
         : locale === "zh-TW"
           ? `查看帶有「${term.name}」標籤的文章。`
           : `Posts tagged ${term.name}.`;
-      add(term.url, renderTermPage({ site, locale, title, description, posts: term.posts, url: term.url, current: "tags", parentKey: "tags" }));
+      add(term.url, templates.renderTermPage({ site, locale, title, description, posts: term.posts, url: term.url, current: "tags", parentKey: "tags" }));
     }
   }
 
   const postsByTranslation = groupBy(posts, (post) => post.translationKey);
   for (const group of postsByTranslation.values()) {
-    const translations = translationsFor(group);
+    const translations = translationsFor(group, (item) => item.url, locales);
     for (const post of group) {
       const localePosts = groupByLocale(posts, post.locale);
       const index = localePosts.findIndex((entry) => entry.url === post.url);
       const nextPost = index > 0 ? localePosts[index - 1] : null;
       const previousPost = index < localePosts.length - 1 ? localePosts[index + 1] : null;
-      add(post.url, renderPostPage({ site, locale: post.locale, post, translations, previousPost, nextPost }));
+      add(post.url, templates.renderPostPage({ site, locale: post.locale, post, translations, previousPost, nextPost }));
     }
   }
 
   const pagesByTranslation = groupBy(pages, (page) => page.translationKey);
   for (const group of pagesByTranslation.values()) {
-    const translations = translationsFor(group);
+    const translations = translationsFor(group, (item) => item.url, locales);
     for (const page of group) {
       if (page.slug === "about") {
-        add(page.url, renderAboutPage({ site, locale: page.locale, page, translations }));
+      add(page.url, templates.renderAboutPage({ site, locale: page.locale, page, translations }));
       }
     }
   }
 
-  add("/sitemap/", renderVisualSitemap({ site, routes }));
+  add("/sitemap/", renderVisualSitemap({ site, routes, templates }));
   return routes;
-}
-
-function escapeXml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-}
-
-function latestDate(items, fallback = today) {
-  return items.reduce((latest, item) => {
-    const updated = normalizeDate(item.updated ?? item.date, fallback);
-    return updated > latest ? updated : latest;
-  }, fallback);
-}
-
-export async function buildSitemapXml() {
-  const { site, posts, pages } = await loadBlogData();
-  const entries = [];
-  const add = (url, updated, alternates = []) => {
-    entries.push({
-      url,
-      updated: normalizeDate(updated, today),
-      alternates
-    });
-  };
-  const siteUpdated = latestDate([...posts, ...pages]);
-
-  add("/", siteUpdated);
-
-  const postsByTranslation = groupBy(posts, (post) => post.translationKey);
-  for (const group of postsByTranslation.values()) {
-    const alternates = translationsFor(group);
-    for (const post of group) {
-      add(post.url, post.updated, alternates);
-    }
-  }
-
-  const pagesByTranslation = groupBy(pages, (page) => page.translationKey);
-  for (const group of pagesByTranslation.values()) {
-    const alternates = translationsFor(group);
-    for (const page of group) {
-      add(page.url, page.updated, alternates);
-    }
-  }
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${entries.map((entry) => `  <url>
-    <loc>${escapeXml(absoluteUrl(site, entry.url))}</loc>
-    <lastmod>${escapeXml(entry.updated)}</lastmod>
-${entry.alternates.map((alt) => `    <xhtml:link rel="alternate" hreflang="${escapeXml(alt.locale)}" href="${escapeXml(absoluteUrl(site, alt.url))}" />`).join("\n")}
-  </url>`).join("\n")}
-</urlset>
-`;
 }
 
 export async function buildNotFoundHtml() {
   const site = await readSiteConfig();
-  return rewriteRelativePaths(renderNotFoundPage({ site }), "/404.html");
+  const templates = await loadThemeTemplates(site);
+  return rewriteRelativePaths(templates.renderNotFoundPage({ site }), "/404.html");
 }
 
 function rewriteRelativePaths(html, urlPath) {
   const fromDir = urlPath.endsWith("/") ? urlPath : path.posix.dirname(urlPath);
-  return html.replace(/\b(href|src|poster|data-video-src)=["']\/(?!\/)([^"']+)["']/g, (match, attr, target) => {
+  return html.replace(/\b(href|src|poster|data-video-src)=["']\/(?!\/)([^"']+)["']/g, (match, attr, target, offset, fullHtml) => {
+    const tagStart = fullHtml.lastIndexOf("<", offset);
+    if (tagStart >= 0 && /^<base\b/i.test(fullHtml.slice(tagStart, offset))) return match;
     const cleanTarget = target.replace(/^\/+/, "");
     let prefix = path.posix.relative(fromDir.replace(/^\/|\/$/g, ""), path.posix.dirname(cleanTarget));
     if (!prefix) prefix = ".";
@@ -474,7 +620,7 @@ function rewriteRelativePaths(html, urlPath) {
   });
 }
 
-function renderVisualSitemap({ site, routes }) {
+function renderVisualSitemap({ site, routes, templates = defaultTemplates }) {
   const htmlRoutes = routes.filter((route) => route.url !== "/404.html");
   const rows = htmlRoutes
     .map((route) => {
@@ -494,11 +640,11 @@ function renderVisualSitemap({ site, routes }) {
       </table>
     </div>
   </main>`;
-  return renderLayout({
+  return templates.renderLayout({
     site,
-    locale: DEFAULT_LOCALE,
+    locale: site.defaultLocale,
     title: "Sitemap",
-    description: "Human-readable sitemap for blog.js.gripe.",
+    description: site.sitemap?.description || "Human-readable sitemap.",
     url: "/sitemap/",
     main,
     robots: "noindex,follow"
@@ -533,19 +679,19 @@ ${markdown}
 }
 
 export function buildRobotsTxt(site) {
-  return `# Claude is not welcome here because this site owner does not welcome
-# unethical AI crawlers that freely scrape sites while arbitrarily
-# banning user accounts.
-Content-Signal: ai-train=no, search=yes, ai-input=yes
-
-User-agent: ClaudeBot
-Disallow: /
-
-User-agent: Claude-User
-Disallow: /
-
-User-agent: *
-Allow: /
+  const robots = site.robots || {};
+  const header = Array.isArray(robots.header)
+    ? robots.header.map((line) => `# ${line}`).join("\n")
+    : "";
+  const signal = robots.contentSignal ? `Content-Signal: ${robots.contentSignal}\n\n` : "";
+  const rules = Array.isArray(robots.rules) ? robots.rules : [{ userAgent: "*", allow: ["/"] }];
+  const body = rules.map((rule) => {
+    const lines = [`User-agent: ${rule.userAgent || "*"}`];
+    for (const value of rule.allow || []) lines.push(`Allow: ${value}`);
+    for (const value of rule.disallow || []) lines.push(`Disallow: ${value}`);
+    return lines.join("\n");
+  }).join("\n\n");
+  return `${header}${header ? "\n" : ""}${signal}${body}
 
 Sitemap: ${absoluteUrl(site, "/sitemap.xml")}
 `;
@@ -553,15 +699,15 @@ Sitemap: ${absoluteUrl(site, "/sitemap.xml")}
 
 export function buildLlmsTxt(site, posts) {
   const latest = posts.slice(0, 60);
-  const languageLines = LOCALES
+  const languageLines = site.locales
     .map((locale) => `- ${localeLabel(locale)}: ${absoluteUrl(site, `/${locale}/`)}`)
     .join("\n");
   const articleLines = latest
     .map((post) => `- ${post.title}: ${absoluteUrl(site, post.markdownUrl)}`)
     .join("\n");
-  return `# 技诉 Blog / blog.js.gripe
+  return `# ${site.llms?.title || site.siteName[site.defaultLocale] || site.siteUrl}
 
-Public writing site for technical practice, web services, writing, and observation.
+${site.llms?.description || site.description[site.defaultLocale] || ""}
 
 ## Languages
 
@@ -574,7 +720,7 @@ ${articleLines}
 }
 
 export function buildLlmsFullTxt(site, posts) {
-  return `# 技诉 Blog / blog.js.gripe
+  return `# ${site.llms?.title || site.siteName[site.defaultLocale] || site.siteUrl}
 
 ${posts.map((post) => `## ${post.title}
 

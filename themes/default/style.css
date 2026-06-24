@@ -167,8 +167,7 @@ img {
 }
 
 .site-nav,
-.utility-nav,
-.language-nav {
+.utility-nav {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
@@ -179,13 +178,8 @@ img {
   justify-content: center;
 }
 
-.language-nav {
-  justify-content: flex-end;
-}
-
 .site-nav a,
-.utility-nav a,
-.language-nav a {
+.utility-nav a {
   border: 2px solid transparent;
   border-radius: var(--radius);
   color: var(--muted);
@@ -217,9 +211,7 @@ img {
 }
 
 .site-nav a:hover,
-.language-nav a:hover,
-.site-nav a[aria-current="page"],
-.language-nav a[aria-current="page"] {
+.site-nav a[aria-current="page"] {
   background: var(--surface-2);
   border-color: var(--text);
   color: var(--text);
@@ -351,6 +343,31 @@ h3 {
   display: grid;
   gap: 1rem;
   grid-template-columns: minmax(0, var(--content));
+}
+
+.pagination {
+  align-items: center;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr auto 1fr;
+  margin-top: 1.5rem;
+  max-width: var(--content);
+}
+
+.pagination a {
+  justify-self: start;
+  width: max-content;
+  max-width: 100%;
+}
+
+.pagination a:last-child {
+  justify-self: end;
+}
+
+.pagination > span {
+  color: var(--muted);
+  font-weight: 700;
+  justify-self: center;
 }
 
 .post-card {
@@ -717,10 +734,6 @@ h3 {
   image-rendering: pixelated;
 }
 
-.prose img[src^="https://files.js.gripe"] {
-  image-rendering: auto;
-}
-
 .prose img.js-lightbox-image {
   cursor: zoom-in;
 }
@@ -964,17 +977,24 @@ html[data-preferred-locale="en"] .not-found-panel[data-i18n-panel="en"] {
   gap: 0.45rem;
 }
 
-.footer-links a {
+.footer-links a,
+.footer-link-button {
   align-items: center;
   border: 1px solid transparent;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
   display: inline-flex;
+  font: inherit;
   min-height: 40px;
   padding: 0.42rem 0.72rem;
   text-decoration: none;
 }
 
 .footer-links a:hover,
-.footer-links a:focus-visible {
+.footer-links a:focus-visible,
+.footer-link-button:hover,
+.footer-link-button:focus-visible {
   border-color: var(--border);
   background: var(--surface-2);
 }
@@ -984,13 +1004,23 @@ html[data-preferred-locale="en"] .not-found-panel[data-i18n-panel="en"] {
 }
 
 @media (max-width: 820px) {
+  .pagination {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .pagination a,
+  .pagination a:last-child,
+  .pagination > span {
+    justify-self: center;
+  }
+
   .site-header {
     grid-template-columns: 1fr;
   }
 
   .site-nav,
-  .utility-nav,
-  .language-nav {
+  .utility-nav {
     justify-content: flex-start;
   }
 

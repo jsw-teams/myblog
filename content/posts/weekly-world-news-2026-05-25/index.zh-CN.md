@@ -10,10 +10,8 @@ category: "热点时事"
 draft: false
 cover: "/news/weekly-world-news-2026-05-25.zh-CN.webp"
 media:
-  video: "https://files.js.gripe/files/raw/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
   type: "video/mp4"
   poster: "/news/weekly-world-news-2026-05-25.zh-CN.webp"
-  embed: "https://files.js.gripe/files/raw/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
   mainlandNotice: "视频媒体托管在境外文件服务，中国大陆网络可能无法播放；正文保留完整文字版与来源，便于在视频不可用时阅读。"
   captions:
     - src: "/news/weekly-world-news-2026-05-25.zh-CN.vtt"

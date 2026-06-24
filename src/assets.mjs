@@ -1,13 +1,14 @@
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEFAULT_OG_IMAGE } from "./og-images.mjs";
+import { readSiteConfig } from "./lib/content.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
 const publicDir = path.join(rootDir, "static");
 const assetsDir = path.join(publicDir, "assets");
-const sourceDir = path.join(rootDir, "source-assets");
 const cacheDir = path.join(rootDir, ".cache");
 const basePath = "";
 
@@ -21,10 +22,10 @@ process.env.FONTCONFIG_CACHE ??= path.join(cacheDir, "fontconfig");
 
 const { default: sharp } = await import("sharp");
 
-const sourceFiles = {
-  daily: path.join(sourceDir, "mascot-daily-actions.png"),
-  emotions: path.join(sourceDir, "mascot-emotions.png"),
-  error: path.join(sourceDir, "mascot-error-actions.png")
+let sourceFiles = {
+  daily: path.join(rootDir, "source-assets", "mascot-daily-actions.png"),
+  emotions: path.join(rootDir, "source-assets", "mascot-emotions.png"),
+  error: path.join(rootDir, "source-assets", "mascot-error-actions.png")
 };
 
 const cropConfig = {
@@ -55,6 +56,22 @@ const cropConfig = {
 
 async function ensureDir(dir) {
   await fs.mkdir(dir, { recursive: true });
+}
+
+function configureThemeSourceFiles(site) {
+  const themeName = site.theme?.name || "default";
+  const themeSourceDir = path.join(rootDir, "themes", themeName, "source-assets");
+  const legacySourceDir = path.join(rootDir, "source-assets");
+  const sourceDir = fsSync.existsSync(themeSourceDir) ? themeSourceDir : legacySourceDir;
+  sourceFiles = {
+    daily: path.join(sourceDir, "mascot-daily-actions.png"),
+    emotions: path.join(sourceDir, "mascot-emotions.png"),
+    error: path.join(sourceDir, "mascot-error-actions.png")
+  };
+}
+
+function hasSource(key) {
+  return fsSync.existsSync(sourceFiles[key]);
 }
 
 async function readMetadata(key) {
@@ -134,6 +151,11 @@ async function transparentCrop(sourceKey, extract) {
 }
 
 async function writeCrop(sourceKey, crop, outputName, width) {
+  const output = path.join(assetsDir, outputName);
+  if (!hasSource(sourceKey)) {
+    if (fsSync.existsSync(output)) return;
+    throw new Error(`Missing theme source asset: ${sourceFiles[sourceKey]}`);
+  }
   const metadata = await readMetadata(sourceKey);
   const extract = crop.left == null
     ? cellExtract(metadata, cropConfig[sourceKey].grid, crop)
@@ -141,12 +163,15 @@ async function writeCrop(sourceKey, crop, outputName, width) {
   await (await transparentCrop(sourceKey, extract))
     .resize({ width, withoutEnlargement: true })
     .png({ compressionLevel: 9, adaptiveFiltering: true })
-    .toFile(path.join(assetsDir, outputName));
+    .toFile(output);
 }
 
-async function makeIconPng(size, output) {
-  const crop = cropConfig.daily.crops.laptop;
-  await (await transparentCrop("daily", crop))
+async function makeIconPng(size, output, source = null) {
+  if (!source && !hasSource("daily") && fsSync.existsSync(output)) return;
+  const image = source
+    ? sharp(source)
+    : await transparentCrop("daily", cropConfig.daily.crops.laptop);
+  await image
     .resize(size, size, {
       fit: "contain",
       position: "centre"
@@ -174,33 +199,53 @@ function icoFromPng(pngBuffer, size) {
   return Buffer.concat([header, directory, pngBuffer]);
 }
 
-async function writeFavicon() {
+function resolveProjectPath(value) {
+  if (!value) return "";
+  const clean = String(value).replace(/^\/+/, "");
+  return path.isAbsolute(value) ? value : path.join(rootDir, clean);
+}
+
+async function writeFavicon(site) {
+  const iconSource = resolveProjectPath(site.icons?.source);
+  const source = iconSource && fsSync.existsSync(iconSource) ? iconSource : null;
+  if (!source && !hasSource("daily")) {
+    const required = [
+      path.join(publicDir, "favicon.ico"),
+      path.join(publicDir, "favicon-32x32.png"),
+      path.join(publicDir, "apple-touch-icon.png"),
+      path.join(assetsDir, "icon-192.png"),
+      path.join(assetsDir, "icon-512.png")
+    ];
+    if (required.every((file) => fsSync.existsSync(file))) return;
+  }
   const favicon32 = path.join(publicDir, "favicon-32x32.png");
-  await makeIconPng(32, favicon32);
-  await makeIconPng(180, path.join(publicDir, "apple-touch-icon.png"));
-  await makeIconPng(192, path.join(assetsDir, "icon-192.png"));
-  await makeIconPng(512, path.join(assetsDir, "icon-512.png"));
+  await makeIconPng(32, favicon32, source);
+  await makeIconPng(180, path.join(publicDir, "apple-touch-icon.png"), source);
+  await makeIconPng(192, path.join(assetsDir, "icon-192.png"), source);
+  await makeIconPng(512, path.join(assetsDir, "icon-512.png"), source);
 
   const pngBuffer = await fs.readFile(favicon32);
   await fs.writeFile(path.join(publicDir, "favicon.ico"), icoFromPng(pngBuffer, 32));
 }
 
-async function writeManifest() {
+async function writeManifest(site) {
+  const locale = site.defaultLocale || "zh-CN";
+  const siteName = site.siteName?.[locale] || site.siteName?.en || "Blog";
   const manifest = {
-    name: "技诉 Blog",
-    short_name: "技诉",
+    name: site.pwa?.name || siteName,
+    short_name: site.pwa?.shortName || siteName,
     start_url: withBase("/"),
     display: "minimal-ui",
-    background_color: "#f8f4ec",
-    theme_color: "#141414",
+    background_color: site.pwa?.backgroundColor || "#f8f4ec",
+    theme_color: site.pwa?.themeColor || "#141414",
     icons: [
       {
-        src: withBase("/assets/icon-192.png"),
+        src: withBase(site.icons?.icon192 || "/assets/icon-192.png"),
         sizes: "192x192",
         type: "image/png"
       },
       {
-        src: withBase("/assets/icon-512.png"),
+        src: withBase(site.icons?.icon512 || "/assets/icon-512.png"),
         sizes: "512x512",
         type: "image/png"
       }
@@ -213,12 +258,40 @@ async function writeManifest() {
   );
 }
 
-async function copyBaseFiles() {
-  await fs.copyFile(path.join(rootDir, "src", "styles.css"), path.join(assetsDir, "site.css"));
-  await fs.copyFile(path.join(rootDir, "src", "client.js"), path.join(assetsDir, "client.js"));
+async function copyThemeFiles(site) {
+  const themeName = site.theme?.name || "default";
+  const themeDir = path.join(rootDir, "themes", themeName);
+  const outputDir = path.join(assetsDir, "theme", themeName);
+  await ensureDir(outputDir);
+
+  const pageStyleFiles = Object.values(site.theme?.pageStyleFiles || {}).flat().filter(Boolean);
+  const pageScriptFiles = Object.values(site.theme?.pageScriptFiles || {})
+    .flat()
+    .map((script) => typeof script === "string" ? script : script?.src)
+    .filter((file) => file && !/^(?:[a-z][a-z0-9+.-]*:|\/\/|\/)/i.test(String(file)));
+  const featureScriptFiles = Object.values(site.theme?.featureScriptFiles || {})
+    .filter((file) => file && !/^(?:[a-z][a-z0-9+.-]*:|\/\/|\/)/i.test(String(file)));
+  const featureStyleFiles = Object.values(site.theme?.featureStyleFiles || {}).flat().filter(Boolean);
+  const files = [site.theme?.style, site.theme?.script, ...pageStyleFiles, ...pageScriptFiles, ...featureScriptFiles, ...featureStyleFiles].filter(Boolean);
+  for (const file of files) {
+    const source = path.join(themeDir, file);
+    if (fsSync.existsSync(source)) {
+      const target = path.join(outputDir, file);
+      await ensureDir(path.dirname(target));
+      await fs.copyFile(source, target);
+    }
+  }
 }
 
 async function writeOgImage() {
+  if (!hasSource("daily")) {
+    const outputs = [
+      path.join(assetsDir, "og-default.png"),
+      path.join(publicDir, DEFAULT_OG_IMAGE.replace(/^\/+/, ""))
+    ];
+    if (outputs.every((file) => fsSync.existsSync(file))) return;
+    throw new Error(`Missing theme source asset: ${sourceFiles.daily}`);
+  }
   const mascot = await (await transparentCrop("daily", cropConfig.daily.crops.reading))
     .resize({ width: 390 })
     .png()
@@ -263,10 +336,12 @@ async function writeOgImage() {
 }
 
 export async function generateAssets() {
+  const site = await readSiteConfig();
+  configureThemeSourceFiles(site);
   await ensureDir(publicDir);
   await ensureDir(assetsDir);
   await ensureDir(process.env.FONTCONFIG_CACHE);
-  await copyBaseFiles();
+  await copyThemeFiles(site);
 
   await writeCrop("error", cropConfig.error.crops.notFound, "mascot-404.png", 520);
   await writeCrop("daily", cropConfig.daily.crops.reading, "mascot-reading.png", 420);
@@ -276,8 +351,8 @@ export async function generateAssets() {
   await writeCrop("emotions", cropConfig.emotions.crops.thinking, "mascot-thinking.png", 300);
   await writeCrop("emotions", cropConfig.emotions.crops.sleeping, "mascot-sleeping.png", 300);
 
-  await writeFavicon();
-  await writeManifest();
+  await writeFavicon(site);
+  await writeManifest(site);
   await writeOgImage();
 }
 

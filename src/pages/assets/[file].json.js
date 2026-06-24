@@ -1,7 +1,8 @@
-import { LOCALES, buildSearchIndex, loadBlogData } from "../../lib/content.mjs";
+import { buildSearchIndex, readSiteConfig, loadBlogData } from "../../lib/content.mjs";
 
-export function getStaticPaths() {
-  return LOCALES.map((locale) => ({ params: { file: `search-index.${locale}` }, props: { locale } }));
+export async function getStaticPaths() {
+  const site = await readSiteConfig();
+  return site.locales.map((locale) => ({ params: { file: `search-index.${locale}` }, props: { locale } }));
 }
 
 export async function GET({ props }) {

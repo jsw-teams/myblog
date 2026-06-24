@@ -9,11 +9,7 @@
     "build": "astro build",
     "deploy:local": "/opt/deploy-hooks/bin/deploy-myblog.sh",
     "deploy:local:blog-only": "SKIP_MYWEB_REBUILD=1 /opt/deploy-hooks/bin/deploy-myblog.sh",
-    "news:mvp": "node scripts/news-mvp/generate-weekly-news.mjs",
-    "news:mvp:video": "node scripts/news-mvp/render-first-video.mjs",
-    "news:mvp:tts": "node scripts/news-mvp/edge-worker-tts.mjs",
-    "news:mvp:upload-assets": "node scripts/news-mvp/upload-myfiles-assets.mjs",
-    "serve": "astro preview --host 127.0.0.1",
+    "serve": "node scripts/serve-public.mjs",
     "check": "node scripts/check-build.mjs"
   },
   "dependencies": {

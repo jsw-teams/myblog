@@ -8,7 +8,6 @@ author: "年；均；頡；Codex 觀瀾"
 tags: ["美伊框架", "新加坡", "台灣矽盾", "美國利率", "Weekly News"]
 category: "熱點時事"
 draft: false
-cover: "https://r2.files.js.gripe/files/fil_hqHSjLfEpjNtcV5_wJi8JsOE.jpg"
 ---
 
 本期涵蓋台北時間 2026-06-15 00:00 到 2026-06-21 23:59。這一期不是把兩份報告壓縮成一個結論，而是把它們各自的內容放在讀者面前：年導報告提供戲劇化的區域洞察與執行包裝，均報告提供事實確定性、發布邊界與三地受眾寫法。
@@ -31,7 +30,6 @@ cover: "https://r2.files.js.gripe/files/fil_hqHSjLfEpjNtcV5_wJi8JsOE.jpg"
 
 年導報告把美伊框架寫成「被通膨逼出的脆弱和平」。它指出，美國與伊朗達成停戰備忘錄，並非單純地緣布局，而是受到國內宏觀經濟壓力、燃油支出與通膨焦慮牽引。報告特別列出霍爾木茲海峽控制權、通行費用、制裁解除與核談判之間的交易感：美國希望海峽恢復免費開放，伊朗與區域力量則可能在過渡期後圍繞服務費和共同管理繼續談判。
 
-![G7 峰會期間各國領導人會場畫面](https://r2.files.js.gripe/files/fil_eKDu7fHoB5eHD0ZcRNfKS7yr.jpg)
 
 *圖片來源：AP News，2026-06-17。*
 
@@ -61,13 +59,11 @@ HarbourFront Centre 重建在年導報告裡則是「突破土地極限的物理
 
 年導報告把台灣段寫成「硬核科技突圍與軟性認知滲透的正面交鋒」。在台積電部分，它指出 Agentic AI 算力需求、矽基板翹曲瓶頸、CoPoS 面板級封裝與玻璃核心基板等技術路線，正在推動先進封裝進入新的物理結構；同時，美國供應鏈本土化與 Amkor 等布局，也讓「矽盾」的地理含義變得更複雜。
 
-![台灣官員接受 AP News 採訪](https://r2.files.js.gripe/files/fil_tMTHkwe1Y85sAEKgGsUyEpg1.jpg)
 
 *圖片來源：AP News，2026-06-13。*
 
 年導報告的另一條線，是流行文化進入兩岸情緒場。它用古裝劇、海峽論壇露面與偶像傳播作為例子，強調低敵意、低門檻、繞開政治正面衝突的傳播方式，可能更容易進入年輕世代的日常感受。
 
-![輝達 CEO 黃仁勳接受 AP News 採訪](https://r2.files.js.gripe/files/fil_b2Qgj4NI7G6LJ-UzYPSy89fa.jpg)
 
 *圖片來源：AP News，2026-06-18。*
 
@@ -103,9 +99,6 @@ HarbourFront Centre 重建在年導報告裡則是「突破土地極限的物理
 
 ### 本期報告下載
 
-- [2026年6月15日至21日每週新聞熱點多語種運營報告（均）PDF](https://files.js.gripe/files/fil_ApXZx83ECR-mA3bYOKgX8C5P.pdf)
-- [2026年6月中旬全球區域新聞熱點與受眾洞察（導演剪輯強化版）PDF](https://files.js.gripe/files/fil_aLeMLZDQabAr3W5sRp8YzYJE.pdf)
-- [6.21 三地每週新聞熱點檢索 PDF](https://files.js.gripe/files/fil_N2CLs_UIyHll9hpjDK18Db0C.pdf)
 
 ### 圖片來源
 

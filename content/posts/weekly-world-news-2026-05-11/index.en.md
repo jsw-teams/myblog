@@ -10,10 +10,8 @@ category: "Current Affairs"
 draft: false
 cover: "/news/weekly-world-news-2026-05-11.en.webp"
 media:
-  video: "https://files.js.gripe/files/raw/fil_nIlQKBe3aVUc83737dveGYDT.mp4"
   type: "video/mp4"
   poster: "/news/weekly-world-news-2026-05-11.en.webp"
-  embed: "https://files.js.gripe/files/raw/fil_nIlQKBe3aVUc83737dveGYDT.mp4"
   captions:
     - src: "/news/weekly-world-news-2026-05-11.en.vtt"
       lang: "en"
