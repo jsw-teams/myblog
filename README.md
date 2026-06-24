@@ -196,17 +196,36 @@ plugins:
 
 ## 部署
 
-推送到 `main` 后，GitHub Actions 会运行 `.github/workflows/pages.yml`，执行安装、构建和检查，然后发布 `public/`。
+推送到 `main` 后，GitHub Actions 会运行 `.github/workflows/cloudflare-pages.yml`，执行安装、构建、检查，然后发布 `public/` 到 Cloudflare Pages。
 
 ### Cloudflare Pages
 
-[Cloudflare Pages](https://www.cloudflare.com/products/pages/) 是 Cloudflare 的静态/前端部署平台，官方说明支持从 Git 构建并免费开始使用。项目配置可以按下面填写：
+[Cloudflare Pages](https://www.cloudflare.com/products/pages/) 是 Cloudflare 的静态/前端部署平台，官方说明支持从 Git 构建并免费开始使用。如果直接使用 Cloudflare Pages 的 Git 集成，项目配置可以按下面填写：
 
 ```text
-Build command: npm ci && npm run build
+Build command: pnpm install --frozen-lockfile && pnpm run build
 Build output directory: public
 Node.js version: 20 或更新
 ```
+
+当前仓库也内置了 GitHub Actions 直传部署，使用 Cloudflare 官方推荐的 Wrangler Direct Upload。需要在 GitHub 仓库设置里添加：
+
+```text
+Settings -> Secrets and variables -> Actions -> Secrets
+
+CLOUDFLARE_ACCOUNT_ID = Cloudflare 账号 ID
+CLOUDFLARE_API_TOKEN  = 具有 Account / Cloudflare Pages / Edit 权限的 API token
+```
+
+可选仓库变量：
+
+```text
+Settings -> Secrets and variables -> Actions -> Variables
+
+CLOUDFLARE_PAGES_PROJECT_NAME = Cloudflare Pages 项目名，默认 myblog
+```
+
+不要把 Cloudflare API Token 写入代码、README、issue 或聊天记录。Token 泄露后应立即在 Cloudflare Dashboard 里撤销并重新创建。
 
 部署后在 Cloudflare Pages 项目里绑定自定义域名。`_headers` 会随 `public/` 一起发布，用来保证 `sitemap.xml`、`feed.xml`、`llms.txt` 等文件的 Content-Type。
 
