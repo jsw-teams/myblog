@@ -154,7 +154,8 @@ async function writeCrop(sourceKey, crop, outputName, width) {
   const output = path.join(assetsDir, outputName);
   if (!hasSource(sourceKey)) {
     if (fsSync.existsSync(output)) return;
-    throw new Error(`Missing theme source asset: ${sourceFiles[sourceKey]}`);
+    console.warn(`Skipping optional theme asset: ${sourceFiles[sourceKey]}`);
+    return;
   }
   const metadata = await readMetadata(sourceKey);
   const extract = crop.left == null
