@@ -205,7 +205,7 @@ plugins:
 ```text
 Build command: pnpm install --frozen-lockfile && pnpm run build
 Build output directory: public
-Node.js version: 20 或更新
+Node.js version: 22.12 或更新
 ```
 
 当前仓库也内置了 GitHub Actions 直传部署，使用 Cloudflare 官方推荐的 Wrangler Direct Upload。需要在 GitHub 仓库设置里添加：
