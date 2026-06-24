@@ -117,6 +117,7 @@ function normalizeSiteConfig(config) {
   site.theme.name = site.theme.name || "default";
   site.plugins = mergePlainDefaults(site.theme.plugins || {}, site.plugins || {});
   if (!site.plugins.comments && site.comments) site.plugins.comments = site.comments;
+  normalizeCommentsPlugin(site);
   configureThemeI18n(site.theme.i18n || {});
   const themeCss = Array.isArray(site.theme.css) ? site.theme.css : [];
   const themeJs = Array.isArray(site.theme.js) ? site.theme.js : [];
@@ -173,23 +174,125 @@ function normalizeSiteConfig(config) {
   site.theme.scripts ??= {};
   site.theme.scripts.head = Array.isArray(site.theme.scripts.head) ? site.theme.scripts.head : [];
   site.theme.scripts.bodyEnd = Array.isArray(site.theme.scripts.bodyEnd) ? site.theme.scripts.bodyEnd : [];
-  const cloudflareWebAnalytics = site.plugins.analytics?.cloudflareWebAnalytics;
-  if (cloudflareWebAnalytics?.enabled && cloudflareWebAnalytics.token) {
-    const beacon = {
-      token: String(cloudflareWebAnalytics.token),
-      ...(cloudflareWebAnalytics.beacon && typeof cloudflareWebAnalytics.beacon === "object" ? cloudflareWebAnalytics.beacon : {})
-    };
-    site.theme.scripts.bodyEnd.push({
-      src: cloudflareWebAnalytics.src || "https://static.cloudflareinsights.com/beacon.min.js",
-      defer: cloudflareWebAnalytics.defer ?? true,
-      consent: cloudflareWebAnalytics.consent || "analytics",
-      "data-cf-beacon": JSON.stringify(beacon)
-    });
-  }
+  configurePluginScripts(site);
   site.scripts ??= {};
   site.scripts.head = Array.isArray(site.scripts.head) ? site.scripts.head : [];
   site.scripts.bodyEnd = Array.isArray(site.scripts.bodyEnd) ? site.scripts.bodyEnd : [];
   return site;
+}
+
+const COMMENT_PROVIDERS = new Set(["twikoo", "waline", "giscus", "utterances", "disqus", "custom"]);
+
+function normalizeCommentsPlugin(site) {
+  const comments = site.plugins?.comments;
+  if (!comments || comments.enabled === false || comments.provider === false || comments.provider === "none") {
+    site.plugins.comments = { enabled: false, provider: "none" };
+    if (site.theme?.features) site.theme.features.comments = false;
+    return;
+  }
+
+  const provider = String(comments.provider || "").trim().toLowerCase();
+  if (!COMMENT_PROVIDERS.has(provider)) {
+    site.plugins.comments = { ...comments, enabled: false, provider: "none" };
+    if (site.theme?.features) site.theme.features.comments = false;
+    return;
+  }
+
+  site.plugins.comments = { ...comments, enabled: true, provider };
+  site.theme ??= {};
+  site.theme.features ??= {};
+  site.theme.features.comments = true;
+}
+
+function pluginAttrs(config = {}) {
+  return config.attrs && typeof config.attrs === "object" && !Array.isArray(config.attrs) ? config.attrs : {};
+}
+
+function pushPluginScript(site, script = {}) {
+  if (!script.src && !script.content && !script.inline) return;
+  site.theme.scripts.bodyEnd.push(script);
+}
+
+function configurePluginScripts(site) {
+  const analytics = site.plugins.analytics || {};
+  const cloudflare = analytics.cloudflareWebAnalytics;
+  if (cloudflare?.enabled && cloudflare.token) {
+    const beacon = {
+      token: String(cloudflare.token),
+      ...(cloudflare.beacon && typeof cloudflare.beacon === "object" ? cloudflare.beacon : {})
+    };
+    pushPluginScript(site, {
+      src: cloudflare.src || "https://static.cloudflareinsights.com/beacon.min.js",
+      defer: cloudflare.defer ?? true,
+      consent: cloudflare.consent || "analytics",
+      "data-cf-beacon": JSON.stringify(beacon)
+    });
+  }
+
+  const plausible = analytics.plausible;
+  if (plausible?.enabled && plausible.domain) {
+    pushPluginScript(site, {
+      src: plausible.src || "https://plausible.io/js/script.js",
+      defer: plausible.defer ?? true,
+      consent: plausible.consent || "analytics",
+      "data-domain": plausible.domain
+    });
+  }
+
+  const umami = analytics.umami;
+  if (umami?.enabled && umami.websiteId) {
+    pushPluginScript(site, {
+      src: umami.src || "https://analytics.example.com/script.js",
+      defer: umami.defer ?? true,
+      consent: umami.consent || "analytics",
+      "data-website-id": umami.websiteId,
+      ...pluginAttrs(umami)
+    });
+  }
+
+  const googleAnalytics = analytics.googleAnalytics;
+  if (googleAnalytics?.enabled && googleAnalytics.measurementId) {
+    const id = String(googleAnalytics.measurementId);
+    pushPluginScript(site, {
+      src: googleAnalytics.src || `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`,
+      async: googleAnalytics.async ?? true,
+      consent: googleAnalytics.consent || "analytics"
+    });
+    pushPluginScript(site, {
+      consent: googleAnalytics.consent || "analytics",
+      content: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${id.replaceAll("'", "\\'")}');`
+    });
+  }
+
+  const advertising = site.plugins.advertising || {};
+  const adsense = advertising.googleAdsense;
+  if (adsense?.enabled && adsense.client) {
+    const params = new URLSearchParams({ client: String(adsense.client) });
+    if (adsense.host) params.set("host", String(adsense.host));
+    const src = adsense.src || `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?${params}`;
+    pushPluginScript(site, {
+      src,
+      async: adsense.async ?? true,
+      crossorigin: adsense.crossorigin || "anonymous",
+      consent: adsense.consent || "marketing",
+      "data-ad-client": adsense.client,
+      "data-ad-host": adsense.host,
+      ...pluginAttrs(adsense)
+    });
+  }
+
+  for (const script of [...(analytics.custom || []), ...(advertising.custom || [])]) {
+    if (script?.enabled === false) continue;
+    pushPluginScript(site, {
+      defer: script?.defer ?? true,
+      consent: script?.consent || "analytics",
+      ...script,
+      ...pluginAttrs(script)
+    });
+  }
 }
 
 export async function readSiteConfig() {

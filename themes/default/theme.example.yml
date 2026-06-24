@@ -9,7 +9,7 @@ features:
   search: true
   lightbox: true
   media: true
-  comments: true
+  comments: false
   webMcp: true
 
 featureScripts:
@@ -98,9 +98,43 @@ nav:
 
 plugins:
   comments:
+    enabled: false
+    # Only one provider can be active at a time: twikoo, waline, giscus, utterances, disqus, custom, or none.
     provider: twikoo
-    envId: https://api-comments.example.com
-    script: https://example.com/twikoo.min.js
+    twikoo:
+      envId: https://api-comments.example.com
+      script: https://example.com/twikoo.min.js
+    waline:
+      serverURL: https://waline.example.com
+      script: https://unpkg.com/@waline/client@v3/dist/waline.js
+      css: https://unpkg.com/@waline/client@v3/dist/waline.css
+      lang: zh-CN
+    giscus:
+      script: https://giscus.app/client.js
+      repo: owner/repo
+      repo-id: REPO_ID
+      category: General
+      category-id: CATEGORY_ID
+      mapping: pathname
+      reactions-enabled: "1"
+      emit-metadata: "0"
+      input-position: bottom
+      theme: preferred_color_scheme
+      lang: zh-CN
+      crossorigin: anonymous
+    utterances:
+      script: https://utteranc.es/client.js
+      repo: owner/repo
+      issue-term: pathname
+      theme: github-light
+      crossorigin: anonymous
+    disqus:
+      shortname: example
+      script: https://example.disqus.com/embed.js
+    custom:
+      script: https://example.com/comments.js
+      attrs:
+        data-site-id: example
   analytics:
     cloudflareWebAnalytics:
       enabled: false
@@ -110,3 +144,45 @@ plugins:
       consent: analytics
       beacon:
         spa: false
+        send_page_view: true
+    plausible:
+      enabled: false
+      src: https://plausible.io/js/script.js
+      domain: example.com
+      defer: true
+      consent: analytics
+    umami:
+      enabled: false
+      src: https://analytics.example.com/script.js
+      websiteId: 00000000-0000-0000-0000-000000000000
+      defer: true
+      consent: analytics
+      attrs:
+        data-auto-track: "true"
+    googleAnalytics:
+      enabled: false
+      measurementId: G-XXXXXXXXXX
+      async: true
+      consent: analytics
+    custom:
+      - enabled: false
+        src: https://example.com/analytics.js
+        defer: true
+        consent: analytics
+        attrs:
+          data-site: example
+  advertising:
+    googleAdsense:
+      enabled: false
+      client: ca-pub-0000000000000000
+      host: ca-host-pub-0000000000000000
+      async: true
+      crossorigin: anonymous
+      consent: marketing
+    custom:
+      - enabled: false
+        src: https://example.com/ad-network.js
+        defer: true
+        consent: marketing
+        attrs:
+          data-zone: sidebar

@@ -8,7 +8,7 @@ features:
   search: true
   lightbox: true
   media: true
-  comments: true
+  comments: false
   webMcp: true
 featureScripts:
   search: scripts/search.js
@@ -129,15 +129,19 @@ footer:
         en: Sitemap
 plugins:
   comments:
-    provider: twikoo
-    envId: https://api-comments.js.gripe
-    script: https://registry.npmmirror.com/twikoo/1.7.13/files/dist/twikoo.min.js
+    enabled: false
+    provider: none
   analytics:
     cloudflareWebAnalytics:
       enabled: false
       src: https://static.cloudflareinsights.com/beacon.min.js
-      token: a2c7ad0cfc8f4493aa80c8b5aae99357
+      token: YOUR_CLOUDFLARE_WEB_ANALYTICS_TOKEN
       defer: true
       consent: analytics
       beacon:
         spa: false
+  advertising:
+    googleAdsense:
+      enabled: false
+      client: ca-pub-0000000000000000
+      consent: marketing

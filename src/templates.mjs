@@ -102,16 +102,22 @@ function renderScriptTag(script) {
   const attrs = typeof script === "string" ? { src: script } : { ...script };
   if (!attrs || typeof attrs !== "object") return "";
   const consent = attrs.consent || attrs.category;
+  const content = attrs.content || attrs.inline || "";
   delete attrs.consent;
   delete attrs.category;
+  delete attrs.content;
+  delete attrs.inline;
   if (attrs.src) attrs.src = withBase(attrs.src);
   if (consent && attrs.src) {
     attrs["data-consent-category"] = consent;
     attrs["data-consent-src"] = attrs.src;
     attrs.type = "text/plain";
     delete attrs.src;
+  } else if (consent && content) {
+    attrs["data-consent-category"] = consent;
+    attrs.type = "text/plain";
   }
-  return `<script${renderAttributes(attrs)}></script>`;
+  return `<script${renderAttributes(attrs)}>${content}</script>`;
 }
 
 function renderScripts(scripts = []) {
@@ -454,15 +460,32 @@ function renderMediaPlayer(post, locale) {
 
 function renderCommentSection(site, post, locale) {
   const comments = site.plugins?.comments || {};
-  if (comments.enabled === false || comments.provider === false || comments.provider === "none") return "";
-  if ((comments.provider || "twikoo") !== "twikoo") return "";
-  const envId = comments.envId || "";
-  const script = comments.script || "";
-  if (!envId || !script) return "";
+  const provider = String(comments.provider || "none").toLowerCase();
+  if (comments.enabled !== true || provider === "none") return "";
+  const providerConfig = {
+    ...(comments[provider] && typeof comments[provider] === "object" ? comments[provider] : {}),
+    provider
+  };
+  for (const key of ["enabled", "provider", "twikoo", "waline", "giscus", "utterances", "disqus", "custom"]) {
+    if (comments[key] != null && !["object"].includes(typeof comments[key])) providerConfig[key] ??= comments[key];
+  }
+  if (comments.script) providerConfig.script ??= comments.script;
+  if (comments.envId) providerConfig.envId ??= comments.envId;
+  if (comments.serverURL) providerConfig.serverURL ??= comments.serverURL;
+  if (comments.shortname) providerConfig.shortname ??= comments.shortname;
+  const required = {
+    twikoo: ["envId", "script"],
+    waline: ["serverURL", "script"],
+    giscus: ["repo", "repo-id", "category", "category-id", "script"],
+    utterances: ["repo", "script"],
+    disqus: ["shortname"],
+    custom: ["script"]
+  };
+  if (!required[provider] || !required[provider].every((key) => providerConfig[key])) return "";
   return `<section class="article-comments"
     data-comments-root
-    data-twikoo-env-id="${escapeHtml(envId)}"
-    data-twikoo-script="${escapeHtml(script)}"
+    data-comments-provider="${escapeHtml(provider)}"
+    data-comments-config="${escapeHtml(JSON.stringify(providerConfig))}"
     data-comments-readonly="${escapeHtml(t(locale, "commentsReadOnlyMainland"))}"
     data-comments-loading="${escapeHtml(t(locale, "commentsLoading"))}"
     data-comments-empty="${escapeHtml(t(locale, "commentsEmpty"))}"
@@ -472,7 +495,7 @@ function renderCommentSection(site, post, locale) {
     </div>
     <p class="comments-note">${escapeHtml(t(locale, "commentsRules"))}</p>
     <p class="comments-status" data-comments-status>${escapeHtml(t(locale, "commentsLoading"))}</p>
-    <div class="twikoo-mount" data-twikoo-mount></div>
+    <div class="comments-mount" data-comments-mount></div>
   </section>`;
 }
 

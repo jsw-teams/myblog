@@ -159,9 +159,43 @@ pageStyles:
 ```yaml
 plugins:
   comments:
+    enabled: false
+    # Only one comments provider can be active at a time.
+    # Supported providers: twikoo, waline, giscus, utterances, disqus, custom, none.
     provider: twikoo
-    envId: https://api-comments.example.com
-    script: https://example.com/twikoo.min.js
+    twikoo:
+      envId: https://api-comments.example.com
+      script: https://example.com/twikoo.min.js
+    waline:
+      serverURL: https://waline.example.com
+      script: https://unpkg.com/@waline/client@v3/dist/waline.js
+      css: https://unpkg.com/@waline/client@v3/dist/waline.css
+      lang: zh-CN
+    giscus:
+      script: https://giscus.app/client.js
+      repo: owner/repo
+      repo-id: REPO_ID
+      category: General
+      category-id: CATEGORY_ID
+      mapping: pathname
+      reactions-enabled: "1"
+      emit-metadata: "0"
+      input-position: bottom
+      theme: preferred_color_scheme
+      lang: zh-CN
+      crossorigin: anonymous
+    utterances:
+      script: https://utteranc.es/client.js
+      repo: owner/repo
+      issue-term: pathname
+      theme: github-light
+      crossorigin: anonymous
+    disqus:
+      shortname: example
+    custom:
+      script: https://example.com/comments.js
+      attrs:
+        data-site-id: example
   analytics:
     cloudflareWebAnalytics:
       enabled: false
@@ -171,7 +205,51 @@ plugins:
       consent: analytics
       beacon:
         spa: false
+        send_page_view: true
+    plausible:
+      enabled: false
+      src: https://plausible.io/js/script.js
+      domain: example.com
+      defer: true
+      consent: analytics
+    umami:
+      enabled: false
+      src: https://analytics.example.com/script.js
+      websiteId: 00000000-0000-0000-0000-000000000000
+      defer: true
+      consent: analytics
+      attrs:
+        data-auto-track: "true"
+    googleAnalytics:
+      enabled: false
+      measurementId: G-XXXXXXXXXX
+      async: true
+      consent: analytics
+    custom:
+      - enabled: false
+        src: https://example.com/analytics.js
+        defer: true
+        consent: analytics
+        attrs:
+          data-site: example
+  advertising:
+    googleAdsense:
+      enabled: false
+      client: ca-pub-0000000000000000
+      host: ca-host-pub-0000000000000000
+      async: true
+      crossorigin: anonymous
+      consent: marketing
+    custom:
+      - enabled: false
+        src: https://example.com/ad-network.js
+        defer: true
+        consent: marketing
+        attrs:
+          data-zone: sidebar
 ```
+
+`plugins.comments.enabled` 默认为 `false`。需要评论时设为 `true`，并用 `provider` 选择唯一一家评论服务；未被选中的 provider 配置只作为备用配置，不会被加载。
 
 可选第三方脚本会按 consent 分类延迟加载。默认分类包括 `necessary`、`preferences`、`analytics`、`marketing`。Consent UI 的 CSS 是独立功能样式：`themes/default/styles/consent.css`。
 

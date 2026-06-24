@@ -119,7 +119,8 @@
     escapeHtml: escapeHtml,
     normalizeText: normalizeText,
     formatDate: formatDate,
-    loadScriptOnce: loadScriptOnce
+    loadScriptOnce: loadScriptOnce,
+    loadStyleOnce: loadStyleOnce
   };
 
   document.addEventListener("click", function (event) {
@@ -188,7 +189,8 @@
         if (attr.name === "type" || attr.name === "data-consent-src" || attr.name === "data-consent-category") return;
         script.setAttribute(attr.name, attr.value);
       });
-      script.src = node.getAttribute("data-consent-src");
+      if (node.getAttribute("data-consent-src")) script.src = node.getAttribute("data-consent-src");
+      script.text = node.textContent || "";
       script.async = node.async !== false;
       node.replaceWith(script);
     });
