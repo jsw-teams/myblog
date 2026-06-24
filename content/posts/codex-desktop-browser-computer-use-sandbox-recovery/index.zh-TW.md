@@ -22,6 +22,14 @@ cover: "https://files.js.gripe/files/raw/fil_swPhoelH0iPoZvfZDp71USKn.png"
 
 ![接手排障檢查清單：替我審批模式](https://files.js.gripe/files/raw/fil_swPhoelH0iPoZvfZDp71USKn.png)
 
+## 修復腳本下載
+
+如果你想先嘗試常規修復，可以下載這個 Windows 批次檔：
+
+- [修复Codex Browser和ComputerUse.cmd](https://files.js.gripe/files/fil_nd7GSxvz4mQMLwvBQIpzF5hI.cmd)
+
+請在 Windows 上按右鍵選擇「以系統管理員身分執行」。溫馨提示：腳本會關閉 Google Chrome，請先保存瀏覽器裡的工作內容、表單和未送出的頁面。腳本不會重裝 Codex；它主要用於恢復 bundled 外掛資源、修復 Browser / Computer Use 相關設定和 helper，並在結束後提示你重啟 Codex Desktop、重新開啟設定頁觸發外掛枚舉。
+
 ## 先把現場交給 Codex
 
 可以把下面這段交給 Codex，讓它直接接手修復：

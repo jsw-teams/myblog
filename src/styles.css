@@ -847,6 +847,10 @@ h3 {
   gap: 1rem;
 }
 
+.twikoo-mount {
+  min-height: 120px;
+}
+
 .comment-card {
   box-shadow: none;
   padding: 1rem;

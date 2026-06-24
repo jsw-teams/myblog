@@ -22,6 +22,14 @@ The original failure screenshots stay here because they are the clearest evidenc
 
 ![Codex recovery flow: routine fixes run, risky actions ask first](https://files.js.gripe/files/raw/fil_yiHUhkElTdS8edM9WnqWBQow.png)
 
+## Repair Script Download
+
+If you want to try the routine repair path first, download this Windows batch script:
+
+- [修复Codex Browser和ComputerUse.cmd](https://files.js.gripe/files/fil_nd7GSxvz4mQMLwvBQIpzF5hI.cmd)
+
+On Windows, right-click it and choose "Run as administrator." Friendly warning: the script closes Google Chrome, so save browser work, forms, and unsent pages before running it. The script does not reinstall Codex; it focuses on restoring bundled plugin resources, repairing Browser / Computer Use configuration and helpers, and then asking you to restart Codex Desktop and reopen Settings to trigger plugin enumeration.
+
 ## Hand The Scene To Codex
 
 This prompt gives Codex the right job: take over the repair, not merely write advice.

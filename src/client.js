@@ -105,7 +105,32 @@
         return;
       }
 
-      resolve(readInjectedCountry() === "CN");
+      var injectedCountry = readInjectedCountry();
+      if (injectedCountry === "CN") {
+        resolve(true);
+        return;
+      }
+
+      fetch("/cdn-cgi/trace", {
+        cache: "no-store",
+        credentials: "omit"
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error("region trace request failed");
+          return response.text();
+        })
+        .then(function (text) {
+          var match = String(text || "").match(/(?:^|\n)loc=([A-Za-z]{2})(?:\n|$)/);
+          if (!match) {
+            resolve(true);
+            return;
+          }
+          var traceCountry = normalizeCountry(match[1]);
+          resolve(traceCountry === "CN" || traceCountry === "XX");
+        })
+        .catch(function () {
+          resolve(true);
+        });
     });
     return regionPromise;
   }
@@ -446,34 +471,81 @@
     });
   }
 
-  function setupUtterancesComments() {
-    var roots = Array.prototype.slice.call(document.querySelectorAll("[data-utterances-root]"));
+  function setupComments() {
+    var roots = Array.prototype.slice.call(document.querySelectorAll("[data-comments-root]"));
     if (!roots.length) return;
 
-    detectMainlandChina().then(function (isMainland) {
-      roots.forEach(function (root) {
-        var status = root.querySelector("[data-comments-status]");
-        var mount = root.querySelector("[data-utterances-mount]");
-        if (!mount) return;
+    roots.forEach(function (root) {
+      loadTwikooComments(root);
+    });
+  }
 
-        if (isMainland) {
-          loadMirroredComments(root);
-          return;
+  function loadTwikooComments(root) {
+    var status = root.querySelector("[data-comments-status]");
+    var mount = root.querySelector("[data-twikoo-mount]");
+    var envId = root.getAttribute("data-twikoo-env-id") || "";
+    var scriptUrl = root.getAttribute("data-twikoo-script") || "";
+    var loadingText = root.getAttribute("data-comments-loading") || "";
+    var errorText = root.getAttribute("data-comments-error") || "";
+
+    if (!mount || !envId || !scriptUrl) {
+      if (status) {
+        status.textContent = errorText;
+        status.classList.add("is-error");
+      }
+      return;
+    }
+
+    if (status) status.textContent = loadingText;
+
+    loadScriptOnce(scriptUrl, "twikoo-client")
+      .then(function () {
+        if (!window.twikoo || typeof window.twikoo.init !== "function") {
+          throw new Error("twikoo client is unavailable");
         }
 
-        if (status) status.textContent = "";
-        if (mount.querySelector("script")) return;
-
-        var script = document.createElement("script");
-        script.src = "https://utteranc.es/client.js";
-        script.async = true;
-        script.crossOrigin = "anonymous";
-        script.setAttribute("repo", root.getAttribute("data-utterances-repo") || "");
-        script.setAttribute("issue-term", root.getAttribute("data-utterances-issue-term") || "title");
-        script.setAttribute("label", root.getAttribute("data-utterances-label") || "");
-        script.setAttribute("theme", root.getAttribute("data-utterances-theme") || "github-light");
-        mount.appendChild(script);
+        mount.id = mount.id || "twikoo-" + Math.random().toString(36).slice(2);
+        window.twikoo.init({
+          envId: envId,
+          el: "#" + mount.id,
+          path: window.location.pathname
+        });
+        if (status) status.hidden = true;
+      })
+      .catch(function () {
+        if (mount) mount.innerHTML = "";
+        if (status) {
+          status.hidden = false;
+          status.textContent = errorText;
+          status.classList.add("is-error");
+        }
       });
+  }
+
+  function loadScriptOnce(src, id) {
+    return new Promise(function (resolve, reject) {
+      var existing = document.getElementById(id);
+      if (existing) {
+        if (existing.getAttribute("data-loaded") === "true") {
+          resolve();
+          return;
+        }
+        existing.addEventListener("load", resolve, { once: true });
+        existing.addEventListener("error", reject, { once: true });
+        return;
+      }
+
+      var script = document.createElement("script");
+      script.id = id;
+      script.src = src;
+      script.async = true;
+      script.defer = true;
+      script.onload = function () {
+        script.setAttribute("data-loaded", "true");
+        resolve();
+      };
+      script.onerror = reject;
+      document.head.appendChild(script);
     });
   }
 
@@ -589,118 +661,10 @@
     window.JSGripeWebMcpReady = registered;
   }
 
-  function loadMirroredComments(root) {
-    var status = root.querySelector("[data-comments-status]");
-    var repo = root.getAttribute("data-utterances-repo") || "";
-    var label = root.getAttribute("data-utterances-label") || "";
-    var issueTerm = root.getAttribute("data-utterances-issue-term") || "";
-    var readonlyText = root.getAttribute("data-comments-readonly") || "";
-    var loadingText = root.getAttribute("data-comments-loading") || "";
-    var emptyText = root.getAttribute("data-comments-empty") || "";
-    var errorText = root.getAttribute("data-comments-error") || "";
-
-    if (status) status.textContent = loadingText;
-    var query = [
-      "repo:" + repo,
-      "is:issue",
-      "label:" + label,
-      '"' + issueTerm + '"',
-      "in:title"
-    ].join(" ");
-    var searchUrl = "/api/comments/search?q=" + encodeURIComponent(query) + "&per_page=1";
-
-    fetch(searchUrl, {
-      headers: { Accept: "application/json" },
-      credentials: "same-origin"
-    })
-      .then(function (response) {
-        if (!response.ok) throw new Error("comment issue search failed");
-        return response.json();
-      })
-      .then(function (data) {
-        var issue = data && Array.isArray(data.items) ? data.items[0] : null;
-        if (!issue || !issue.number) return [];
-        return fetch("/api/comments/issues/" + encodeURIComponent(issue.number) + "/comments?per_page=50", {
-          headers: { Accept: "application/json" },
-          credentials: "same-origin"
-        })
-          .then(function (response) {
-            if (!response.ok) throw new Error("comments fetch failed");
-            return response.json();
-          })
-          .then(function (comments) {
-            return dedupeComments(comments || []);
-          });
-      })
-      .then(function (comments) {
-        if (!Array.isArray(comments)) comments = [];
-        renderComments(root, comments);
-        if (status) status.textContent = comments.length ? readonlyText : emptyText;
-      })
-      .catch(function () {
-        if (status) {
-          status.textContent = errorText;
-          status.classList.add("is-error");
-        }
-      });
-  }
-
-  function dedupeComments(comments) {
-    var seen = {};
-    return comments.filter(function (comment) {
-      var key = [
-        comment.user && comment.user.login || "",
-        String(comment.body || "").trim(),
-        comment.created_at || ""
-      ].join("\n");
-      if (seen[key]) return false;
-      seen[key] = true;
-      return true;
-    });
-  }
-
-  function renderComments(root, comments) {
-    var list = root.querySelector("[data-comments-list]");
-    if (!list) return;
-    list.innerHTML = "";
-    comments.forEach(function (comment) {
-      var article = document.createElement("article");
-      article.className = "comment-card";
-
-      var header = document.createElement("header");
-      var avatar = document.createElement("img");
-      var title = document.createElement("p");
-      var link = document.createElement("a");
-      var time = document.createElement("time");
-      var body = document.createElement("p");
-
-      avatar.src = comment.user && comment.user.avatar_url ? comment.user.avatar_url : "";
-      avatar.alt = "";
-      avatar.loading = "lazy";
-      avatar.decoding = "async";
-      link.href = comment.html_url || "#";
-      link.rel = "nofollow noopener noreferrer";
-      link.target = "_blank";
-      link.textContent = comment.user && comment.user.login ? comment.user.login : "GitHub user";
-      time.dateTime = comment.created_at || "";
-      time.textContent = comment.created_at ? new Date(comment.created_at).toLocaleString() : "";
-      title.appendChild(link);
-      title.appendChild(document.createTextNode(" · "));
-      title.appendChild(time);
-      header.appendChild(avatar);
-      header.appendChild(title);
-      body.className = "comment-body";
-      body.textContent = comment.body || "";
-      article.appendChild(header);
-      article.appendChild(body);
-      list.appendChild(article);
-    });
-  }
-
   setupSearch();
   setupImageLightbox();
   setupRegionMedia();
   setupArticleAudioTracks();
   setupArticleCaptionTracks();
-  setupUtterancesComments();
+  setupComments();
 })();

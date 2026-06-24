@@ -22,6 +22,14 @@ cover: "https://files.js.gripe/files/raw/fil_R1Au-JpxT6nAKZ0Mjc3cbptX.png"
 
 ![Codex 接手修复链路：常规动作直接做，高风险动作再问](https://files.js.gripe/files/raw/fil_R1Au-JpxT6nAKZ0Mjc3cbptX.png)
 
+## 修复脚本下载
+
+如果你只想先尝试常规修复，可以下载这个 Windows 批处理脚本：
+
+- [修复Codex Browser和ComputerUse.cmd](https://files.js.gripe/files/fil_nd7GSxvz4mQMLwvBQIpzF5hI.cmd)
+
+请在 Windows 上右键选择“以管理员身份运行”。温馨提示：脚本会关闭 Google Chrome，请先保存浏览器里的工作内容、表单和未提交页面。脚本不会重装 Codex；它主要用于恢复 bundled 插件资源、修复 Browser / Computer Use 相关配置和 helper，并在结束后提示你重启 Codex Desktop、重新打开设置页触发插件枚举。
+
 ## 先把现场交给 Codex
 
 可以直接把下面这段交给 Codex。它不是让用户学习排障，而是让 Codex 接手现场：

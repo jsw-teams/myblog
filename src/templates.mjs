@@ -205,7 +205,7 @@ export function renderLayout({
   <meta name="twitter:image" content="${escapeHtml(imageUrl)}">
   <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}">
   <script>window.JSGripeBasePath=${JSON.stringify(basePath)};</script>
-  <link rel="stylesheet" href="${withBase("/assets/site.css?v=20260605-video-controls")}">
+  <link rel="stylesheet" href="${withBase("/assets/site.css?v=20260623")}">
   ${renderJsonLd(jsonLd)}
 </head>
 <body${renderAttributes(bodyAttrs)}>
@@ -213,7 +213,7 @@ export function renderLayout({
   ${renderNav(site, locale, current)}
   ${main}
   ${renderFooter(site, locale)}
-  <script src="${withBase("/assets/client.js?v=20260603-region")}" defer></script>
+  <script src="${withBase("/assets/client.js?v=20260623")}" defer></script>
 </body>
 </html>`;
 }
@@ -312,11 +312,9 @@ function renderMediaPlayer(post, locale) {
 
 function renderCommentSection(post, locale) {
   return `<section class="article-comments"
-    data-utterances-root
-    data-utterances-repo="jsw-teams/myblog"
-    data-utterances-issue-term="${escapeHtml(`Comments: ${post.title}`)}"
-    data-utterances-label="blog-comment"
-    data-utterances-theme="github-light"
+    data-comments-root
+    data-twikoo-env-id="https://api-comments.js.gripe"
+    data-twikoo-script="https://registry.npmmirror.com/twikoo/1.7.13/files/dist/twikoo.min.js"
     data-comments-readonly="${escapeHtml(t(locale, "commentsReadOnlyMainland"))}"
     data-comments-loading="${escapeHtml(t(locale, "commentsLoading"))}"
     data-comments-empty="${escapeHtml(t(locale, "commentsEmpty"))}"
@@ -326,8 +324,7 @@ function renderCommentSection(post, locale) {
     </div>
     <p class="comments-note">${escapeHtml(t(locale, "commentsRules"))}</p>
     <p class="comments-status" data-comments-status>${escapeHtml(t(locale, "commentsLoading"))}</p>
-    <div class="comments-list" data-comments-list></div>
-    <div data-utterances-mount></div>
+    <div class="twikoo-mount" data-twikoo-mount></div>
   </section>`;
 }
 

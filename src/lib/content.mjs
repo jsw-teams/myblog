@@ -552,7 +552,7 @@ Sitemap: ${absoluteUrl(site, "/sitemap.xml")}
 }
 
 export function buildLlmsTxt(site, posts) {
-  const latest = posts.slice(0, 20);
+  const latest = posts.slice(0, 60);
   const languageLines = LOCALES
     .map((locale) => `- ${localeLabel(locale)}: ${absoluteUrl(site, `/${locale}/`)}`)
     .join("\n");
