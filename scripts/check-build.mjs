@@ -10,8 +10,7 @@ const requiredFiles = [
   "index.html",
   "404.html",
   "robots.txt",
-  "sitemap-index.xml",
-  "sitemap-0.xml",
+  "sitemap.xml",
   "feed.xml",
   "llms.txt",
   "llms-full.txt",
@@ -27,7 +26,9 @@ const forbiddenFiles = [
   "assets/client.js",
   "assets/site.css",
   "assets/theme/default/client.js",
-  "assets/theme/default/scripts/client.js"
+  "assets/theme/default/scripts/client.js",
+  "sitemap-index.xml",
+  "sitemap-0.xml"
 ];
 
 const themeFiles = [
@@ -83,27 +84,25 @@ for (const file of forbiddenFiles) {
   if (await exists(path.join(root, "static", file))) fail(`stale static/${file}`);
 }
 
-const sitemapIndex = await readFile(path.join(publicDir, "sitemap-index.xml"), "utf8");
-if (!sitemapIndex.trimStart().startsWith("<?xml")) fail("sitemap-index.xml is missing XML declaration");
-if (!sitemapIndex.includes("<sitemapindex")) {
-  fail("sitemap-index.xml is missing sitemap index root");
-}
-if (sitemapIndex.includes("<?xml-stylesheet")) fail("sitemap-index.xml should not include an XSL stylesheet");
-if (!sitemapIndex.includes("<loc>https://blog.js.gripe/sitemap-0.xml</loc>")) {
-  fail("sitemap-index.xml does not point at sitemap-0.xml");
-}
-
-const sitemap = await readFile(path.join(publicDir, "sitemap-0.xml"), "utf8");
-if (!sitemap.trimStart().startsWith("<?xml")) fail("sitemap-0.xml is missing XML declaration");
+const sitemap = await readFile(path.join(publicDir, "sitemap.xml"), "utf8");
+if (!sitemap.trimStart().startsWith("<?xml")) fail("sitemap.xml is missing XML declaration");
 if (!sitemap.includes('xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"')) {
-  fail("sitemap-0.xml is missing sitemap namespace");
+  fail("sitemap.xml is missing sitemap namespace");
 }
-if (sitemap.includes("<?xml-stylesheet")) fail("sitemap-0.xml should not include an XSL stylesheet");
+if (sitemap.includes("<?xml-stylesheet")) fail("sitemap.xml should not include an XSL stylesheet");
+if (sitemap.includes("<sitemapindex")) fail("sitemap.xml should be a urlset, not a sitemap index");
+if (!sitemap.includes("<urlset")) fail("sitemap.xml is missing urlset root");
 if (!sitemap.includes("<url>") || !sitemap.includes("<loc>https://blog.js.gripe/")) {
-  fail("sitemap-0.xml does not contain expected absolute URLs");
+  fail("sitemap.xml does not contain expected absolute URLs");
 }
-if (!sitemap.includes("<changefreq>")) fail("sitemap-0.xml is missing changefreq metadata");
-if (!sitemap.includes("<priority>")) fail("sitemap-0.xml is missing priority metadata");
+if (!sitemap.includes("<loc>https://blog.js.gripe/zh-CN/posts/")) {
+  fail("sitemap.xml does not contain article URLs");
+}
+if (!sitemap.includes("<loc>https://blog.js.gripe/zh-CN/about/")) {
+  fail("sitemap.xml does not contain page URLs");
+}
+if (!sitemap.includes("<changefreq>")) fail("sitemap.xml is missing changefreq metadata");
+if (!sitemap.includes("<priority>")) fail("sitemap.xml is missing priority metadata");
 
 const headers = await readFile(path.join(publicDir, "_headers"), "utf8");
 if (!headers.includes("Content-Type: application/xml; charset=utf-8")) {

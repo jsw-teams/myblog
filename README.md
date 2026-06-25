@@ -267,7 +267,7 @@ plugins:
 - 普通 pages 页
 - 搜索页与搜索索引
 - `feed.xml`
-- `sitemap-index.xml` / `sitemap-0.xml`（由 `@astrojs/sitemap` 生成，`/sitemap.xml` 会重定向到索引）
+- `sitemap.xml`（由 `@astrojs/sitemap` 生成，最终产物只保留统一的 URL 列表入口）
 - `robots.txt`
 - `llms.txt`
 
