@@ -267,11 +267,11 @@ plugins:
 - 普通 pages 页
 - 搜索页与搜索索引
 - `feed.xml`
-- `sitemap.xml`
+- `sitemap-index.xml` / `sitemap-0.xml`（由 `@astrojs/sitemap` 生成，`/sitemap.xml` 会重定向到索引）
 - `robots.txt`
 - `llms.txt`
 
-`sitemap.xml` 使用标准 XML 输出，不依赖 XSL。浏览器应显示 XML 文档树或原始 XML，而不是被当成普通文本页面。
+站点地图由 `@astrojs/sitemap` 生成标准 XML，不依赖自定义 XSL。浏览器应显示 XML 文档树或原始 XML，而不是被当成普通文本页面。
 
 ## 部署
 
@@ -306,7 +306,7 @@ CLOUDFLARE_PAGES_PROJECT_NAME = Cloudflare Pages 项目名，默认 myblog
 
 不要把 Cloudflare API Token 写入代码、README、issue 或聊天记录。Token 泄露后应立即在 Cloudflare Dashboard 里撤销并重新创建。
 
-部署后在 Cloudflare Pages 项目里绑定自定义域名。`_headers` 会随 `public/` 一起发布，用来保证 `sitemap.xml`、`feed.xml`、`llms.txt` 等文件的 Content-Type。
+部署后在 Cloudflare Pages 项目里绑定自定义域名。`_headers` 会随 `public/` 一起发布，用来保证站点地图、`feed.xml`、`llms.txt` 等文件的 Content-Type。
 
 ### AWS CloudFront / Amplify
 

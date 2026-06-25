@@ -734,7 +734,7 @@ function renderVisualSitemap({ site, routes, templates = defaultTemplates }) {
   const main = `<main id="main" class="page-main list-main">
     <header class="page-heading">
       <h1>Sitemap</h1>
-      <p class="lead">${htmlRoutes.length} URLs published for crawlers. The XML version is available at <a href="/sitemap.xml">/sitemap.xml</a>.</p>
+      <p class="lead">${htmlRoutes.length} URLs published for crawlers. The XML version is available at <a href="/sitemap-index.xml">/sitemap-index.xml</a>.</p>
     </header>
     <div class="table-wrap">
       <table>
@@ -796,7 +796,7 @@ export function buildRobotsTxt(site) {
   }).join("\n\n");
   return `${header}${header ? "\n" : ""}${signal}${body}
 
-Sitemap: ${absoluteUrl(site, "/sitemap.xml")}
+Sitemap: ${absoluteUrl(site, "/sitemap-index.xml")}
 `;
 }
 

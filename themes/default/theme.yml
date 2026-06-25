@@ -111,6 +111,9 @@ nav:
         zh-TW: 搜尋
         en: Search
 footer:
+  copyright:
+    enabled: true
+    text: "© :year :siteName"
   links:
     - href: /:locale/feed.xml
       label:

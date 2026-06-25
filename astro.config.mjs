@@ -1,8 +1,100 @@
 import { defineConfig } from "astro/config";
+import sitemap from "@astrojs/sitemap";
+import { buildTermMap, groupByLocale, loadBlogData } from "./src/lib/content.mjs";
+
+const { site, posts, pages } = await loadBlogData();
+const sitemapOptions = site.sitemap || {};
+const sitemapMeta = new Map();
+const excludedPaths = new Set([
+  ...posts.filter((post) => post.sitemap === false).map((post) => post.url),
+  ...pages.filter((page) => page.sitemap === false).map((page) => page.url)
+]);
+
+function normalizeDate(value, fallback = "2026-04-27") {
+  if (!value) return fallback;
+  if (value instanceof Date && !Number.isNaN(value.getTime())) return value.toISOString().slice(0, 10);
+  const text = String(value).slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : fallback;
+}
+
+function latestDate(items) {
+  return items.reduce((latest, item) => {
+    const updated = normalizeDate(item.updated ?? item.date);
+    return updated > latest ? updated : latest;
+  }, "2026-04-27");
+}
+
+function isExcluded(pathname) {
+  if (excludedPaths.has(pathname)) return true;
+  return (sitemapOptions.exclude || []).some((pattern) => {
+    const text = String(pattern);
+    return text.endsWith("*") ? pathname.startsWith(text.slice(0, -1)) : pathname === text;
+  });
+}
+
+function setMeta(url, meta = {}) {
+  sitemapMeta.set(url, meta);
+}
+
+const siteUpdated = latestDate([...posts, ...pages]);
+const homePageSize = Math.max(1, Number(site.pagination?.homePageSize || 8));
+setMeta("/", { lastmod: siteUpdated, changefreq: "daily", priority: 1.0 });
+
+for (const locale of site.locales) {
+  const localePosts = groupByLocale(posts, locale);
+  const totalHomePages = Math.max(1, Math.ceil(localePosts.length / homePageSize));
+  for (let page = 1; page <= totalHomePages; page += 1) {
+    setMeta(page === 1 ? `/${locale}/` : `/${locale}/${"older/".repeat(page - 1)}`, {
+      lastmod: siteUpdated,
+      changefreq: page === 1 ? "daily" : "weekly",
+      priority: page === 1 ? 0.9 : 0.5
+    });
+  }
+  setMeta(`/${locale}/archive/`, { lastmod: siteUpdated, changefreq: "weekly", priority: 0.5 });
+  setMeta(`/${locale}/categories/`, { lastmod: siteUpdated, changefreq: "weekly", priority: 0.4 });
+  setMeta(`/${locale}/tags/`, { lastmod: siteUpdated, changefreq: "weekly", priority: 0.4 });
+  for (const term of buildTermMap(posts, locale, "categories").values()) {
+    setMeta(term.url, { lastmod: siteUpdated, changefreq: "weekly", priority: 0.3 });
+  }
+  for (const term of buildTermMap(posts, locale, "tags").values()) {
+    setMeta(term.url, { lastmod: siteUpdated, changefreq: "weekly", priority: 0.3 });
+  }
+}
+
+for (const post of posts) {
+  setMeta(post.url, { lastmod: normalizeDate(post.updated ?? post.date), changefreq: "monthly", priority: 0.6 });
+}
+
+for (const page of pages) {
+  setMeta(page.url, { lastmod: normalizeDate(page.updated ?? page.date), changefreq: "monthly", priority: 0.5 });
+}
 
 export default defineConfig({
   output: "static",
-  site: "https://blog.js.gripe",
+  site: site.siteUrl,
   outDir: "./public",
-  publicDir: "./static"
+  publicDir: "./static",
+  integrations: [
+    sitemap({
+      i18n: {
+        defaultLocale: site.defaultLocale,
+        locales: Object.fromEntries(site.locales.map((locale) => [locale, locale]))
+      },
+      filter(page) {
+        const pathname = new URL(page).pathname;
+        return !isExcluded(pathname);
+      },
+      serialize(item) {
+        const pathname = new URL(item.url).pathname;
+        const meta = sitemapMeta.get(pathname);
+        if (!meta) return item;
+        return {
+          ...item,
+          lastmod: meta.lastmod,
+          changefreq: meta.changefreq,
+          priority: meta.priority
+        };
+      }
+    })
+  ]
 });

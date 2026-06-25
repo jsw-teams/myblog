@@ -236,6 +236,12 @@ function renderNav(site, locale, current) {
 
 function renderFooter(site, locale) {
   const configuredLinks = Array.isArray(site.footer?.links) ? site.footer.links : [];
+  const copyright = site.footer?.copyright || {};
+  const copyrightEnabled = copyright.enabled !== false;
+  const copyrightTemplate = copyright.text ?? copyright.label ?? "© :year :siteName";
+  const copyrightText = localConfigText(copyrightTemplate, locale, site)
+    .replaceAll(":year", String(new Date().getUTCFullYear()))
+    .replaceAll(":siteName", localText(site.siteName, locale, site));
   const links = configuredLinks.length
     ? configuredLinks
     : [
@@ -244,9 +250,9 @@ function renderFooter(site, locale) {
       { href: "/sitemap/", label: t(locale, "sitemap") }
     ];
   return `<footer class="site-footer">
-    <p class="footer-brand">&copy; ${new Date().getUTCFullYear()} ${escapeHtml(localText(site.siteName, locale, site))}</p>
+    ${copyrightEnabled && copyrightText ? `<p class="footer-brand">${escapeHtml(copyrightText)}</p>` : ""}
     <nav class="footer-links" aria-label="${escapeHtml(t(locale, "sitemap"))}">
-      ${links.map((link) => `<a href="${withBase(String(link.href || "").replaceAll(":locale", locale))}">${escapeHtml(localConfigText(link.label, locale, site))}</a>`).join("")}
+      ${links.filter((link) => link?.enabled !== false).map((link) => `<a href="${withBase(String(link.href || "").replaceAll(":locale", locale))}">${escapeHtml(localConfigText(link.label, locale, site))}</a>`).join("")}
       ${site.theme?.consent?.enabled === false ? "" : `<button class="footer-link-button" type="button" data-consent-open>${escapeHtml(t(locale, "consentManage"))}</button>`}
     </nav>
   </footer>`;

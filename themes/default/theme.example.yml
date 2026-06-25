@@ -96,6 +96,33 @@ nav:
         zh-TW: 搜尋
         en: Search
 
+footer:
+  copyright:
+    enabled: true
+    text:
+      zh-CN: "© :year :siteName"
+      zh-TW: "© :year :siteName"
+      en: "© :year :siteName"
+  links:
+    - href: /:locale/feed.xml
+      enabled: true
+      label:
+        zh-CN: 订阅
+        zh-TW: 訂閱
+        en: Feed
+    - href: /:locale/about/
+      enabled: true
+      label:
+        zh-CN: 隐私政策
+        zh-TW: 隱私政策
+        en: Privacy
+    - href: /sitemap/
+      enabled: true
+      label:
+        zh-CN: 站点地图
+        zh-TW: 站點地圖
+        en: Sitemap
+
 plugins:
   comments:
     enabled: false
