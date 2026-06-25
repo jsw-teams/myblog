@@ -136,9 +136,9 @@ plugins:
     provider: none
   analytics:
     cloudflareWebAnalytics:
-      enabled: false
+      enabled: true
       src: https://static.cloudflareinsights.com/beacon.min.js
-      token: YOUR_CLOUDFLARE_WEB_ANALYTICS_TOKEN
+      token: a2c7ad0cfc8f4493aa80c8b5aae99357
       defer: true
       consent: analytics
       beacon:

@@ -209,6 +209,19 @@ function pluginAttrs(config = {}) {
 
 function pushPluginScript(site, script = {}) {
   if (!script.src && !script.content && !script.inline) return;
+  const scriptKey = JSON.stringify({
+    src: script.src || "",
+    consent: script.consent || "",
+    beacon: script["data-cf-beacon"] || "",
+    content: script.content || script.inline || ""
+  });
+  const exists = site.theme.scripts.bodyEnd.some((entry) => JSON.stringify({
+    src: entry?.src || "",
+    consent: entry?.consent || "",
+    beacon: entry?.["data-cf-beacon"] || "",
+    content: entry?.content || entry?.inline || ""
+  }) === scriptKey);
+  if (exists) return;
   site.theme.scripts.bodyEnd.push(script);
 }
 

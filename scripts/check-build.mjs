@@ -137,7 +137,7 @@ if (home.includes("/assets/site.css") || home.includes("/assets/client.js")) {
   fail("home page still references legacy root assets");
 }
 
-const scriptTagMatches = home.match(/<script\b[^>]*\bsrc=/g) || [];
+const scriptTagMatches = home.match(/<script\b(?=[^>]*\ssrc=)[^>]*>/g) || [];
 if (scriptTagMatches.length !== 1) {
   fail(`home page should directly load only the consent script, found ${scriptTagMatches.length}`);
 }
