@@ -28,7 +28,8 @@ const forbiddenFiles = [
   "assets/theme/default/client.js",
   "assets/theme/default/scripts/client.js",
   "sitemap-index.xml",
-  "sitemap-0.xml"
+  "sitemap-0.xml",
+  "sitemap/index.html"
 ];
 
 const themeFiles = [

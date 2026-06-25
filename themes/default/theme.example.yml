@@ -116,7 +116,7 @@ footer:
         zh-CN: 隐私政策
         zh-TW: 隱私政策
         en: Privacy
-    - href: /sitemap/
+    - href: /sitemap.xml
       enabled: true
       label:
         zh-CN: 站点地图

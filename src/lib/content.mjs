@@ -10,7 +10,6 @@ import anchor from "markdown-it-anchor";
 import { DEFAULT_LOCALE, LOCALES, configureThemeI18n, formatDate, localeLabel, t } from "../i18n.mjs";
 import {
   absoluteUrl,
-  escapeHtml,
   basePath,
   defaultTemplates
 } from "../templates.mjs";
@@ -701,7 +700,6 @@ export async function buildHtmlPages() {
     }
   }
 
-  add("/sitemap/", renderVisualSitemap({ site, routes, templates }));
   return routes;
 }
 
@@ -720,37 +718,6 @@ function rewriteRelativePaths(html, urlPath) {
     let prefix = path.posix.relative(fromDir.replace(/^\/|\/$/g, ""), path.posix.dirname(cleanTarget));
     if (!prefix) prefix = ".";
     return `${attr}="${prefix}/${path.posix.basename(cleanTarget)}"`;
-  });
-}
-
-function renderVisualSitemap({ site, routes, templates = defaultTemplates }) {
-  const htmlRoutes = routes.filter((route) => route.url !== "/404.html");
-  const rows = htmlRoutes
-    .map((route) => {
-      const url = absoluteUrl(site, route.url);
-      return `<tr><td><a href="${escapeHtml(url)}">${escapeHtml(url)}</a></td><td><time datetime="${today}">${today}</time></td><td></td></tr>`;
-    })
-    .join("");
-  const main = `<main id="main" class="page-main list-main">
-    <header class="page-heading">
-      <h1>Sitemap</h1>
-      <p class="lead">${htmlRoutes.length} URLs published for crawlers. The XML version is available at <a href="/sitemap.xml">/sitemap.xml</a>.</p>
-    </header>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>URL</th><th>Last modified</th><th>Alternate languages</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-  </main>`;
-  return templates.renderLayout({
-    site,
-    locale: site.defaultLocale,
-    title: "Sitemap",
-    description: site.sitemap?.description || "Human-readable sitemap.",
-    url: "/sitemap/",
-    main,
-    robots: "noindex,follow"
   });
 }
 

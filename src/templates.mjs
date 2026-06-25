@@ -247,7 +247,7 @@ function renderFooter(site, locale) {
     : [
       { href: `/${locale}/feed.xml`, label: t(locale, "feed") },
       { href: `/${locale}/about/`, label: t(locale, "privacy") },
-      { href: "/sitemap/", label: t(locale, "sitemap") }
+      { href: "/sitemap.xml", label: t(locale, "sitemap") }
     ];
   return `<footer class="site-footer">
     ${copyrightEnabled && copyrightText ? `<p class="footer-brand">${escapeHtml(copyrightText)}</p>` : ""}
