@@ -3,7 +3,7 @@ import path from "node:path";
 import process from "node:process";
 
 const root = process.cwd();
-const publicDir = path.join(root, "public");
+const outputDir = path.join(root, "dist");
 const locales = ["zh-CN", "zh-TW", "en"];
 
 const requiredFiles = [
@@ -73,7 +73,7 @@ function fail(message) {
 }
 
 for (const file of requiredFiles) {
-  if (!(await exists(path.join(publicDir, file)))) fail(`missing public/${file}`);
+  if (!(await exists(path.join(outputDir, file)))) fail(`missing dist/${file}`);
 }
 
 for (const file of themeFiles) {
@@ -81,11 +81,11 @@ for (const file of themeFiles) {
 }
 
 for (const file of forbiddenFiles) {
-  if (await exists(path.join(publicDir, file))) fail(`stale public/${file}`);
+  if (await exists(path.join(outputDir, file))) fail(`stale dist/${file}`);
   if (await exists(path.join(root, "static", file))) fail(`stale static/${file}`);
 }
 
-const sitemap = await readFile(path.join(publicDir, "sitemap.xml"), "utf8");
+const sitemap = await readFile(path.join(outputDir, "sitemap.xml"), "utf8");
 if (!sitemap.trimStart().startsWith("<?xml")) fail("sitemap.xml is missing XML declaration");
 if (!sitemap.includes('xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"')) {
   fail("sitemap.xml is missing sitemap namespace");
@@ -105,15 +105,18 @@ if (!sitemap.includes("<loc>https://blog.js.gripe/zh-CN/about/")) {
 if (!sitemap.includes("<changefreq>")) fail("sitemap.xml is missing changefreq metadata");
 if (!sitemap.includes("<priority>")) fail("sitemap.xml is missing priority metadata");
 
-const headers = await readFile(path.join(publicDir, "_headers"), "utf8");
-if (!headers.includes("Content-Type: application/xml; charset=utf-8")) {
-  fail("_headers should serve XML files as application/xml");
+const headers = await readFile(path.join(outputDir, "_headers"), "utf8");
+if (!headers.includes("Content-Type: text/xml; charset=utf-8")) {
+  fail("_headers should serve XML files as text/xml");
+}
+if (/\/\*\.xml/.test(headers)) {
+  fail("_headers should not use an overlapping /*.xml rule for sitemap.xml");
 }
 if (!headers.includes("Content-Type: text/markdown; charset=utf-8")) {
   fail("_headers should serve markdown mirrors as text/markdown");
 }
 
-const redirectsPath = path.join(publicDir, "_redirects");
+const redirectsPath = path.join(outputDir, "_redirects");
 if (await exists(redirectsPath)) {
   const redirects = await readFile(redirectsPath, "utf8");
   if (/\/\*\s+\/index\.html\s+200/.test(redirects)) {
@@ -121,7 +124,7 @@ if (await exists(redirectsPath)) {
   }
 }
 
-const home = await readFile(path.join(publicDir, "zh-CN/index.html"), "utf8");
+const home = await readFile(path.join(outputDir, "zh-CN/index.html"), "utf8");
 if (!home.includes("/assets/theme/default/style.css?v=")) fail("home page is missing theme CSS");
 if (!home.includes("/assets/theme/default/styles/home.css?v=")) fail("home page is missing page CSS");
 if (!home.includes("/assets/theme/default/scripts/consent.js?v=")) fail("home page is missing consent theme JS");
@@ -139,18 +142,18 @@ if (scriptTagMatches.length !== 1) {
   fail(`home page should directly load only the consent script, found ${scriptTagMatches.length}`);
 }
 
-const htmlFiles = await listFiles(publicDir, ".html");
+const htmlFiles = await listFiles(outputDir, ".html");
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
-  const relative = path.relative(publicDir, file);
+  const relative = path.relative(outputDir, file);
   if (!/<title>[^<]+<\/title>/i.test(html)) fail(`${relative} is missing title`);
   if (!/<meta[^>]+name=["']description["'][^>]*>/i.test(html)) fail(`${relative} is missing description`);
   if (!/<main\b/i.test(html)) fail(`${relative} is missing main`);
 }
 
 for (const locale of locales) {
-  const searchPage = path.join(publicDir, locale, "search", "index.html");
-  const searchIndex = path.join(publicDir, "assets", `search-index.${locale}.json`);
+  const searchPage = path.join(outputDir, locale, "search", "index.html");
+  const searchIndex = path.join(outputDir, "assets", `search-index.${locale}.json`);
   if (!(await exists(searchPage))) fail(`missing search page for ${locale}`);
   if (!(await exists(searchIndex))) fail(`missing search index for ${locale}`);
   if (await exists(searchIndex)) {

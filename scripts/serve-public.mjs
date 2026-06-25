@@ -4,7 +4,7 @@ import { createServer } from "node:http";
 import path from "node:path";
 import process from "node:process";
 
-const publicDir = path.join(process.cwd(), "public");
+const outputDir = path.join(process.cwd(), "dist");
 const host = process.env.HOST || "127.0.0.1";
 const port = Number(process.env.PORT || 4173);
 
@@ -22,7 +22,7 @@ const mime = new Map([
   [".vtt", "text/vtt; charset=utf-8"],
   [".webmanifest", "application/manifest+json; charset=utf-8"],
   [".webp", "image/webp"],
-  [".xml", "application/xml; charset=utf-8"]
+  [".xml", "text/xml; charset=utf-8"]
 ]);
 
 function normalizeUrl(url) {
@@ -32,8 +32,8 @@ function normalizeUrl(url) {
 
 function resolvePublicPath(url) {
   const relative = normalizeUrl(url);
-  const requestPath = path.normalize(path.join(publicDir, relative));
-  if (!requestPath.startsWith(publicDir)) return null;
+  const requestPath = path.normalize(path.join(outputDir, relative));
+  if (!requestPath.startsWith(outputDir)) return null;
   return requestPath;
 }
 
@@ -53,7 +53,7 @@ async function findFile(url) {
     } catch {}
   }
 
-  const notFound = path.join(publicDir, "404.html");
+  const notFound = path.join(outputDir, "404.html");
   return (await stat(notFound).then((info) => info.isFile()).catch(() => false)) ? notFound : null;
 }
 
@@ -73,5 +73,5 @@ createServer(async (request, response) => {
   });
   createReadStream(file).pipe(response);
 }).listen(port, host, () => {
-  console.log(`Serving public at http://${host}:${port}/`);
+  console.log(`Serving dist at http://${host}:${port}/`);
 });

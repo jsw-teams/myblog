@@ -1,6 +1,6 @@
 # Static Site Builder
 
-一个偏 Hexo 思路的静态网站/博客构建器：站点配置放在根目录 `config.yml`，主题样式、布局、脚本和主题级 i18n 放在 `themes/<name>/`，内容来自 `content/`，构建输出到 `public/`。
+一个偏 Hexo 思路的静态网站/博客构建器：站点配置放在根目录 `config.yml`，主题样式、布局、脚本和主题级 i18n 放在 `themes/<name>/`，内容来自 `content/`，构建输出到 `dist/`。
 
 目标是降低普通内容站点的前端开发成本。开发者可以把大部分工作放在 Markdown、YAML 和主题文件上，而不是每个站点都重新搭页面结构、SEO、sitemap、feed、本地搜索和第三方脚本加载逻辑。默认主题内置本地搜索和合规友好的 Cookie/Consent 偏好选择器，可按需启用评论、统计、RUM 或其他插件脚本。
 
@@ -35,9 +35,9 @@ config.yml              # 站点级配置
 content/posts/          # 文章 Markdown
 content/pages/          # 普通页面 Markdown
 src/                    # 构建器、内容解析、站务渲染
-static/                 # 站点静态文件，会复制到 public/
+static/                 # 站点静态文件，会复制到 dist/
 themes/default/         # 默认主题
-public/                 # 构建产物
+dist/                   # 构建产物
 ```
 
 主题目录：
@@ -137,7 +137,7 @@ pageStyles:
   page: styles/page.css
 ```
 
-构建器会复制主题资源到 `public/assets/theme/<theme>/`，并按文件内容自动生成版本号查询串，不需要手写 `?v=...`。
+构建器会复制主题资源到 `dist/assets/theme/<theme>/`，并按文件内容自动生成版本号查询串，不需要手写 `?v=...`。
 
 `scripts/consent.js` 是默认主题唯一无条件加载的入口脚本。未保存隐私偏好前，它只加载 consent 自身需要的样式并锁定页面交互；搜索、评论、媒体增强、统计或 RUM 等功能脚本会在用户保存选择后按分类加载。
 
@@ -275,7 +275,7 @@ plugins:
 
 ## 部署
 
-推送到 `main` 后，GitHub Actions 会运行 `.github/workflows/cloudflare-pages.yml`，执行安装、构建、检查，然后发布 `public/` 到 Cloudflare Pages。
+推送到 `main` 后，GitHub Actions 会运行 `.github/workflows/cloudflare-pages.yml`，执行安装、构建、检查，然后发布 `dist/` 到 Cloudflare Pages。
 
 ### Cloudflare Pages
 
@@ -283,7 +283,7 @@ plugins:
 
 ```text
 Build command: pnpm install --frozen-lockfile && pnpm run build
-Build output directory: public
+Build output directory: dist
 Node.js version: 22.12 或更新
 ```
 
@@ -306,20 +306,20 @@ CLOUDFLARE_PAGES_PROJECT_NAME = Cloudflare Pages 项目名，默认 myblog
 
 不要把 Cloudflare API Token 写入代码、README、issue 或聊天记录。Token 泄露后应立即在 Cloudflare Dashboard 里撤销并重新创建。
 
-部署后在 Cloudflare Pages 项目里绑定自定义域名。`_headers` 会随 `public/` 一起发布，用来保证站点地图、`feed.xml`、`llms.txt` 等文件的 Content-Type。
+部署后在 Cloudflare Pages 项目里绑定自定义域名。`_headers` 会随 `dist/` 一起发布，用来保证站点地图、`feed.xml`、`llms.txt` 等文件的 Content-Type。
 
 ### AWS CloudFront / Amplify
 
 AWS 没有名为 “CloudFront Pages” 的 Pages 产品。静态站点通常有两种做法：
 
-- `S3 + CloudFront`：把 `public/` 上传到 S3，用 [CloudFront](https://aws.amazon.com/cloudfront/pricing/) 分发。CloudFront Flat-rate Free plan 当前标为 `$0/month`，并说明无 overage charges；配额包括每月 1M requests、100GB data transfer、5GB S3 storage。适合想自己控制 bucket、缓存和分发策略的部署。
+- `S3 + CloudFront`：把 `dist/` 上传到 S3，用 [CloudFront](https://aws.amazon.com/cloudfront/pricing/) 分发。CloudFront Flat-rate Free plan 当前标为 `$0/month`，并说明无 overage charges；配额包括每月 1M requests、100GB data transfer、5GB S3 storage。适合想自己控制 bucket、缓存和分发策略的部署。
 - `AWS Amplify Hosting`：更像 Pages 的 Git 连接部署体验。[Amplify Hosting](https://aws.amazon.com/amplify/pricing/) 官方价格页说明可部署前端应用，免费层包含每月 1,000 build minutes、5GB storage、15GB data transfer out，超出后按量计费。
 
 Amplify 配置可以使用：
 
 ```text
 Build command: npm ci && npm run build
-Output directory: public
+Output directory: dist
 ```
 
 如果前面套 Cloudflare CDN，建议缓存策略：

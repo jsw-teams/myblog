@@ -75,15 +75,11 @@ for (const page of pages) {
 export default defineConfig({
   output: "static",
   site: site.siteUrl,
-  outDir: "./public",
+  outDir: "./dist",
   publicDir: "./static",
   integrations: [
     sitemap({
       entryLimit: Number(sitemapOptions.entryLimit || 50000),
-      i18n: {
-        defaultLocale: site.defaultLocale,
-        locales: Object.fromEntries(site.locales.map((locale) => [locale, locale]))
-      },
       filter(page) {
         const pathname = new URL(page).pathname;
         return !isExcluded(pathname);
