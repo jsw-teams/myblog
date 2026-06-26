@@ -15,7 +15,6 @@ featureScripts:
   lightbox: scripts/lightbox.js
   media: scripts/media.js
   comments: scripts/comments.js
-  webMcp: scripts/web-mcp.js
 featureStyles:
   consent: styles/consent.css
 featureCategories:

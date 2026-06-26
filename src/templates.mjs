@@ -165,6 +165,18 @@ function clientConfig(site) {
   };
 }
 
+function renderWebMcpBootstrap(site) {
+  if (site.theme?.features?.webMcp === false) return "";
+  const config = {
+    basePath,
+    locales: siteLocales(site),
+    defaultLocale: siteDefaultLocale(site),
+    name: site.client?.mcpName || new URL(site.siteUrl).hostname.replace(/\W+/g, "-"),
+    description: site.client?.mcpDescription || "Public site discovery and search tools."
+  };
+  return `<script>(()=>{const c=${escapeJson(config)};const b=String(c.basePath||"").replace(/\\/$/,"");const u=p=>new URL((b&&p.startsWith("/")&&!p.startsWith(b+"/")?b:"")+p,location.origin).href;const n=v=>String(v||"").toLowerCase().normalize("NFKD").replace(/[\\u0300-\\u036f]/g,"").replace(/\\s+/g," ").trim();const l=Array.isArray(c.locales)&&c.locales.length?c.locales:["zh-CN","zh-TW","en"];const pref=()=>l.includes(document.documentElement.lang)?document.documentElement.lang:c.defaultLocale||l[0];async function searchPublicPosts(input={}){const query=String(input.query||"").trim();const locale=l.includes(input.locale)?input.locale:pref();if(!query)return{locale,results:[]};const tokens=n(query).split(" ").filter(Boolean);const response=await fetch(u("/assets/search-index."+encodeURIComponent(locale)+".json"),{credentials:"same-origin"});if(!response.ok)throw new Error("Search index request failed");const data=await response.json();const limit=Math.max(1,Math.min(Number(input.limit)||10,30));const results=(Array.isArray(data)?data:[]).filter(entry=>{const haystack=n([entry.title,entry.description,entry.category,(entry.tags||[]).join(" "),entry.text].join(" "));return tokens.every(token=>haystack.includes(token));}).slice(0,limit).map(entry=>({title:entry.title,description:entry.description,url:u(entry.url),date:entry.date,category:entry.category,tags:entry.tags||[]}));return{locale,query,results};}function listDiscoveryResources(){return{resources:[{rel:"api-catalog",url:u("/.well-known/api-catalog"),type:"application/linkset+json"},{rel:"service-desc",url:u("/openapi.json"),type:"application/vnd.oai.openapi+json;version=3.1"},{rel:"service-doc",url:u("/AGENTS.md"),type:"text/markdown"},{rel:"describedby",url:u("/llms.txt"),type:"text/plain"},{rel:"mcp-server-card",url:u("/.well-known/mcp/server-card.json"),type:"application/json"}]};}const tools=[{name:"search_public_posts",description:"Search public posts by keyword and return matching URLs.",inputSchema:{type:"object",properties:{query:{type:"string",minLength:1},locale:{type:"string",enum:l},limit:{type:"integer",minimum:1,maximum:30,default:10}},required:["query"]},execute:searchPublicPosts},{name:"list_discovery_resources",description:"List machine-readable discovery resources exposed by this site.",inputSchema:{type:"object",properties:{},additionalProperties:false},execute:listDiscoveryResources}];const ac=typeof AbortController==="function"?new AbortController:null;try{if(document.modelContext&&typeof document.modelContext.registerTool==="function"){tools.forEach(t=>{try{document.modelContext.registerTool(t,ac?{signal:ac.signal}:undefined)}catch(e){document.modelContext.registerTool(t)}});window.SiteforgeWebMcpReady=true}}catch(e){window.SiteforgeWebMcpReady=false}try{if(navigator.modelContext&&typeof navigator.modelContext.provideContext==="function"){navigator.modelContext.provideContext({name:c.name,description:c.description,tools});window.SiteforgeWebMcpReady=true}}catch(e){window.SiteforgeWebMcpReady=false}window.SiteforgeWebMcpAbortController=ac;})();</script>`;
+}
+
 function schemaDateTime(value, timezone = "+08:00") {
   if (value instanceof Date && !Number.isNaN(value.getTime())) {
     return value.toISOString();
@@ -358,6 +370,7 @@ export function renderLayout({
   <meta name="twitter:image" content="${escapeHtml(imageUrl)}">
   <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}">
   <script>window.JSGripeConfig=${escapeJson(clientConfig(site))};window.JSGripeBasePath=window.JSGripeConfig.basePath;</script>
+  ${renderWebMcpBootstrap(site)}
   ${renderScripts(headScripts(site))}
   ${renderStyleLinks(site, styles)}
   ${renderJsonLd(jsonLd)}

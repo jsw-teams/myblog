@@ -1,3 +1,27 @@
+/
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json;version=3.1"
+  Link: </AGENTS.md>; rel="service-doc"; type="text/markdown"
+  Link: </llms.txt>; rel="describedby"; type="text/plain"
+
+/zh-CN/
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json;version=3.1"
+  Link: </AGENTS.md>; rel="service-doc"; type="text/markdown"
+  Link: </llms.txt>; rel="describedby"; type="text/plain"
+
+/zh-TW/
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json;version=3.1"
+  Link: </AGENTS.md>; rel="service-doc"; type="text/markdown"
+  Link: </llms.txt>; rel="describedby"; type="text/plain"
+
+/en/
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"
+  Link: </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json;version=3.1"
+  Link: </AGENTS.md>; rel="service-doc"; type="text/markdown"
+  Link: </llms.txt>; rel="describedby"; type="text/plain"
+
 /sitemap.xml
   Content-Type: text/xml; charset=utf-8
   X-Content-Type-Options: nosniff

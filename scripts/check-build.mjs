@@ -130,8 +130,10 @@ if (!home.includes("/assets/theme/default/styles/home.css?v=")) fail("home page 
 if (!home.includes("/assets/theme/default/scripts/consent.js?v=")) fail("home page is missing consent theme JS");
 if (!home.includes("themeConsent")) fail("home page is missing consent config");
 if (!home.includes("themeFeatureCategories")) fail("home page is missing feature consent categories");
+if (!home.includes("SiteforgeWebMcpReady")) fail("home page is missing inline WebMCP registration");
 if (!home.includes("data-consent-open")) fail("home page is missing consent preferences trigger");
 if (home.includes("/assets/theme/default/scripts/client.js")) fail("home page still references client.js");
+if (/<script\b[^>]+\bsrc=["'][^"']*web-mcp\.js/.test(home)) fail("home page should not load web-mcp.js");
 if (/<script\b[^>]+\bsrc=["'][^"']*comments\.js/.test(home)) fail("home page should not directly load comments.js");
 if (home.includes("/assets/site.css") || home.includes("/assets/client.js")) {
   fail("home page still references legacy root assets");

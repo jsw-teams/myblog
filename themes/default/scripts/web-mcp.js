@@ -41,6 +41,18 @@
       });
   }
 
+  function listDiscoveryResources() {
+    return Promise.resolve({
+      resources: [
+        { rel: "api-catalog", url: new URL(theme.withBase("/.well-known/api-catalog"), window.location.origin).href, type: "application/linkset+json" },
+        { rel: "service-desc", url: new URL(theme.withBase("/openapi.json"), window.location.origin).href, type: "application/vnd.oai.openapi+json;version=3.1" },
+        { rel: "service-doc", url: new URL(theme.withBase("/AGENTS.md"), window.location.origin).href, type: "text/markdown" },
+        { rel: "describedby", url: new URL(theme.withBase("/llms.txt"), window.location.origin).href, type: "text/plain" },
+        { rel: "mcp-server-card", url: new URL(theme.withBase("/.well-known/mcp/server-card.json"), window.location.origin).href, type: "application/json" }
+      ]
+    });
+  }
+
   var tools = [{
     name: "search_public_posts",
     title: "Search public posts",
@@ -56,13 +68,36 @@
     },
     annotations: { readOnlyHint: true, untrustedContentHint: true },
     execute: searchPublicPosts
+  }, {
+    name: "list_discovery_resources",
+    title: "List discovery resources",
+    description: "List machine-readable resources exposed by this public site for agents.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+      additionalProperties: false
+    },
+    annotations: { readOnlyHint: true },
+    execute: listDiscoveryResources
   }];
 
+  var controller = typeof AbortController === "function" ? new AbortController() : null;
+  window.JSGripeWebMcpAbortController = controller;
+
+  function registerWithDocumentModelContext() {
+    if (!document.modelContext || typeof document.modelContext.registerTool !== "function") return false;
+    tools.forEach(function (tool) {
+      try {
+        document.modelContext.registerTool(tool, controller ? { signal: controller.signal } : undefined);
+      } catch (error) {
+        document.modelContext.registerTool(tool);
+      }
+    });
+    return true;
+  }
+
   try {
-    if (document.modelContext && typeof document.modelContext.registerTool === "function") {
-      tools.forEach(function (tool) { document.modelContext.registerTool(tool); });
-      window.JSGripeWebMcpReady = true;
-    }
+    if (registerWithDocumentModelContext()) window.JSGripeWebMcpReady = true;
   } catch (error) {
     window.JSGripeWebMcpReady = false;
   }

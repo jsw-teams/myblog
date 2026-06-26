@@ -120,6 +120,7 @@ features:
   lightbox: true
   media: true
   comments: true
+  webMcp: true
 
 featureScripts:
   search: scripts/search.js
@@ -139,7 +140,7 @@ pageStyles:
 
 构建器会复制主题资源到 `dist/assets/theme/<theme>/`，并按文件内容自动生成版本号查询串，不需要手写 `?v=...`。
 
-`scripts/consent.js` 是默认主题唯一无条件加载的入口脚本。未保存隐私偏好前，它只加载 consent 自身需要的样式并锁定页面交互；搜索、评论、媒体增强、统计或 RUM 等功能脚本会在用户保存选择后按分类加载。
+`scripts/consent.js` 是默认主题唯一无条件加载的外部入口脚本。未保存隐私偏好前，它只加载 consent 自身需要的样式并锁定页面交互；搜索、评论、媒体增强、统计或 RUM 等功能脚本会在用户保存选择后按分类加载。WebMCP 是例外：它由构建器内联一个小型注册脚本，不额外加载 `web-mcp.js`，用于让浏览器代理在页面加载时发现站点工具。
 
 导航入口也由主题配置控制。分类、标签、搜索、归档或任意 pages 入口都可以用 `enabled: false` 关闭，或直接从 `nav.links` / `nav.utilityLinks` 删除。
 

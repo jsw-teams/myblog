@@ -171,7 +171,7 @@
   function consentAllows(category) {
     var normalized = category || "necessary";
     if (!consentEnabled()) return true;
-    if (normalized === "necessary") return !!readChoice();
+    if (normalized === "necessary") return true;
     var choice = readChoice();
     return !!(choice && choice.categories && choice.categories[normalized]);
   }
@@ -197,18 +197,17 @@
   }
 
   function loadThemeFeatures() {
-    if (!hasConsentChoice()) return;
     [
       ["search", "[data-search-root]"],
       ["lightbox", ".prose img"],
       ["media", "[data-region-media], [data-audio-track-root], [data-caption-track-root]"],
-      ["comments", "[data-comments-root]"],
-      ["webMcp", ""]
+      ["comments", "[data-comments-root]"]
     ].forEach(function (entry) {
       var key = entry[0];
       var selector = entry[1];
       var category = featureCategories[key] || "necessary";
       if (key === "consent" || features[key] === false || !featureScripts[key]) return;
+      if (category !== "necessary" && !hasConsentChoice()) return;
       if (selector && !document.querySelector(selector)) return;
       if (!consentAllows(category)) return;
       (featureStyles[key] || []).forEach(function (href, index) {
