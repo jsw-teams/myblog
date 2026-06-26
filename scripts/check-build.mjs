@@ -76,6 +76,19 @@ for (const file of requiredFiles) {
   if (!(await exists(path.join(outputDir, file)))) fail(`missing dist/${file}`);
 }
 
+const llms = await readFile(path.join(outputDir, "llms.txt"), "utf8");
+if (!llms.startsWith("# ")) fail("llms.txt should start with an H1 title");
+for (const expected of [
+  "## Primary Site Areas",
+  "## Machine-Readable Resources",
+  "## Latest Markdown Mirrors",
+  "[Sitemap](",
+  "[Agent guide](",
+  "[Full LLM context]("
+]) {
+  if (!llms.includes(expected)) fail(`llms.txt is missing ${expected}`);
+}
+
 for (const file of themeFiles) {
   if (!(await exists(path.join(root, file)))) fail(`missing ${file}`);
 }

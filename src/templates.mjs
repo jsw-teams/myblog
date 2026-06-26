@@ -554,7 +554,7 @@ export function renderHomePage({ site, locale, posts, page = 1, totalPages = 1, 
         <h1 id="home-title">${escapeHtml(siteName)}</h1>
         <p class="lead">${escapeHtml(t(locale, "siteIntro"))}</p>
       </div>
-      <img class="hero-mascot pixel-art" src="/assets/mascot-laptop.png" alt="" width="280" height="301">
+      <img class="hero-mascot pixel-art" src="/assets/mascot-laptop.png" alt="" width="280" height="301" loading="eager" decoding="async" fetchpriority="high">
     </section>
     <section class="home-section" aria-labelledby="latest-posts">
       <div class="section-heading">
@@ -587,7 +587,7 @@ export function renderRootPage({ site }) {
   }).join("");
   const main = `<main id="main" class="page-main root-picker">
     <section class="language-choice" aria-labelledby="root-title">
-      <img src="/assets/mascot-reading.png" alt="" width="230" height="345">
+      <img src="/assets/mascot-reading.png" alt="" width="230" height="345" loading="eager" decoding="async" fetchpriority="high">
       <div>
         <h1 id="root-title">${escapeHtml(localText(site.siteName, locale, site))}</h1>
         <p class="lead">${escapeHtml(description)}</p>
@@ -667,7 +667,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
       ${renderCommentSection(site, post, locale)}
       <footer class="article-footer">
         <div class="article-end">
-          <img src="/assets/mascot-happy.png" alt="" width="130" height="174">
+          <img src="/assets/mascot-happy.png" alt="" width="130" height="174" loading="lazy" decoding="async">
           <span>${escapeHtml(t(locale, "articleEnd"))}</span>
         </div>
         <nav class="post-neighbors" aria-label="${escapeHtml(t(locale, "archive"))}">
@@ -853,7 +853,7 @@ export function renderNotFoundPage({ site }) {
   const description = "页面不存在。頁面不存在。 This page was not found.";
   const main = `<main id="main" class="page-main not-found-main">
     <section class="not-found-panel" data-i18n-panel="zh-CN" aria-labelledby="not-found-zh">
-      <img src="/assets/mascot-404.png" alt="" width="300" height="450">
+      <img src="/assets/mascot-404.png" alt="" width="300" height="450" loading="eager" decoding="async" fetchpriority="high">
       <div>
         <h1 id="not-found-zh">404：页面不存在</h1>
         <p class="lead">这个页面可能已经移动，或从未存在。</p>
@@ -866,7 +866,7 @@ export function renderNotFoundPage({ site }) {
       </div>
     </section>
     <section class="not-found-panel" data-i18n-panel="zh-TW" aria-labelledby="not-found-zh-tw">
-      <img src="/assets/mascot-404.png" alt="" width="300" height="450">
+      <img src="/assets/mascot-404.png" alt="" width="300" height="450" loading="eager" decoding="async" fetchpriority="high">
       <div>
         <h1 id="not-found-zh-tw">404：頁面不存在</h1>
         <p class="lead">這個頁面可能已經移動，或從未存在。</p>
@@ -879,7 +879,7 @@ export function renderNotFoundPage({ site }) {
       </div>
     </section>
     <section class="not-found-panel" data-i18n-panel="en" aria-labelledby="not-found-en">
-      <img src="/assets/mascot-404.png" alt="" width="300" height="450">
+      <img src="/assets/mascot-404.png" alt="" width="300" height="450" loading="eager" decoding="async" fetchpriority="high">
       <div>
         <h1 id="not-found-en">404: Page not found</h1>
         <p class="lead">This page may have moved, or it may never have existed.</p>

@@ -783,19 +783,38 @@ Sitemap: ${absoluteUrl(site, "/sitemap.xml")}
 
 export function buildLlmsTxt(site, posts) {
   const latest = posts.slice(0, 60);
+  const title = site.llms?.title || site.siteName[site.defaultLocale] || site.siteUrl;
+  const description = site.llms?.description || site.description[site.defaultLocale] || "";
   const languageLines = site.locales
-    .map((locale) => `- ${localeLabel(locale)}: ${absoluteUrl(site, `/${locale}/`)}`)
+    .map((locale) => `- [${localeLabel(locale)}](${absoluteUrl(site, `/${locale}/`)})`)
     .join("\n");
+  const discoveryLines = [
+    ["Sitemap", "/sitemap.xml"],
+    ["RSS feed", "/feed.xml"],
+    ["Full LLM context", "/llms-full.txt"],
+    ["Agent guide", "/AGENTS.md"],
+    ["API catalog", "/.well-known/api-catalog"],
+    ["OpenAPI description", "/openapi.json"],
+    ["WebMCP server card", "/.well-known/mcp/server-card.json"]
+  ].map(([label, url]) => `- [${label}](${absoluteUrl(site, url)})`).join("\n");
   const articleLines = latest
-    .map((post) => `- ${post.title}: ${absoluteUrl(site, post.markdownUrl)}`)
+    .map((post) => `- [${post.title}](${absoluteUrl(site, post.markdownUrl)}): ${post.description}`)
     .join("\n");
-  return `# ${site.llms?.title || site.siteName[site.defaultLocale] || site.siteUrl}
+  return `# ${title}
 
-${site.llms?.description || site.description[site.defaultLocale] || ""}
+> ${description}
 
-## Languages
+Siteforge exposes public, read-only Markdown mirrors, feeds, sitemap metadata,
+and agent discovery resources for AI assistants. Prefer Markdown mirror URLs for
+article context. Use canonical HTML URLs when citing pages for users.
+
+## Primary Site Areas
 
 ${languageLines}
+
+## Machine-Readable Resources
+
+${discoveryLines}
 
 ## Latest Markdown Mirrors
 
