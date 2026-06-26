@@ -554,7 +554,7 @@ export function renderHomePage({ site, locale, posts, page = 1, totalPages = 1, 
         <h1 id="home-title">${escapeHtml(siteName)}</h1>
         <p class="lead">${escapeHtml(t(locale, "siteIntro"))}</p>
       </div>
-      <img class="hero-mascot pixel-art" src="/assets/mascot-laptop.png" alt="" width="280" height="301" loading="eager" decoding="async" fetchpriority="high">
+      <img class="hero-mascot pixel-art" src="/assets/mascot-laptop-280.png" alt="" width="280" height="301" loading="eager" decoding="async" fetchpriority="high">
     </section>
     <section class="home-section" aria-labelledby="latest-posts">
       <div class="section-heading">

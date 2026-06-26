@@ -4,11 +4,11 @@
   --surface: #fffdfa;
   --surface-2: #f0eadf;
   --text: #171514;
-  --muted: #665f57;
+  --muted: #4d453f;
   --border: #d7ccbd;
-  --accent: #2f6f68;
-  --accent-strong: #194f4a;
-  --gold: #9f6400;
+  --accent: #1d625b;
+  --accent-strong: #0f4944;
+  --gold: #7f5100;
   --rose: #b94b4b;
   --focus: #0b7285;
   --pixel-shadow: 6px 6px 0 #241f1a;
@@ -328,6 +328,10 @@ h3 {
   margin-top: clamp(2rem, 6vw, 4rem);
 }
 
+.home-main {
+  gap: 4rem;
+}
+
 .section-heading {
   align-items: baseline;
   border-bottom: 3px solid var(--text);
@@ -343,6 +347,10 @@ h3 {
   display: grid;
   gap: 1rem;
   grid-template-columns: minmax(0, var(--content));
+}
+
+.home-section .post-list {
+  margin-top: 1.5rem;
 }
 
 .pagination {

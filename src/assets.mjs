@@ -64,11 +64,26 @@ async function copyIfExists(source, target) {
   return true;
 }
 
+async function writeResizedPngIfExists(source, target, width) {
+  if (!fsSync.existsSync(source)) return false;
+  await ensureDir(path.dirname(target));
+  await sharp(source)
+    .resize({ width, withoutEnlargement: true })
+    .png({ compressionLevel: 9, adaptiveFiltering: true, palette: true, quality: 90 })
+    .toFile(target);
+  return true;
+}
+
 async function copyThemeGeneratedAssets(site) {
   const sourceDir = themeSourceDir(site);
   for (const file of themeAssetFiles) {
     await copyIfExists(path.join(sourceDir, file), path.join(assetsDir, file));
   }
+  await writeResizedPngIfExists(
+    path.join(sourceDir, "mascot-laptop.png"),
+    path.join(assetsDir, "mascot-laptop-280.png"),
+    280
+  );
   for (const file of rootAssetFiles) {
     await copyIfExists(path.join(sourceDir, file), path.join(publicDir, file));
   }
