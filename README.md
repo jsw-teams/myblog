@@ -4,6 +4,25 @@
 
 目标是降低普通内容站点的前端开发成本。开发者可以把大部分工作放在 Markdown、YAML 和主题文件上，而不是每个站点都重新搭页面结构、SEO、sitemap、feed、本地搜索和第三方脚本加载逻辑。默认主题内置本地搜索和合规友好的 Cookie/Consent 偏好选择器，可按需启用评论、统计、RUM 或其他插件脚本。
 
+## 给模型协作使用
+
+根目录 `AGENTS.md` 是给 Codex、Claude 或其他代码代理看的项目说明。用 Siteforge 开新项目或新主题时，先让模型阅读它，再明确要求：
+
+```text
+请基于 Siteforge 的主题架构开发当前项目的前端主题。复制默认主题后，必须把主题目录名和 theme.name 改成适合当前项目的名称，不要沿用 default、myblog 或其他来源项目名称。优先修改 themes/<project-theme>/ 下的 theme.yml、templates/、style.css、styles/、scripts/ 和 source-assets/；只有主题 API 无法表达需求时才修改 src/。
+```
+
+可选搭配两个 skill 仓库使用：
+
+- [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)：用于压低复杂度。调用时可以对模型说 `使用 ponytail full`、`使用 ponytail lite` 或 `使用 ponytail ultra`，让它优先复用现有结构、少加抽象、少加依赖。
+- [anthropics/skills](https://github.com/anthropics/skills/)：用于给模型补充专业工作流。按需要安装其中的写作、前端、文档、测试或其他 skills，然后在任务里点名使用对应 skill。
+
+这两个 skill 不是 Siteforge 的运行依赖，只是协作约束。推荐提示：
+
+```text
+请先阅读 AGENTS.md。使用 ponytail full 控制复杂度；如果已安装 anthropics/skills 中相关技能，请结合对应 skill 工作。目标是基于 Siteforge 开发当前项目自己的前端主题，而不是复制当前博客。插件、评论、统计、广告、搜索等能力都按项目需要选择，可多可少，也可以完全不启用。
+```
+
 ## 快速开始
 
 ```bash
@@ -101,13 +120,15 @@ theme:
   name: default
 ```
 
+新项目不建议长期沿用 `default` 作为主题名。复制默认主题后，把目录改成当前项目合适的名称，例如 `themes/company-docs/`、`themes/product-site/` 或 `themes/portfolio/`，再把 `theme.name` 改成同名值。
+
 不要把主题 CSS、主题 JS 或布局配置写进根配置；这些属于主题目录。
 
 ## 主题配置
 
 `themes/default/theme.yml` 是当前部署使用的主题配置；`themes/default/theme.example.yml` 是给新主题或新站点复制参考的示例配置。
 
-`theme.yml` 管理主题资源、页面布局、插件和第三方脚本。默认主题把通用页面拆成独立模板与样式，方便开发者只改需要的部分：
+`theme.yml` 管理主题资源、页面布局、可选插件和第三方脚本。默认主题把页面拆成独立模板与样式，方便开发者只改需要的部分：
 
 ```yaml
 style: style.css
@@ -142,9 +163,9 @@ pageStyles:
 
 `scripts/consent.js` 是默认主题唯一无条件加载的外部入口脚本。未保存隐私偏好前，它只加载 consent 自身需要的样式并锁定页面交互；搜索、评论、媒体增强、统计或 RUM 等功能脚本会在用户保存选择后按分类加载。WebMCP 是例外：它由构建器内联一个小型注册脚本，不额外加载 `web-mcp.js`，用于让浏览器代理在页面加载时发现站点工具。
 
-导航入口也由主题配置控制。分类、标签、搜索、归档或任意 pages 入口都可以用 `enabled: false` 关闭，或直接从 `nav.links` / `nav.utilityLinks` 删除。
+导航入口也由主题配置控制。分类、标签、搜索、归档或任意 pages 入口都只是默认主题示例，可以用 `enabled: false` 关闭，或直接从 `nav.links` / `nav.utilityLinks` 删除。
 
-默认主题自带这些页面层：
+默认主题当前自带这些偏博客的页面层。其他项目不必照搬，可以按业务模型改成产品页、文档页、作品页、案例页、工具页、落地页或其他页面类型：
 
 - `home`：首页与分页列表。
 - `archive`：归档页。
@@ -155,7 +176,7 @@ pageStyles:
 
 ## 插件与 Consent
 
-评论、统计、RUM 等第三方能力放在主题的 `plugins` 下：
+插件是可选能力，不是每个站点都必须启用。简单站点可以完全不用插件；复杂站点可以按需要启用评论、统计、RUM、广告、地图、搜索、表单、商务或自定义脚本。评论、统计、RUM 等第三方能力放在主题的 `plugins` 下：
 
 ```yaml
 plugins:

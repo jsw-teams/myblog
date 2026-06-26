@@ -32,15 +32,17 @@ builder only when the theme API cannot express the needed behavior.
 ## Theme-First Workflow
 
 1. Copy `themes/default` to `themes/<your-theme>`.
-2. Set `theme.name: <your-theme>` in `config.yml`.
-3. Change global visual language in `themes/<your-theme>/style.css`.
-4. Change page-specific layout and polish in `themes/<your-theme>/styles/`.
-5. Change HTML structure in `themes/<your-theme>/templates/`.
-6. Add images, icons, and other theme-owned assets under
+2. Rename `<your-theme>` to a project-appropriate theme name, not a leftover
+   generic or source-project name.
+3. Set `theme.name: <your-theme>` in `config.yml`.
+4. Change global visual language in `themes/<your-theme>/style.css`.
+5. Change page-specific layout and polish in `themes/<your-theme>/styles/`.
+6. Change HTML structure in `themes/<your-theme>/templates/`.
+7. Add images, icons, and other theme-owned assets under
    `themes/<your-theme>/source-assets/`.
-7. Add optional behavior under `themes/<your-theme>/scripts/`, then expose it
+8. Add optional behavior under `themes/<your-theme>/scripts/`, then expose it
    from `theme.yml` through `featureScripts` and `featureCategories`.
-8. Run `npm run build` and `npm run check`.
+9. Run `npm run build` and `npm run check`.
 
 If a requested customization can be done by changing theme config, templates,
 CSS, or theme scripts, do that instead of editing `src/`.
@@ -52,7 +54,7 @@ types are blog-oriented, but custom projects should define page types around
 their own product and content model.
 
 - `theme.yml` declares CSS, JS, page style mapping, feature scripts, icons,
-  footer content, plugin defaults, and consent categories.
+  footer content, optional plugin defaults, and consent categories.
 - `i18n.yml` contains theme-owned UI strings. Site content should not need to
   carry theme interface text.
 - A theme should support a customizable homepage.
@@ -90,8 +92,11 @@ layout into `src/templates.mjs`.
   must not load.
 - Optional scripts should be mapped in `theme.yml` and gated by consent
   categories.
-- Only one comments provider should be active at a time. Keep provider examples
-  in example config, not as mandatory defaults.
+- Plugins are optional and project-specific. A simple site may need none; a
+  larger site may enable search, comments, analytics, ads, commerce, maps, or
+  custom integrations.
+- Only one comments provider should be active at a time when comments are used.
+  Keep provider examples in example config, not as mandatory defaults.
 - Analytics providers such as Cloudflare Web Analytics should be configurable
   through `plugins.analytics`, including token, source URL, consent category, and
   provider-specific beacon options.
