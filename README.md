@@ -83,7 +83,7 @@ content/posts/<slug>/index.<locale>.md
 页面路径：
 
 ```text
-content/pages/<page>.<locale>.md
+content/pages/<slug>/index.<locale>.md
 ```
 
 frontmatter 示例：

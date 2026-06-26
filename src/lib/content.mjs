@@ -521,10 +521,11 @@ export async function loadPosts(site = null) {
 
 export async function loadPages(site = null) {
   const locales = site?.locales ?? LOCALES;
-  const files = await fg("content/pages/*.md", { cwd: rootDir, onlyFiles: true });
+  const files = await fg("content/pages/*/index.*.md", { cwd: rootDir, onlyFiles: true });
   const pages = [];
   for (const file of files) {
-    const match = path.basename(file).match(/^(.+)\.(.+)\.md$/);
+    const normalizedFile = file.replace(/\\/g, "/");
+    const match = normalizedFile.match(/^content\/pages\/([^/]+)\/index\.(.+)\.md$/);
     if (!match) continue;
     const [, slug, locale] = match;
     if (!locales.includes(locale)) continue;
