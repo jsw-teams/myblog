@@ -56,4 +56,4 @@ Revocation endpoint: https://blog.js.gripe/auth.md#revocation
 
 ## Contact
 
-Use the public repository for site-level issues: https://github.com/jsw-teams/myblog
+Use the public repository for site-level issues: https://github.com/jsw-teams/siteforge

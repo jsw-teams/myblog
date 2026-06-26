@@ -1,4 +1,4 @@
-# Static Site Builder
+# Siteforge
 
 一个偏 Hexo 思路的静态网站/博客构建器：站点配置放在根目录 `config.yml`，主题样式、布局、脚本和主题级 i18n 放在 `themes/<name>/`，内容来自 `content/`，构建输出到 `dist/`。
 
@@ -301,7 +301,7 @@ CLOUDFLARE_API_TOKEN  = 具有 Account / Cloudflare Pages / Edit 权限的 API t
 ```text
 Settings -> Secrets and variables -> Actions -> Variables
 
-CLOUDFLARE_PAGES_PROJECT_NAME = Cloudflare Pages 项目名，默认 myblog
+CLOUDFLARE_PAGES_PROJECT_NAME = Cloudflare Pages 项目名，建议 siteforge
 ```
 
 不要把 Cloudflare API Token 写入代码、README、issue 或聊天记录。Token 泄露后应立即在 Cloudflare Dashboard 里撤销并重新创建。
