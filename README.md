@@ -4,6 +4,21 @@
 
 目标是降低普通内容站点的前端开发成本。开发者可以把大部分工作放在 Markdown、YAML 和主题文件上，而不是每个站点都重新搭页面结构、SEO、sitemap、feed、本地搜索和第三方脚本加载逻辑。默认主题内置本地搜索和合规友好的 Cookie/Consent 偏好选择器，可按需启用评论、统计、RUM 或其他插件脚本。
 
+## 当前检查结果
+
+Google PageSpeed 原始报告：
+[https://pagespeed.web.dev/analysis/https-blog-js-gripe-en/ifrxjzn6xy?hl=zh-cn](https://pagespeed.web.dev/analysis/https-blog-js-gripe-en/ifrxjzn6xy?hl=zh-cn)
+
+当前部署在桌面端达到性能、无障碍、最佳做法、SEO 全 100，智能体浏览检查 3/3；移动端性能 98，其余项目 100，说明默认主题在轻量渲染、可访问性、搜索引擎基础信息和 Agent discovery 方面已经处于很稳的状态。
+
+![PageSpeed desktop report](https://picture.js.gripe/api/images/9a4790a6-9af9-4872-ba5c-07a98412752a.png)
+
+![PageSpeed mobile report](https://picture.js.gripe/api/images/38c6d074-b7c3-4da0-b183-aae87e100787.png)
+
+Cloudflare Agent 检查同样通过，验证站点已暴露适合代理读取的发现入口。
+
+![cloudflare agent check](https://picture.js.gripe/api/images/692e1a39-3a94-4ac6-a6b4-b4afab049eff.png)
+
 ## 给模型协作使用
 
 根目录 `AGENTS.md` 是给 Codex、Claude 或其他代码代理看的项目说明。用 Siteforge 开新项目或新主题时，先让模型阅读它，再明确要求：
