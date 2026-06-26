@@ -47,17 +47,23 @@ CSS, or theme scripts, do that instead of editing `src/`.
 
 ## Theme Contracts
 
-The default theme shows the expected shape for custom themes:
+The default theme shows the expected shape for custom themes. Its current page
+types are blog-oriented, but custom projects should define page types around
+their own product and content model.
 
 - `theme.yml` declares CSS, JS, page style mapping, feature scripts, icons,
   footer content, plugin defaults, and consent categories.
 - `i18n.yml` contains theme-owned UI strings. Site content should not need to
   carry theme interface text.
-- `templates/home.html` renders the homepage content surface.
-- `templates/archive.html` renders archive listings.
-- `templates/terms-index.html` renders category and tag index pages.
-- `templates/terms-page.html` renders one category or tag page.
-- `templates/page.html` renders ordinary pages such as About.
+- A theme should support a customizable homepage.
+- A theme should support customizable ordinary pages.
+- A theme should be able to add project-specific page types, such as product
+  pages, documentation sections, portfolio entries, landing pages, tools, case
+  studies, blog posts, archive listings, category pages, tag pages, or search
+  pages.
+- Blog-specific templates such as `home.html`, `archive.html`,
+  `terms-index.html`, `terms-page.html`, and `page.html` are examples from the
+  default theme, not mandatory page types for every Siteforge-based project.
 
 When adding a new reusable page type, prefer adding a theme template and a small
 builder hook that passes structured data into it. Do not hardcode one site's
