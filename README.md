@@ -151,7 +151,8 @@ featureStyles:
   consent: styles/consent.css
 
 pageStyles:
-  home: []
+  home:
+    - styles/home.css
   archive: styles/archive.css
   categories: styles/terms.css
   tags: styles/terms.css

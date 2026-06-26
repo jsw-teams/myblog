@@ -37,7 +37,8 @@ consent:
     marketing:
       required: false
 pageStyles:
-  home: []
+  home:
+    - styles/home.css
   archive: styles/archive.css
   categories: styles/terms.css
   tags: styles/terms.css

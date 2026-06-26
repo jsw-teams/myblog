@@ -14,11 +14,10 @@
 
 .consent-backdrop {
   background:
-    linear-gradient(90deg, rgb(36 31 26 / 6%) 1px, transparent 1px),
-    linear-gradient(rgb(36 31 26 / 6%) 1px, transparent 1px),
-    rgb(248 244 236 / 68%);
+    linear-gradient(90deg, rgb(36 31 26 / 8%) 1px, transparent 1px),
+    linear-gradient(rgb(36 31 26 / 8%) 1px, transparent 1px),
+    rgb(248 244 236 / 88%);
   background-size: 18px 18px;
-  backdrop-filter: blur(2px);
   inset: 0;
   position: fixed;
   z-index: -1;
@@ -104,8 +103,6 @@
 body.consent-pending .site-header,
 body.consent-pending .page-main,
 body.consent-pending .site-footer {
-  filter: grayscale(.18);
-  opacity: .45;
   pointer-events: none;
   user-select: none;
 }

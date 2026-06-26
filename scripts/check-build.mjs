@@ -139,7 +139,7 @@ if (await exists(redirectsPath)) {
 
 const home = await readFile(path.join(outputDir, "zh-CN/index.html"), "utf8");
 if (!home.includes("/assets/theme/default/style.css?v=")) fail("home page is missing theme CSS");
-if (home.includes("/assets/theme/default/styles/home.css?v=")) fail("home page should not load a separate render-blocking home.css");
+if (!home.includes("/assets/theme/default/styles/home.css?v=")) fail("home page is missing page CSS");
 if (!home.includes("/assets/theme/default/scripts/consent.js?v=")) fail("home page is missing consent theme JS");
 if (!home.includes("themeConsent")) fail("home page is missing consent config");
 if (!home.includes("themeFeatureCategories")) fail("home page is missing feature consent categories");
