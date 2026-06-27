@@ -12,8 +12,20 @@ Siteforge is a static site builder for Markdown content, YAML configuration, the
 - `themes/default/styles/`: page and feature CSS.
 - `themes/default/scripts/`: browser features loaded by the consent-aware theme entry script.
 - `src/`: build-time content parsing, rendering, feed, sitemap, asset, and theme glue.
-- `static/.well-known/api-catalog`: RFC 9727 linkset for machine-readable discovery.
-- `static/.well-known/mcp/server-card.json`: WebMCP-oriented capability card.
+
+Discovery files such as `_headers`, `llms.txt`, `llms-full.txt`, `openapi.json`,
+API catalog, and MCP server card are generated from `config.yml`; do not maintain
+separate handwritten copies under `static/`.
+
+## License And Attribution
+
+Siteforge is licensed under `AGPL-3.0-or-later`. Modified, redistributed,
+publicly deployed, or downstream versions should keep their corresponding source
+code open under the AGPL.
+
+Preserve the original author attribution: `Siteforge by JSW Teams`. Keep the
+repository `NOTICE` file, or provide equivalent visible attribution with a link
+to the original repository.
 
 ## Config As Secondary-Development Source
 

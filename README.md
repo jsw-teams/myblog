@@ -6,6 +6,12 @@
 
 目标是降低普通内容站点的前端开发成本。开发者可以把大部分工作放在 Markdown、YAML 和主题文件上，而不是每个站点都重新搭页面结构、SEO、sitemap、feed、本地搜索和第三方脚本加载逻辑。默认主题内置本地搜索和合规友好的 Cookie/Consent 偏好选择器，可按需启用评论、统计、RUM 或其他插件脚本。
 
+## 开源协议
+
+Siteforge 使用 `AGPL-3.0-or-later` 开源协议。基于 Siteforge 修改、分发、公开部署或二次开发的版本，应按 AGPL 要求继续开源对应源码。
+
+请保留原作者标注：`Siteforge by JSW Teams`，并保留或等效展示仓库中的 `NOTICE` 信息与原始仓库链接。
+
 ## 当前检查结果
 
 Google PageSpeed 原始报告：

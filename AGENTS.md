@@ -23,11 +23,24 @@ builder only when the theme API cannot express the needed behavior.
 - `themes/default/scripts/` contains behavior and plugin scripts. Optional
   third-party features should be loaded through consent-aware feature scripts.
 - `themes/default/source-assets/` contains theme-owned images and icons.
-- `static/` contains site-public files copied as-is, including `_headers`,
-  `llms.txt`, `openapi.json`, and the deployed `/AGENTS.md`.
+- `static/` contains site-public files copied as-is, such as deployed
+  `/AGENTS.md` and other assets that cannot be derived from config.
+- Agent discovery and site-operations outputs such as `_headers`, `llms.txt`,
+  `llms-full.txt`, `openapi.json`, API catalog, and MCP server card are generated
+  from `config.yml` and builder code.
 - `src/` contains the builder. Avoid changing it for purely visual or
   project-specific theme work.
 - `dist/` is generated output. Do not edit it by hand.
+
+## License And Attribution
+
+Siteforge is licensed under `AGPL-3.0-or-later`. Modified, redistributed,
+publicly deployed, or downstream versions should keep their corresponding source
+code open under the AGPL.
+
+Preserve the original author attribution: `Siteforge by JSW Teams`. Keep the
+root `NOTICE` file, or provide equivalent visible attribution with a link to the
+original repository.
 
 ## Config As Secondary-Development Source
 

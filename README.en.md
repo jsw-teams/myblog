@@ -11,6 +11,16 @@ stay in Markdown, YAML, and theme files instead of rebuilding page structure,
 SEO, sitemap, feeds, local search, and third-party script loading for every
 site.
 
+## License
+
+Siteforge is licensed under `AGPL-3.0-or-later`. Modified, redistributed,
+publicly deployed, or downstream versions based on Siteforge should keep their
+corresponding source code open under the AGPL.
+
+Please preserve the original author attribution: `Siteforge by JSW Teams`, and
+keep or equivalently display the `NOTICE` information and original repository
+link.
+
 ## Quick Start
 
 For Hexo users:
