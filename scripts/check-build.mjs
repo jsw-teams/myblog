@@ -14,6 +14,9 @@ const requiredFiles = [
   "feed.xml",
   "llms.txt",
   "llms-full.txt",
+  "openapi.json",
+  ".well-known/api-catalog",
+  ".well-known/mcp/server-card.json",
   "_headers",
   "zh-CN/index.html",
   "zh-CN/archive/index.html",
@@ -30,6 +33,13 @@ const forbiddenFiles = [
   "sitemap-index.xml",
   "sitemap-0.xml",
   "sitemap/index.html"
+];
+
+const forbiddenStaticGeneratedFiles = [
+  "_headers",
+  "openapi.json",
+  path.join(".well-known", "api-catalog"),
+  path.join(".well-known", "mcp", "server-card.json")
 ];
 
 const themeFiles = [
@@ -98,6 +108,12 @@ for (const file of forbiddenFiles) {
   if (await exists(path.join(root, "static", file))) fail(`stale static/${file}`);
 }
 
+for (const file of forbiddenStaticGeneratedFiles) {
+  if (await exists(path.join(root, "static", file))) {
+    fail(`static/${file} should be generated from config.yml, not maintained by hand`);
+  }
+}
+
 const sitemap = await readFile(path.join(outputDir, "sitemap.xml"), "utf8");
 if (!sitemap.trimStart().startsWith("<?xml")) fail("sitemap.xml is missing XML declaration");
 if (!sitemap.includes('xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"')) {
@@ -119,6 +135,9 @@ if (!sitemap.includes("<changefreq>")) fail("sitemap.xml is missing changefreq m
 if (!sitemap.includes("<priority>")) fail("sitemap.xml is missing priority metadata");
 
 const headers = await readFile(path.join(outputDir, "_headers"), "utf8");
+if (!headers.includes("rel=\"api-catalog\"") || !headers.includes("rel=\"service-desc\"")) {
+  fail("_headers should expose agent discovery Link headers");
+}
 if (!headers.includes("Content-Type: text/xml; charset=utf-8")) {
   fail("_headers should serve XML files as text/xml");
 }
@@ -127,6 +146,24 @@ if (/\/\*\.xml/.test(headers)) {
 }
 if (!headers.includes("Content-Type: text/markdown; charset=utf-8")) {
   fail("_headers should serve markdown mirrors as text/markdown");
+}
+
+const openapi = JSON.parse(await readFile(path.join(outputDir, "openapi.json"), "utf8"));
+if (openapi.servers?.[0]?.url !== "https://blog.js.gripe") {
+  fail("openapi.json should be generated from config.yml siteUrl");
+}
+if (!openapi.paths?.["/assets/search-index.{locale}.json"]) {
+  fail("openapi.json is missing search index path");
+}
+
+const apiCatalog = JSON.parse(await readFile(path.join(outputDir, ".well-known", "api-catalog"), "utf8"));
+if (!JSON.stringify(apiCatalog).includes("https://blog.js.gripe/openapi.json")) {
+  fail("api-catalog should reference generated openapi.json");
+}
+
+const serverCard = JSON.parse(await readFile(path.join(outputDir, ".well-known", "mcp", "server-card.json"), "utf8"));
+if (!JSON.stringify(serverCard).includes("https://blog.js.gripe/")) {
+  fail("MCP server card should be generated from config.yml siteUrl");
 }
 
 const redirectsPath = path.join(outputDir, "_redirects");

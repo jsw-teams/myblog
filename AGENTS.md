@@ -29,20 +29,48 @@ builder only when the theme API cannot express the needed behavior.
   project-specific theme work.
 - `dist/` is generated output. Do not edit it by hand.
 
+## Config As Secondary-Development Source
+
+When doing secondary development or helping a user shape a new site, read
+`config.yml` before making frontend decisions. Treat it as structured
+site-operations data that can generate UI and metadata, not as a passive build
+appendix. Site names, descriptions, locales, navigation, utility links, footer
+content, icons, PWA settings, plugin toggles, consent categories, comments,
+analytics, ads, search, WebMCP settings, robots rules, LLM discovery metadata,
+OpenAPI/API catalog data, MCP server card metadata, and response headers should
+be expressed through `config.yml` and theme config where possible.
+
+This reduces frontend communication cost: the user can fill in YAML values once,
+and the builder can generate headers, navigation, language links, SEO metadata,
+feeds, sitemap hints, robots.txt, llms.txt, llms-full.txt, OpenAPI, API catalog,
+MCP server card, consent behavior, footer content, and discovery resources.
+Do not ask the user to repeatedly describe these details in prose when they can
+be represented in `config.yml`.
+
+If a site-operations file can be derived from `config.yml`, do not maintain a
+separate handwritten copy under `static/`. When you find duplicated static
+metadata such as `openapi.json`, API catalog, MCP server card, `_headers`,
+robots, or LLM discovery text, prefer adding or improving a dynamic generator in
+`src/` and document the contract.
+
 ## Theme-First Workflow
 
-1. Copy `themes/default` to `themes/<your-theme>`.
-2. Rename `<your-theme>` to a project-appropriate theme name, not a leftover
+1. Read `config.yml` and identify which site-level content can be generated from
+   structured config.
+2. Copy `themes/default` to `themes/<your-theme>`.
+3. Rename `<your-theme>` to a project-appropriate theme name, not a leftover
    generic or source-project name.
-3. Set `theme.name: <your-theme>` in `config.yml`.
-4. Change global visual language in `themes/<your-theme>/style.css`.
-5. Change page-specific layout and polish in `themes/<your-theme>/styles/`.
-6. Change HTML structure in `themes/<your-theme>/templates/`.
-7. Add images, icons, and other theme-owned assets under
+4. Set `theme.name: <your-theme>` in `config.yml`.
+5. Move migrated site metadata, locales, navigation, footer, plugin choices, and
+   consent behavior into `config.yml` / `theme.yml`.
+6. Change global visual language in `themes/<your-theme>/style.css`.
+7. Change page-specific layout and polish in `themes/<your-theme>/styles/`.
+8. Change HTML structure in `themes/<your-theme>/templates/`.
+9. Add images, icons, and other theme-owned assets under
    `themes/<your-theme>/source-assets/`.
-8. Add optional behavior under `themes/<your-theme>/scripts/`, then expose it
+10. Add optional behavior under `themes/<your-theme>/scripts/`, then expose it
    from `theme.yml` through `featureScripts` and `featureCategories`.
-9. Run `npm run build` and `npm run check`.
+11. Run `npm run build` and `npm run check`.
 
 If a requested customization can be done by changing theme config, templates,
 CSS, or theme scripts, do that instead of editing `src/`.
@@ -229,10 +257,15 @@ contracts, extend the check script so future themes do not silently regress.
 When asked to build a custom site or theme with Siteforge:
 
 1. Read `config.yml`, `themes/default/theme.yml`, and the relevant template.
-2. Decide whether the request belongs in `content/pages`, theme config,
-   templates, CSS, scripts, content, or builder core.
-3. Prefer Markdown/HTML page edits and theme-level changes before builder code.
-4. Run `npm run generate` and `npm run check`.
-5. Summarize changed files and explain whether the change is user-editable page
+2. Extract site-level secondary-development facts from `config.yml`: names,
+   locales, navigation, footer, plugin toggles, consent categories, robots/LLM
+   policy, and discovery needs.
+3. Decide whether the request belongs in `config.yml`, `content/pages`, theme
+   config, templates, CSS, scripts, content, or builder core.
+4. Prefer config, Markdown/HTML page edits, and theme-level changes before
+   builder code.
+5. Run `npm run generate` and `npm run check`.
+6. Summarize changed files and explain whether the change is structured site
+   config, user-editable page
    content, reusable theme work,
    or framework work.

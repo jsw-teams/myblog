@@ -26,7 +26,7 @@ Cloudflare Agent 检查同样通过，验证站点已暴露适合代理读取的
 根目录 `AGENTS.md` 是给 Codex、Claude 或其他代码代理看的项目说明。用 Siteforge 开新项目或新主题时，先让模型阅读它，再明确要求：
 
 ```text
-请基于 Siteforge 的主题架构开发当前项目的前端主题。复制默认主题后，必须把主题目录名和 theme.name 改成适合当前项目的名称，不要沿用 default、myblog 或其他来源项目名称。优先修改 themes/<project-theme>/ 下的 theme.yml、templates/、style.css、styles/、scripts/ 和 source-assets/；只有主题 API 无法表达需求时才修改 src/。
+请基于 Siteforge 的主题架构开展二次开发。先读取 config.yml，把站点名、多语言、导航、插件、consent、页脚、robots、llms、OpenAPI、API catalog、MCP server card、headers 和其他站务配置当作二次开发参考，不要让用户反复口头补充这些结构化信息。复制默认主题后，必须把主题目录名和 theme.name 改成适合当前项目的名称，不要沿用 default、myblog 或其他来源项目名称。优先修改 config.yml、content/pages 和 themes/<project-theme>/ 下的 theme.yml、templates/、style.css、styles/、scripts/ 和 source-assets/；只有主题 API 无法表达需求时才修改 src/。
 ```
 
 可选搭配两个 skill 仓库使用：
@@ -37,7 +37,7 @@ Cloudflare Agent 检查同样通过，验证站点已暴露适合代理读取的
 这两个 skill 不是 Siteforge 的运行依赖，只是协作约束。推荐提示：
 
 ```text
-请先阅读 AGENTS.md。使用 ponytail full 控制复杂度；如果已安装 anthropics/skills 中相关技能，请结合对应 skill 工作。目标是基于 Siteforge 开发当前项目自己的前端主题，而不是复制当前博客。插件、评论、统计、广告、搜索等能力都按项目需要选择，可多可少，也可以完全不启用。
+请先阅读 AGENTS.md 和 config.yml。使用 ponytail full 控制复杂度；如果已安装 anthropics/skills 中相关技能，请结合对应 skill 工作。目标是基于 Siteforge 开发当前项目自己的站点配置、内容页面和前端主题，而不是复制当前博客。插件、评论、统计、广告、搜索等能力都按 config.yml 和项目需要选择，可多可少，也可以完全不启用。
 ```
 
 ## 快速开始
@@ -212,6 +212,19 @@ activeLocales:
 theme:
   name: default
 ```
+
+二次开发或让 agent 接手新站点时，`config.yml` 应该和主题一起作为开发参考。它不是“构建参数附录”，而是可以动态生成页面外壳和站务内容的结构化来源，例如：
+
+- `siteName`、`description`、`author` 生成 `<title>`、SEO 摘要、JSON-LD、feed 和默认页面文案。
+- `defaultLocale`、`activeLocales` 决定多语言路由、语言切换和 hreflang。
+- `nav.links`、`nav.utilityLinks` 生成主导航、搜索入口、归档入口或其他站点级链接。
+- `footer`、`head`、`pwa`、`icons` 生成页脚、头部元信息、PWA 和图标资源。
+- `plugins`、`features`、`featureScripts`、`featureCategories` 决定搜索、评论、统计、广告、WebMCP 和 consent 加载策略。
+- `robots`、`llms`、`feed`、`discovery` 生成 `robots.txt`、`llms.txt`、`llms-full.txt`、`feed.xml`、`openapi.json`、`.well-known/api-catalog`、`.well-known/mcp/server-card.json` 和 `_headers`。
+
+这类信息适合由 YAML 驱动，而不是让前端模板或 static 站务文件硬编码。开发者和 agent 做二次开发时，应先把站点名、语言、导航、页脚、插件开关、第三方脚本、爬虫策略和 agent discovery 信息整理进 `config.yml` / `theme.yml`，再调整 `content/pages` 和主题样式。这样用户只需要填结构化站务数据，构建器就能生成对应 UI 和站务文件，前端沟通成本会低很多。
+
+注意：如果某个站务文件能从 `config.yml` 推导出来，就不要在 `static/` 里维护另一份手写版本。二次开发时如果发现 `robots.txt`、`llms.txt`、`openapi.json`、API catalog、MCP server card 或 `_headers` 还需要手改，应优先补动态生成逻辑，再更新 README 和 AGENTS 说明。
 
 新项目不建议长期沿用 `default` 作为主题名。复制默认主题后，把目录改成当前项目合适的名称，例如 `themes/company-docs/`、`themes/product-site/` 或 `themes/portfolio/`，再把 `theme.name` 改成同名值。
 

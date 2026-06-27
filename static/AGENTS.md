@@ -15,6 +15,27 @@ Siteforge is a static site builder for Markdown content, YAML configuration, the
 - `static/.well-known/api-catalog`: RFC 9727 linkset for machine-readable discovery.
 - `static/.well-known/mcp/server-card.json`: WebMCP-oriented capability card.
 
+## Config As Secondary-Development Source
+
+Use `config.yml` as a secondary-development reference before changing frontend files. It is
+structured site-operations data, not just a build setting file. Site name,
+description, locales, navigation, utility links, footer, icons, PWA settings,
+plugin toggles, consent categories, comments, analytics, ads, search, and WebMCP
+settings, robots rules, LLM discovery metadata, OpenAPI/API catalog data, MCP
+server card metadata, and response headers should be represented in config
+whenever possible.
+
+This lowers frontend coordination cost: users can provide YAML values once, and
+Siteforge can generate headers, navigation, language links, metadata, feeds,
+sitemaps, robots.txt, llms.txt, llms-full.txt, OpenAPI, API catalog, MCP server
+card, consent behavior, footer content, and discovery resources from those
+values.
+
+If a site-operations file can be derived from `config.yml`, do not keep a
+separate handwritten copy under `static/`. Prefer dynamic generation for
+OpenAPI, API catalog, MCP server card, `_headers`, robots, and LLM discovery
+outputs, then document the generated contract.
+
 ## Build
 
 Hexo users can treat `npm run generate` like `hexo generate`, and
@@ -31,6 +52,8 @@ Build output goes to `dist/`.
 
 ## Frontend Extension Rules
 
+- Put site-level migration data in `config.yml` before hardcoding it in
+  templates.
 - Put reusable theme configuration in `themes/<name>/theme.yml`.
 - Put CSS in `themes/<name>/style.css` or `themes/<name>/styles/*.css`.
 - Put browser feature scripts in `themes/<name>/scripts/*.js`.

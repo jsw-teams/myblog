@@ -183,14 +183,17 @@ set `theme.name: <your-theme>` in `config.yml`.
 
 Prefer this order:
 
-1. Edit `content/pages` for page copy, static HTML structure, and dynamic slot
+1. Read and update `config.yml` as the structured secondary-development source for site
+   name, locales, navigation, footer, plugins, consent, and other site-level
+   data.
+2. Edit `content/pages` for page copy, static HTML structure, and dynamic slot
    placement.
-2. Edit `themes/<name>/theme.yml` for theme configuration, page styles, feature
+3. Edit `themes/<name>/theme.yml` for theme configuration, page styles, feature
    scripts, consent categories, and plugin defaults.
-3. Edit `themes/<name>/templates/` for reusable page shells.
-4. Edit `themes/<name>/style.css` and `themes/<name>/styles/` for styling.
-5. Edit `themes/<name>/scripts/` for browser behavior.
-6. Edit `src/` only when improving the framework itself.
+4. Edit `themes/<name>/templates/` for reusable page shells.
+5. Edit `themes/<name>/style.css` and `themes/<name>/styles/` for styling.
+6. Edit `themes/<name>/scripts/` for browser behavior.
+7. Edit `src/` only when improving the framework itself.
 
 ## Agent Collaboration
 
@@ -200,10 +203,12 @@ agents. Ask agents to read it before changing a Siteforge project.
 Useful prompt:
 
 ```text
-Please read AGENTS.md first. Prefer content/pages Markdown/HTML and theme-level
-changes before editing builder source. Use Siteforge dynamic slots instead of
-hardcoding generated UI, and keep zh-CN as the source of truth when syncing
-localized pages.
+Please read AGENTS.md and config.yml first. Treat config.yml as the structured
+source for site name, locales, navigation, footer, plugins, consent, and other
+site operations and discovery data. Prefer content/pages Markdown/HTML, config, and
+theme-level changes before editing builder source. Use Siteforge dynamic slots
+instead of hardcoding generated UI, and keep zh-CN as the source of truth when
+syncing localized pages.
 ```
 
 Agents should avoid putting implementation notes into public page copy. Explain
@@ -224,6 +229,39 @@ activeLocales:
 theme:
   name: default
 ```
+
+When doing secondary development or asking an agent to build a new site,
+`config.yml` should be used as a development reference alongside the theme. It is
+not just a build-parameter appendix; it is structured site-operations data that
+can generate page chrome and public metadata:
+
+- `siteName`, `description`, and `author` feed titles, SEO descriptions,
+  JSON-LD, feeds, and default page text.
+- `defaultLocale` and `activeLocales` drive localized routes, language links,
+  and hreflang.
+- `nav.links` and `nav.utilityLinks` generate main navigation, search/archive
+  entries, and other site-level links.
+- `footer`, `head`, `pwa`, and `icons` generate footer content, head metadata,
+  PWA output, and icon assets.
+- `plugins`, `features`, `featureScripts`, and `featureCategories` drive search,
+  comments, analytics, ads, WebMCP, and consent-aware loading.
+- `robots`, `llms`, `feed`, and `discovery` generate `robots.txt`, `llms.txt`,
+  `llms-full.txt`, `feed.xml`, `openapi.json`, `.well-known/api-catalog`,
+  `.well-known/mcp/server-card.json`, and `_headers`.
+
+Put this information in YAML instead of hardcoding it into frontend templates.
+During secondary development, first move the site's name, languages, navigation,
+footer, plugin switches, third-party script choices, crawler rules, and agent
+discovery metadata into `config.yml` and `theme.yml`; then adjust
+`content/pages` and theme styling. Users can fill in structured site data while
+the builder generates the matching UI and site-operations files, which lowers
+frontend communication cost.
+
+Important: if a site-operations file can be derived from `config.yml`, do not
+keep a second handwritten copy under `static/`. During secondary development, if
+`robots.txt`, `llms.txt`, `openapi.json`, the API catalog, the MCP server card,
+or `_headers` still requires manual edits, add or improve the dynamic generator
+first, then update README and AGENTS guidance.
 
 Do not keep `default` as the long-term theme name for a new project. Copy the
 theme, rename it for the project, then update `theme.name`.

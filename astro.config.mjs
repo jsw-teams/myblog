@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
-import { buildTermMap, groupByLocale, loadBlogData } from "./src/lib/content.mjs";
+import { buildHeaders, buildTermMap, groupByLocale, loadBlogData } from "./src/lib/content.mjs";
 
 const { site, posts, pages } = await loadBlogData();
 const sitemapOptions = site.sitemap || {};
@@ -112,7 +112,8 @@ export default defineConfig({
           await fs.writeFile(target, xml);
           await Promise.all([
             fs.rm(path.join(outputDir, "sitemap-index.xml"), { force: true }),
-            fs.rm(source, { force: true })
+            fs.rm(source, { force: true }),
+            fs.writeFile(path.join(outputDir, "_headers"), buildHeaders(site))
           ]);
         }
       }

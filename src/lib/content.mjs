@@ -883,22 +883,248 @@ Sitemap: ${absoluteUrl(site, "/sitemap.xml")}
 `;
 }
 
+function siteOrigin(site) {
+  return String(site.siteUrl || "").replace(/\/+$/, "");
+}
+
+function siteTitle(site) {
+  return site.llms?.title || site.siteName?.[site.defaultLocale] || siteOrigin(site);
+}
+
+function siteDescription(site) {
+  return site.llms?.description || site.description?.[site.defaultLocale] || "";
+}
+
+function discoveryResources(site) {
+  return [
+    { rel: "api-catalog", url: "/.well-known/api-catalog", type: "application/linkset+json", title: "API catalog" },
+    { rel: "service-desc", url: "/openapi.json", type: "application/vnd.oai.openapi+json;version=3.1", title: "OpenAPI description" },
+    { rel: "service-doc", url: "/AGENTS.md", type: "text/markdown", title: "Agent guide" },
+    { rel: "describedby", url: "/llms.txt", type: "text/plain", title: "LLM summary" },
+    { rel: "llms-full", url: "/llms-full.txt", type: "text/plain", title: "Full LLM context" },
+    { rel: "mcp-server-card", url: "/.well-known/mcp/server-card.json", type: "application/json", title: "MCP server card" },
+    ...(Array.isArray(site.discovery?.resources) ? site.discovery.resources : [])
+  ];
+}
+
+export function buildOpenApiJson(site) {
+  return {
+    openapi: "3.1.0",
+    info: {
+      title: site.discovery?.openapiTitle || `${siteTitle(site)} Public Resources`,
+      version: String(site.discovery?.version || "1.0.0"),
+      description: site.discovery?.openapiDescription || `Public, read-only resources for discovering and searching ${siteTitle(site)} content.`
+    },
+    servers: [{ url: siteOrigin(site) }],
+    paths: {
+      "/assets/search-index.{locale}.json": {
+        get: {
+          operationId: "getSearchIndex",
+          summary: "Get a locale-specific public post search index.",
+          parameters: [
+            {
+              name: "locale",
+              in: "path",
+              required: true,
+              schema: {
+                type: "string",
+                enum: site.locales
+              }
+            }
+          ],
+          responses: {
+            200: {
+              description: "Search index entries.",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string" },
+                        description: { type: "string" },
+                        url: { type: "string" },
+                        date: { type: "string" },
+                        updated: { type: "string" },
+                        category: { type: "string" },
+                        tags: { type: "array", items: { type: "string" } },
+                        text: { type: "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/.well-known/status.json": {
+        get: {
+          operationId: "getStatus",
+          summary: "Get static publication status for the public site.",
+          responses: {
+            200: {
+              description: "Status response.",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      status: { type: "string" },
+                      service: { type: "string" },
+                      site: { type: "string" },
+                      public: { type: "boolean" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+}
+
+export function buildApiCatalog(site) {
+  const origin = siteOrigin(site);
+  return {
+    linkset: [
+      {
+        anchor: `${origin}/`,
+        "service-desc": [
+          {
+            href: `${origin}/openapi.json`,
+            type: "application/vnd.oai.openapi+json;version=3.1",
+            title: `${siteTitle(site)} public API description`
+          }
+        ],
+        "service-doc": [
+          {
+            href: `${origin}/AGENTS.md`,
+            type: "text/markdown",
+            title: "Agent guide"
+          },
+          {
+            href: `${origin}/llms.txt`,
+            type: "text/plain",
+            title: "Public content guide for language models"
+          },
+          {
+            href: `${origin}/auth.md`,
+            type: "text/markdown",
+            title: "Agent authentication and registration policy"
+          }
+        ],
+        status: [
+          {
+            href: `${origin}/.well-known/status.json`,
+            type: "application/json",
+            title: "Public site status"
+          }
+        ],
+        describedby: [
+          {
+            href: `${origin}/llms-full.txt`,
+            type: "text/plain",
+            title: "Full LLM context"
+          }
+        ]
+      }
+    ]
+  };
+}
+
+export function buildMcpServerCard(site) {
+  const origin = siteOrigin(site);
+  return {
+    schemaVersion: "0.1",
+    serverInfo: {
+      name: site.client?.mcpName || siteTitle(site),
+      version: String(site.discovery?.version || "1.0.0")
+    },
+    transports: [
+      {
+        type: "webmcp",
+        endpoint: `${origin}/`
+      }
+    ],
+    capabilities: {
+      tools: [
+        {
+          name: "search_public_posts",
+          description: "Search public posts by keyword."
+        },
+        {
+          name: "list_discovery_resources",
+          description: "List machine-readable discovery resources published by the site."
+        }
+      ],
+      resources: discoveryResources(site).map((resource) => absoluteUrl(site, resource.url))
+    },
+    auth: {
+      type: site.discovery?.auth?.type || "none",
+      metadata: absoluteUrl(site, site.discovery?.auth?.metadata || "/auth.md")
+    }
+  };
+}
+
+export function buildHeaders(site) {
+  const linkHeaders = discoveryResources(site)
+    .filter((resource) => ["api-catalog", "service-desc", "service-doc", "describedby"].includes(resource.rel))
+    .map((resource) => `  Link: <${resource.url}>; rel="${resource.rel}"; type="${resource.type}"`)
+    .join("\n");
+  const localeHeaders = site.locales.map((locale) => `/${locale}/\n${linkHeaders}`).join("\n\n");
+  return `/
+${linkHeaders}
+
+${localeHeaders}
+
+/openapi.json
+  Content-Type: application/vnd.oai.openapi+json;version=3.1; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-cache
+
+/.well-known/api-catalog
+  Content-Type: application/linkset+json; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-cache
+
+/.well-known/mcp/server-card.json
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-cache
+
+/sitemap.xml
+  Content-Type: text/xml; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Cache-Control: public, max-age=0, must-revalidate
+
+/feed.xml
+  Content-Type: text/xml; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-cache
+
+/md/*
+  Content-Type: text/markdown; charset=utf-8
+`;
+}
+
 export function buildLlmsTxt(site, posts) {
   const latest = posts.slice(0, 60);
-  const title = site.llms?.title || site.siteName[site.defaultLocale] || site.siteUrl;
-  const description = site.llms?.description || site.description[site.defaultLocale] || "";
+  const title = siteTitle(site);
+  const description = siteDescription(site);
   const languageLines = site.locales
     .map((locale) => `- [${localeLabel(locale)}](${absoluteUrl(site, `/${locale}/`)})`)
     .join("\n");
-  const discoveryLines = [
-    ["Sitemap", "/sitemap.xml"],
-    ["RSS feed", "/feed.xml"],
-    ["Full LLM context", "/llms-full.txt"],
-    ["Agent guide", "/AGENTS.md"],
-    ["API catalog", "/.well-known/api-catalog"],
-    ["OpenAPI description", "/openapi.json"],
-    ["WebMCP server card", "/.well-known/mcp/server-card.json"]
-  ].map(([label, url]) => `- [${label}](${absoluteUrl(site, url)})`).join("\n");
+  const discoveryLines = discoveryResources(site)
+    .concat([
+      { title: "Sitemap", url: "/sitemap.xml" },
+      { title: "RSS feed", url: "/feed.xml" }
+    ])
+    .map((resource) => `- [${resource.title || resource.rel}](${absoluteUrl(site, resource.url)})`)
+    .join("\n");
   const articleLines = latest
     .map((post) => `- [${post.title}](${absoluteUrl(site, post.markdownUrl)}): ${post.description}`)
     .join("\n");
