@@ -134,9 +134,13 @@ in `static/AGENTS.md`.
 
 Use Node 22 or newer.
 
+For Hexo-oriented users, prefer documenting `npm run generate` as the public
+static generation command. It maps to Hexo's `hexo generate`; `npm run build`
+remains the underlying implementation.
+
 ```bash
 npm install
-npm run build
+npm run generate
 npm run check
 ```
 

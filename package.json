@@ -8,7 +8,10 @@
     "assets": "node src/assets.mjs",
     "prebuild": "node src/prebuild.mjs",
     "build": "astro build",
+    "pregenerate": "node src/prebuild.mjs",
+    "generate": "astro build",
     "serve": "node scripts/serve-public.mjs",
+    "server": "node scripts/serve-public.mjs",
     "check": "node scripts/check-build.mjs"
   },
   "dependencies": {

@@ -17,11 +17,14 @@ Siteforge is a static site builder for Markdown content, YAML configuration, the
 
 ## Build
 
+Hexo users can treat `npm run generate` like `hexo generate`, and
+`npm run server` like `hexo server`.
+
 ```bash
 npm install
-npm run build
+npm run generate
 npm run check
-npm run serve
+npm run server
 ```
 
 Build output goes to `dist/`.

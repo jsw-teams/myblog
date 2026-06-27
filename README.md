@@ -40,11 +40,18 @@ Cloudflare Agent 检查同样通过，验证站点已暴露适合代理读取的
 
 ## 快速开始
 
+如果你熟悉 Hexo，可以把 Siteforge 的常用命令按下面理解：
+
+- 安装依赖：仍然是 `npm install`，相当于先把主题、构建器和内容处理依赖装好。
+- 生成静态站点：`npm run generate`，对应 Hexo 里的 `hexo generate` / `hexo g`。
+- 本地预览：`npm run server`，对应 Hexo 里的 `hexo server` / `hexo s`。
+- 发布前检查：`npm run check`，用于确认 `dist/`、sitemap、feed、Agent discovery 和主题资源都生成正常。
+
 ```bash
 npm install
-npm run build
+npm run generate
 npm run check
-npm run serve
+npm run server
 ```
 
 本地预览默认运行在：
@@ -57,9 +64,9 @@ http://127.0.0.1:4173/
 
 ```powershell
 npm.cmd install
-npm.cmd run build
+npm.cmd run generate
 npm.cmd run check
-npm.cmd run serve
+npm.cmd run server
 ```
 
 ## 目录结构
@@ -313,14 +320,14 @@ plugins:
 
 ## 部署
 
-推送到 `main` 后，GitHub Actions 会运行 `.github/workflows/cloudflare-pages.yml`，执行安装、构建、检查，然后发布 `dist/` 到 Cloudflare Pages。
+推送到 `main` 后，GitHub Actions 会运行 `.github/workflows/cloudflare-pages.yml`，执行安装、生成、检查，然后发布 `dist/` 到 Cloudflare Pages。这里的“生成”对应 Hexo 用户熟悉的 `hexo generate`，实际命令是 `npm run generate`。
 
 ### Cloudflare Pages
 
 [Cloudflare Pages](https://www.cloudflare.com/products/pages/) 是 Cloudflare 的静态/前端部署平台，官方说明支持从 Git 构建并免费开始使用。如果直接使用 Cloudflare Pages 的 Git 集成，项目配置可以按下面填写：
 
 ```text
-Build command: pnpm install --frozen-lockfile && pnpm run build
+Build command: pnpm install --frozen-lockfile && pnpm run generate
 Build output directory: dist
 Node.js version: 22.12 或更新
 ```
@@ -356,7 +363,7 @@ AWS 没有名为 “CloudFront Pages” 的 Pages 产品。静态站点通常有
 Amplify 配置可以使用：
 
 ```text
-Build command: npm ci && npm run build
+Build command: npm ci && npm run generate
 Output directory: dist
 ```
 
