@@ -42,6 +42,7 @@ pageStyles:
   archive: styles/archive.css
   categories: styles/terms.css
   tags: styles/terms.css
+  search: []
   term: styles/terms.css
   page: styles/page.css
 pageScripts:
@@ -49,6 +50,7 @@ pageScripts:
   archive: []
   categories: []
   tags: []
+  search: []
   term: []
   page: []
 styles: []

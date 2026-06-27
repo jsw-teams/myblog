@@ -22,3 +22,5 @@ yarn-error.log*
 pnpm-debug.log*
 serve.log
 serve.err.log
+siteforge-preview.log
+siteforge-preview.err.log

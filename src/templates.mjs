@@ -544,15 +544,36 @@ export function renderPagination({ locale, page, totalPages, pageUrl }) {
   </nav>`;
 }
 
-export function renderHomePage({ site, locale, posts, page = 1, totalPages = 1, pageUrl = (number) => number === 1 ? `/${locale}/` : `/${locale}/${"older/".repeat(number - 1)}` }) {
+function replacePageSlots(html, slots) {
+  let output = html || "";
+  for (const [key, value] of Object.entries(slots)) {
+    const normalized = key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+    const pattern = new RegExp(`<!--\\s*siteforge:${normalized}\\s*-->|\\{\\{\\s*siteforge\\.${key}\\s*\\}\\}`, "g");
+    output = output.replace(pattern, value || "");
+  }
+  return output;
+}
+
+function renderSearchPanel(locale) {
+  return `<section class="search-panel" data-search-root data-search-locale="${escapeHtml(locale)}" data-search-empty="${escapeHtml(t(locale, "searchEmpty"))}" data-search-no-results="${escapeHtml(t(locale, "searchNoResults"))}" data-search-loading="${escapeHtml(t(locale, "searchLoading"))}" data-search-error="${escapeHtml(t(locale, "searchError"))}" data-search-results-label="${escapeHtml(t(locale, "searchResultsCount"))}">
+      <form class="search-form" data-search-form role="search">
+        <label class="visually-hidden" for="search-input">${escapeHtml(t(locale, "search"))}</label>
+        <input id="search-input" class="search-input" data-search-input type="search" name="q" autocomplete="off" placeholder="${escapeHtml(t(locale, "searchPlaceholder"))}">
+      </form>
+      <p class="search-status empty" data-search-status aria-live="polite">${escapeHtml(t(locale, "searchLoading"))}</p>
+      <div class="search-results" data-search-results></div>
+    </section>`;
+}
+
+export function renderHomePage({ site, locale, pageContent = null, posts, page = 1, totalPages = 1, pageUrl = (number) => number === 1 ? `/${locale}/` : `/${locale}/${"older/".repeat(number - 1)}` }) {
   const locales = siteLocales(site);
-  const description = localText(site.description, locale, site);
   const siteName = localText(site.siteName, locale, site);
-  const main = `<main id="main" class="page-main home-main">
-    <section class="home-hero" aria-labelledby="home-title">
+  const title = pageContent?.title || siteName;
+  const description = pageContent?.description || localText(site.description, locale, site);
+  const fallbackContent = `<section class="home-hero" aria-labelledby="home-title">
       <div>
-        <h1 id="home-title">${escapeHtml(siteName)}</h1>
-        <p class="lead">${escapeHtml(t(locale, "siteIntro"))}</p>
+        <h1 id="home-title">${escapeHtml(title)}</h1>
+        <p class="lead">${escapeHtml(pageContent?.description || t(locale, "siteIntro"))}</p>
       </div>
       <img class="hero-mascot pixel-art" src="/assets/mascot-laptop.png" alt="" width="280" height="301" loading="eager" decoding="async" fetchpriority="high">
     </section>
@@ -562,12 +583,18 @@ export function renderHomePage({ site, locale, posts, page = 1, totalPages = 1, 
       </div>
       ${renderPostList(posts, locale)}
       ${renderPagination({ locale, page, totalPages, pageUrl })}
-    </section>
+    </section>`;
+  const content = pageContent?.html ? replacePageSlots(pageContent.html, {
+    postList: renderPostList(posts, locale),
+    pagination: renderPagination({ locale, page, totalPages, pageUrl })
+  }) : fallbackContent;
+  const main = `<main id="main" class="page-main home-main">
+    ${content}
   </main>`;
   return renderLayout({
     site,
     locale,
-    title: siteName,
+    title,
     description,
     url: pageUrl(page),
     current: "home",
@@ -699,20 +726,25 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
   });
 }
 
-export function renderTermIndexPage({ site, locale, titleKey, descriptionKey, terms, url, current }) {
+export function renderTermIndexPage({ site, locale, pageContent = null, titleKey, descriptionKey, terms, url, current }) {
   const locales = siteLocales(site);
-  const main = `<main id="main" class="page-main list-main">
-    <header class="page-heading">
-      <h1>${escapeHtml(t(locale, titleKey))}</h1>
-      <p class="lead">${escapeHtml(t(locale, descriptionKey))}</p>
+  const title = pageContent?.title || t(locale, titleKey);
+  const description = pageContent?.description || t(locale, descriptionKey);
+  const termsHtml = renderTermLinks(terms, t(locale, "noPosts"));
+  const fallbackContent = `<header class="page-heading">
+      <h1>${escapeHtml(title)}</h1>
+      <p class="lead">${escapeHtml(description)}</p>
     </header>
-    ${renderTermLinks(terms, t(locale, "noPosts"))}
+    ${termsHtml}`;
+  const content = pageContent?.html ? replacePageSlots(pageContent.html, { terms: termsHtml }) : fallbackContent;
+  const main = `<main id="main" class="page-main list-main">
+    ${content}
   </main>`;
   return renderLayout({
     site,
     locale,
-    title: t(locale, titleKey),
-    description: t(locale, descriptionKey),
+    title,
+    description,
     url,
     current,
     main,
@@ -720,32 +752,30 @@ export function renderTermIndexPage({ site, locale, titleKey, descriptionKey, te
     robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
-      { name: t(locale, titleKey), url }
+      { name: title, url }
     ])]
   });
 }
 
-export function renderSearchPage({ site, locale }) {
+export function renderSearchPage({ site, locale, pageContent = null }) {
   const locales = siteLocales(site);
-  const main = `<main id="main" class="page-main list-main">
-    <header class="page-heading">
-      <h1>${escapeHtml(t(locale, "search"))}</h1>
-      <p class="lead">${escapeHtml(t(locale, "searchDescription"))}</p>
+  const title = pageContent?.title || t(locale, "search");
+  const description = pageContent?.description || t(locale, "searchDescription");
+  const searchPanel = renderSearchPanel(locale);
+  const fallbackContent = `<header class="page-heading">
+      <h1>${escapeHtml(title)}</h1>
+      <p class="lead">${escapeHtml(description)}</p>
     </header>
-    <section class="search-panel" data-search-root data-search-locale="${escapeHtml(locale)}" data-search-empty="${escapeHtml(t(locale, "searchEmpty"))}" data-search-no-results="${escapeHtml(t(locale, "searchNoResults"))}" data-search-loading="${escapeHtml(t(locale, "searchLoading"))}" data-search-error="${escapeHtml(t(locale, "searchError"))}" data-search-results-label="${escapeHtml(t(locale, "searchResultsCount"))}">
-      <form class="search-form" data-search-form role="search">
-        <label class="visually-hidden" for="search-input">${escapeHtml(t(locale, "search"))}</label>
-        <input id="search-input" class="search-input" data-search-input type="search" name="q" autocomplete="off" placeholder="${escapeHtml(t(locale, "searchPlaceholder"))}">
-      </form>
-      <p class="search-status empty" data-search-status aria-live="polite">${escapeHtml(t(locale, "searchLoading"))}</p>
-      <div class="search-results" data-search-results></div>
-    </section>
+    ${searchPanel}`;
+  const content = pageContent?.html ? replacePageSlots(pageContent.html, { searchPanel }) : fallbackContent;
+  const main = `<main id="main" class="page-main list-main">
+    ${content}
   </main>`;
   return renderLayout({
     site,
     locale,
-    title: t(locale, "search"),
-    description: t(locale, "searchDescription"),
+    title,
+    description,
     url: `/${locale}/search/`,
     current: "search",
     main,
@@ -753,7 +783,7 @@ export function renderSearchPage({ site, locale }) {
     robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
-      { name: t(locale, "search"), url: `/${locale}/search/` }
+      { name: title, url: `/${locale}/search/` }
     ])]
   });
 }
@@ -783,27 +813,30 @@ export function renderTermPage({ site, locale, title, description, posts, url, c
   });
 }
 
-export function renderArchivePage({ site, locale, groups }) {
+export function renderArchivePage({ site, locale, pageContent = null, groups }) {
   const locales = siteLocales(site);
-  const main = `<main id="main" class="page-main list-main">
-    <header class="page-heading">
-      <h1>${escapeHtml(t(locale, "archive"))}</h1>
-      <p class="lead">${escapeHtml(t(locale, "archiveDescription"))}</p>
-    </header>
-    <div class="archive-list">
-      ${groups.map((group) => `<section aria-labelledby="year-${group.year}">
+  const title = pageContent?.title || t(locale, "archive");
+  const description = pageContent?.description || t(locale, "archiveDescription");
+  const archiveList = groups.map((group) => `<section aria-labelledby="year-${group.year}">
         <h2 id="year-${group.year}">${escapeHtml(group.year)}</h2>
         <ul>
           ${group.posts.map((post) => `<li><time datetime="${escapeHtml(post.date)}">${escapeHtml(formatDate(post.date, locale))}</time><a href="${post.url}">${escapeHtml(post.title)}</a></li>`).join("")}
         </ul>
-      </section>`).join("")}
-    </div>
+      </section>`).join("");
+  const fallbackContent = `<header class="page-heading">
+      <h1>${escapeHtml(title)}</h1>
+      <p class="lead">${escapeHtml(description)}</p>
+    </header>
+    <div class="archive-list">${archiveList}</div>`;
+  const content = pageContent?.html ? replacePageSlots(pageContent.html, { archiveList }) : fallbackContent;
+  const main = `<main id="main" class="page-main list-main">
+    ${content}
   </main>`;
   return renderLayout({
     site,
     locale,
-    title: t(locale, "archive"),
-    description: t(locale, "archiveDescription"),
+    title,
+    description,
     url: `/${locale}/archive/`,
     current: "archive",
     main,
@@ -811,22 +844,16 @@ export function renderArchivePage({ site, locale, groups }) {
     robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
-      { name: t(locale, "archive"), url: `/${locale}/archive/` }
+      { name: title, url: `/${locale}/archive/` }
     ])]
   });
 }
 
 export function renderAboutPage({ site, locale, page, translations }) {
   const languageBlock = renderLanguageAvailability(locale, translations);
-  const main = `<main id="main" class="page-main article-main">
-    <article class="article-shell">
-      <header class="article-header">
-        <h1>${escapeHtml(page.title)}</h1>
-        <p class="lead">${escapeHtml(page.description)}</p>
-        ${languageBlock}
-      </header>
-      <div class="prose">${page.html}</div>
-    </article>
+  const content = replacePageSlots(page.html, { languages: languageBlock });
+  const main = `<main id="main" class="page-main article-main page-content-main">
+    ${content}
   </main>`;
   const alternates = translations
     .map((entry) => ({ hreflang: entry.locale, url: entry.url }))

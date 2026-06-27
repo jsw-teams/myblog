@@ -71,6 +71,52 @@ When adding a new reusable page type, prefer adding a theme template and a small
 builder hook that passes structured data into it. Do not hardcode one site's
 layout into `src/templates.mjs`.
 
+## Markdown Pages And Dynamic Slots
+
+`content/pages/<slug>/index.<locale>.md` is a first-class customization surface.
+Page Markdown may contain static HTML directly, not only prose Markdown. Use this
+for low-cost user-editable page structure: headings, sections, small static
+layout wrappers, images, and the position of Siteforge dynamic components.
+
+Special default pages are also content-owned:
+
+- `content/pages/home/index.<locale>.md` -> `/<locale>/`
+- `content/pages/archive/index.<locale>.md` -> `/<locale>/archive/`
+- `content/pages/categories/index.<locale>.md` -> `/<locale>/categories/`
+- `content/pages/tags/index.<locale>.md` -> `/<locale>/tags/`
+- `content/pages/search/index.<locale>.md` -> `/<locale>/search/`
+
+Use Siteforge slots where the builder should inject dynamic output:
+
+```html
+<!-- siteforge:post-list -->
+<!-- siteforge:pagination -->
+<!-- siteforge:archive-list -->
+<!-- siteforge:terms -->
+<!-- siteforge:search-panel -->
+<!-- siteforge:languages -->
+```
+
+Treat slots as real components, not as comments that need explanatory text below
+them. For example, do not add a paragraph such as "输入关键词开始搜索。" after
+`<!-- siteforge:search-panel -->`; the search component already owns its input,
+status, results, and error states. Put durable page intent in the page header,
+then place the slot exactly where the component should render.
+
+When developing a new slot, add it only for generated or interactive UI whose
+placement should remain user-editable in Markdown/HTML. Use kebab-case in page
+content, such as `<!-- siteforge:related-posts -->`, and camelCase in renderer
+code, such as `relatedPosts`. Generate and replace the slot in
+`src/lib/theme-html.mjs`; mirror the behavior in `src/templates.mjs` when a
+fallback renderer exists. Put UI strings in `themes/default/i18n.yml` and
+`src/i18n.mjs`, attach CSS/JS through `theme.yml`, and update README plus both
+AGENTS documents. Do not add a slot for static copy that can live directly in
+`content/pages`.
+
+When the user edits zh-CN content first, use it as the source of truth for
+structure and meaning. Sync zh-TW and en pages to the same structure unless the
+user explicitly wants a locale-specific variation.
+
 ## CSS Guidance
 
 - Keep the theme baseline in `style.css`.
@@ -146,6 +192,19 @@ npm run check
 
 The build output directory is `dist/`.
 
+For local preview, use:
+
+```bash
+npm run server
+```
+
+The preview server polls source files every 10 seconds and rebuilds only after a
+detected change. Changes to `content/pages/<slug>/index.<locale>.md` should
+prefer page-level incremental output for the matching URL; changes to posts,
+theme files, config, static assets, or builder code may still require a full
+generation pass. Build errors should remain visible in the browser and must not
+terminate preview unless the user explicitly stops it.
+
 `npm run check` verifies important generated files, theme assets, sitemap shape,
 agent discovery headers, and WebMCP bootstrap behavior. If you add new framework
 contracts, extend the check script so future themes do not silently regress.
@@ -170,9 +229,10 @@ contracts, extend the check script so future themes do not silently regress.
 When asked to build a custom site or theme with Siteforge:
 
 1. Read `config.yml`, `themes/default/theme.yml`, and the relevant template.
-2. Decide whether the request belongs in theme config, templates, CSS, scripts,
-   content, or builder core.
-3. Prefer the smallest theme-level change that works.
-4. Run `npm run build` and `npm run check`.
-5. Summarize changed files and explain whether the change is reusable theme work
+2. Decide whether the request belongs in `content/pages`, theme config,
+   templates, CSS, scripts, content, or builder core.
+3. Prefer Markdown/HTML page edits and theme-level changes before builder code.
+4. Run `npm run generate` and `npm run check`.
+5. Summarize changed files and explain whether the change is user-editable page
+   content, reusable theme work,
    or framework work.

@@ -38,6 +38,47 @@ Build output goes to `dist/`.
 - Necessary local features may load before a visitor saves consent choices.
 - Do not put site-specific assets directly into builder code; expose them through the theme or `static/`.
 
+## Page Customization
+
+Localized pages live at `content/pages/<slug>/index.<locale>.md`. These files may
+contain static HTML directly, so agents and developers can adjust page structure,
+copy, component placement, and small page-level markup without editing builder
+source. The default special pages are content-owned too:
+
+- `content/pages/home/index.<locale>.md` -> `/<locale>/`
+- `content/pages/archive/index.<locale>.md` -> `/<locale>/archive/`
+- `content/pages/categories/index.<locale>.md` -> `/<locale>/categories/`
+- `content/pages/tags/index.<locale>.md` -> `/<locale>/tags/`
+- `content/pages/search/index.<locale>.md` -> `/<locale>/search/`
+
+Use Siteforge dynamic slots inside page Markdown/HTML when the builder should
+insert interactive or generated UI:
+
+```html
+<!-- siteforge:post-list -->
+<!-- siteforge:pagination -->
+<!-- siteforge:archive-list -->
+<!-- siteforge:terms -->
+<!-- siteforge:search-panel -->
+<!-- siteforge:languages -->
+```
+
+Do not duplicate what a slot already renders. For example, avoid adding a line
+like "输入关键词开始搜索。" after `<!-- siteforge:search-panel -->`; the search
+panel already owns its input, empty state, result count, and error state. Put
+durable page explanation in the header, then place the slot where the component
+belongs.
+
+To develop a new slot, use kebab-case in content
+(`<!-- siteforge:related-posts -->`) and camelCase in renderer code
+(`relatedPosts`). Generate the component in `src/lib/theme-html.mjs`, mirror it
+in `src/templates.mjs` when fallback rendering applies, keep UI strings in
+theme i18n, and attach CSS/JS through `theme.yml`. Add slots only for generated
+or interactive components; static copy should stay directly in `content/pages`.
+
+When zh-CN content has been edited first, treat it as the source of truth for the
+page structure and meaning, then sync zh-TW and en with the same structure.
+
 ## Agent Discovery
 
 The homepage should expose RFC 8288 `Link` response headers for:

@@ -22,6 +22,7 @@ const staticDir = path.join(rootDir, "static");
 const staticAssetsDir = path.join(staticDir, "assets");
 const moreMarker = /<!--\s*more\s*-->/i;
 const today = "2026-04-27";
+const specialPageSlugs = new Set(["home", "archive", "categories", "tags", "search"]);
 
 export { DEFAULT_LOCALE, LOCALES, absoluteUrl };
 
@@ -390,9 +391,9 @@ function headingSlug(value) {
   return normalized || crypto.createHash("sha1").update(String(value)).digest("hex").slice(0, 8);
 }
 
-function createMarkdownRenderer(baseDir, contentKey) {
+function createMarkdownRenderer(baseDir, contentKey, options = {}) {
   const md = new MarkdownIt({
-    html: false,
+    html: options.html === true,
     linkify: true,
     typographer: true
   }).use(anchor, {
@@ -437,9 +438,9 @@ function plainSummary(content, description) {
   return text.length > 160 ? `${text.slice(0, 157)}...` : text;
 }
 
-function renderMarkdown(content, baseDir, contentKey) {
+function renderMarkdown(content, baseDir, contentKey, options = {}) {
   const body = content.replace(moreMarker, "").trim();
-  const html = createMarkdownRenderer(baseDir, contentKey).render(body);
+  const html = createMarkdownRenderer(baseDir, contentKey, options).render(body);
   return html
     .replaceAll("<table>", '<div class="table-wrap"><table>')
     .replaceAll("</table>", "</table></div>");
@@ -468,6 +469,12 @@ export function termSlug(value) {
 function localeFromPostFilename(file) {
   const match = path.basename(file).match(/^index\.(.+)\.md$/);
   return match?.[1] ?? "";
+}
+
+function pageUrl(slug, locale) {
+  if (slug === "home") return `/${locale}/`;
+  if (specialPageSlugs.has(slug)) return `/${locale}/${slug}/`;
+  return `/${locale}/${slug}/`;
 }
 
 export async function loadPosts(site = null) {
@@ -542,8 +549,8 @@ export async function loadPages(site = null) {
       description: plainSummary(parsed.content, parsed.data.description),
       updated: normalizeDate(parsed.data.updated),
       sitemap: parsed.data.sitemap,
-      html: renderMarkdown(parsed.content, baseDir, contentKey),
-      url: `/${locale}/${slug}/`
+      html: renderMarkdown(parsed.content, baseDir, contentKey, { html: true }),
+      url: pageUrl(slug, locale)
     });
   }
   return pages;
@@ -608,6 +615,14 @@ function groupBy(items, keyFn) {
   return map;
 }
 
+function pageContentMap(pages) {
+  const map = new Map();
+  for (const page of pages) {
+    map.set(`${page.locale}:${page.slug}`, page);
+  }
+  return map;
+}
+
 function translationsFor(group, localePath = (item) => item.url, locales = LOCALES) {
   return locales
     .map((locale) => group.find((item) => item.locale === locale))
@@ -630,6 +645,8 @@ export async function buildHtmlPages() {
   const routes = [];
   const add = (url, html) => routes.push({ url, html: rewriteRelativePaths(html, url) });
   const homePageSize = Math.max(1, Number(site.pagination?.homePageSize || 8));
+  const pagesByLocaleSlug = pageContentMap(pages);
+  const specialPage = (locale, slug) => pagesByLocaleSlug.get(`${locale}:${slug}`) || null;
 
   add("/", templates.renderRootPage({ site }));
 
@@ -644,16 +661,18 @@ export async function buildHtmlPages() {
       add(homePageUrl(page), templates.renderHomePage({
         site,
         locale,
+        pageContent: specialPage(locale, "home"),
         posts: localePosts.slice((page - 1) * homePageSize, page * homePageSize),
         page,
         totalPages: totalHomePages,
         pageUrl: homePageUrl
       }));
     }
-    add(`/${locale}/archive/`, templates.renderArchivePage({ site, locale, groups: archiveGroups(posts, locale) }));
+    add(`/${locale}/archive/`, templates.renderArchivePage({ site, locale, pageContent: specialPage(locale, "archive"), groups: archiveGroups(posts, locale) }));
     add(`/${locale}/categories/`, templates.renderTermIndexPage({
       site,
       locale,
+      pageContent: specialPage(locale, "categories"),
       titleKey: "allCategories",
       descriptionKey: "categoriesDescription",
       terms: termList(categoryMap),
@@ -663,13 +682,14 @@ export async function buildHtmlPages() {
     add(`/${locale}/tags/`, templates.renderTermIndexPage({
       site,
       locale,
+      pageContent: specialPage(locale, "tags"),
       titleKey: "allTags",
       descriptionKey: "tagsDescription",
       terms: termList(tagMap),
       url: `/${locale}/tags/`,
       current: "tags"
     }));
-    add(`/${locale}/search/`, templates.renderSearchPage({ site, locale }));
+    add(`/${locale}/search/`, templates.renderSearchPage({ site, locale, pageContent: specialPage(locale, "search") }));
 
     for (const term of categoryMap.values()) {
       const title = `${t(locale, "postsInCategory")}: ${term.name}`;
@@ -708,8 +728,90 @@ export async function buildHtmlPages() {
   for (const group of pagesByTranslation.values()) {
     const translations = translationsFor(group, (item) => item.url, locales);
     for (const page of group) {
-      if (page.slug === "about") {
-      add(page.url, templates.renderAboutPage({ site, locale: page.locale, page, translations }));
+      if (!specialPageSlugs.has(page.slug)) {
+        add(page.url, templates.renderAboutPage({ site, locale: page.locale, page, translations }));
+      }
+    }
+  }
+
+  return routes;
+}
+
+export async function buildHtmlPagesForUrls(targetUrls = []) {
+  const targets = new Set(targetUrls);
+  if (!targets.size) return [];
+
+  const { site, posts, pages } = await loadBlogData();
+  const templates = await loadThemeTemplates(site);
+  const locales = site.locales;
+  const routes = [];
+  const add = (url, html) => {
+    if (targets.has(url)) routes.push({ url, html: rewriteRelativePaths(html, url) });
+  };
+  const homePageSize = Math.max(1, Number(site.pagination?.homePageSize || 8));
+  const pagesByLocaleSlug = pageContentMap(pages);
+  const specialPage = (locale, slug) => pagesByLocaleSlug.get(`${locale}:${slug}`) || null;
+
+  for (const locale of locales) {
+    const localePosts = groupByLocale(posts, locale);
+    const categoryMap = buildTermMap(posts, locale, "categories");
+    const tagMap = buildTermMap(posts, locale, "tags");
+    const totalHomePages = Math.max(1, Math.ceil(localePosts.length / homePageSize));
+    const homePageUrl = (page) => page === 1 ? `/${locale}/` : `/${locale}/${"older/".repeat(page - 1)}`;
+
+    for (let page = 1; page <= totalHomePages; page += 1) {
+      const url = homePageUrl(page);
+      if (targets.has(url)) {
+        add(url, templates.renderHomePage({
+          site,
+          locale,
+          pageContent: specialPage(locale, "home"),
+          posts: localePosts.slice((page - 1) * homePageSize, page * homePageSize),
+          page,
+          totalPages: totalHomePages,
+          pageUrl: homePageUrl
+        }));
+      }
+    }
+
+    if (targets.has(`/${locale}/archive/`)) {
+      add(`/${locale}/archive/`, templates.renderArchivePage({ site, locale, pageContent: specialPage(locale, "archive"), groups: archiveGroups(posts, locale) }));
+    }
+    if (targets.has(`/${locale}/categories/`)) {
+      add(`/${locale}/categories/`, templates.renderTermIndexPage({
+        site,
+        locale,
+        pageContent: specialPage(locale, "categories"),
+        titleKey: "allCategories",
+        descriptionKey: "categoriesDescription",
+        terms: termList(categoryMap),
+        url: `/${locale}/categories/`,
+        current: "categories"
+      }));
+    }
+    if (targets.has(`/${locale}/tags/`)) {
+      add(`/${locale}/tags/`, templates.renderTermIndexPage({
+        site,
+        locale,
+        pageContent: specialPage(locale, "tags"),
+        titleKey: "allTags",
+        descriptionKey: "tagsDescription",
+        terms: termList(tagMap),
+        url: `/${locale}/tags/`,
+        current: "tags"
+      }));
+    }
+    if (targets.has(`/${locale}/search/`)) {
+      add(`/${locale}/search/`, templates.renderSearchPage({ site, locale, pageContent: specialPage(locale, "search") }));
+    }
+  }
+
+  const pagesByTranslation = groupBy(pages, (page) => page.translationKey);
+  for (const group of pagesByTranslation.values()) {
+    const translations = translationsFor(group, (item) => item.url, locales);
+    for (const page of group) {
+      if (!specialPageSlugs.has(page.slug) && targets.has(page.url)) {
+        add(page.url, templates.renderAboutPage({ site, locale: page.locale, page, translations }));
       }
     }
   }

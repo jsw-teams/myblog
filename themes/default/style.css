@@ -669,6 +669,12 @@ h3 {
   max-width: var(--content);
 }
 
+.page-intro-content {
+  color: var(--muted);
+  margin-top: 0.75rem;
+  max-width: 68ch;
+}
+
 .prose > * + * {
   margin-top: 1rem;
 }

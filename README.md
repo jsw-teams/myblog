@@ -1,5 +1,7 @@
 # Siteforge
 
+[English README](README.en.md)
+
 一个偏 Hexo 思路的静态网站/博客构建器：站点配置放在根目录 `config.yml`，主题样式、布局、脚本和主题级 i18n 放在 `themes/<name>/`，内容来自 `content/`，构建输出到 `dist/`。
 
 目标是降低普通内容站点的前端开发成本。开发者可以把大部分工作放在 Markdown、YAML 和主题文件上，而不是每个站点都重新搭页面结构、SEO、sitemap、feed、本地搜索和第三方脚本加载逻辑。默认主题内置本地搜索和合规友好的 Cookie/Consent 偏好选择器，可按需启用评论、统计、RUM 或其他插件脚本。
@@ -60,6 +62,8 @@ npm run server
 http://127.0.0.1:4173/
 ```
 
+`npm run server` 会启动实时预览：每 10 秒扫描 `content/`、`themes/`、`src/`、`static/`、`config.yml` 和 `astro.config.mjs`，检测到变更才重新生成并刷新浏览器。构建出错时预览进程不会退出，浏览器页面会显示错误提示；修好文件后会自动重新构建，直到你在终端里主动停止。预览模式下，`content/pages/<slug>/index.<locale>.md` 的变更会优先只重建对应页面；文章、主题、配置或构建器源码这类会影响多页面的变更仍走全量生成。构建期间访问尚未生成的新路径时，预览页会显示“正在生成页面”，构建完成后自动刷新，而不是直接把临时状态当成正式 404。
+
 如果 PowerShell 执行策略阻止 `npm.ps1`，可以使用：
 
 ```powershell
@@ -107,6 +111,73 @@ content/posts/<slug>/index.<locale>.md
 ```text
 content/pages/<slug>/index.<locale>.md
 ```
+
+首页和默认博客索引页也可以用同一套 pages 规则定制：
+
+```text
+content/pages/home/index.<locale>.md        # /<locale>/
+content/pages/archive/index.<locale>.md     # /<locale>/archive/
+content/pages/categories/index.<locale>.md  # /<locale>/categories/
+content/pages/tags/index.<locale>.md        # /<locale>/tags/
+content/pages/search/index.<locale>.md      # /<locale>/search/
+```
+
+`content/pages` 里的 Markdown 支持直接书写静态 HTML，适合把页面结构、组件位置和少量页面脚本直接放在内容文件里维护。frontmatter 仍负责页面 `title`、`description`、`translationKey` 等元信息。这个设计让非前端用户也能用较低成本调整首页、归档页、分类页、标签页、搜索页和普通页面，不必每次都进入主题模板或构建器源码。
+
+默认主题会把这些 pages 的正文作为页面主体渲染；特殊页面可用 Siteforge 占位符插入构建器生成的动态组件：
+
+```html
+<!-- siteforge:post-list -->
+<!-- siteforge:pagination -->
+<!-- siteforge:archive-list -->
+<!-- siteforge:terms -->
+<!-- siteforge:search-panel -->
+<!-- siteforge:languages -->
+```
+
+例如首页可以在 `content/pages/home/index.zh-CN.md` 里直接写 `<section>`、`<img>`、`<script>`，再把 `<!-- siteforge:post-list -->` 放在想显示文章列表的位置。普通页面可以用 `<!-- siteforge:languages -->` 放置语言切换区域。这样比 Hexo 常见的“改主题模板才能挪组件”更低成本；普通用户改 Markdown 文件就能调整页面布局。
+
+写作和 agent 协作时，把 slot 当成已经完成的动态组件，不要在它下面补重复说明。反例是：
+
+```html
+<!-- siteforge:search-panel -->
+<p>输入关键词开始搜索。</p>
+```
+
+搜索框、空状态、结果数和错误提示已经由 `<!-- siteforge:search-panel -->` 输出；额外补一句会让页面重复、显得像临时注释。更好的做法是在 slot 前方用页面自己的 `<header>` 写清楚页面意图，然后直接放置动态组件。
+
+### 开发新的动态 slot
+
+当页面需要“用户能在 Markdown/HTML 里决定位置，但内容由构建器生成”的区域时，才新增 `<!-- siteforge:xxx -->`。它适合文章列表、分页、归档列表、标签集合、语言切换、搜索面板这类需要结构化数据或脚本状态的组件；如果只是固定文案、静态链接或一次性 HTML，直接写在 `content/pages` 里即可，不要加 slot。
+
+新增 slot 的推荐流程：
+
+1. 先确定 slot 名称，使用短横线小写：`<!-- siteforge:related-posts -->`。在代码里对应 camelCase key：`relatedPosts`。
+2. 在 `src/lib/theme-html.mjs` 的页面渲染函数里生成组件 HTML，然后传给 `replaceSlots(pageContent.html, { relatedPosts })`。`replaceSlots` 会同时识别 `<!-- siteforge:related-posts -->` 和 `{{ siteforge.relatedPosts }}`。
+3. 如果 `src/templates.mjs` 里也有 fallback 渲染路径，同步加入同名 slot，避免没有 HTML 主题模板时行为不一致。
+4. 如果组件需要主题模板包裹，在 `themes/default/templates/*.html` 里保留 `{{{content}}}`，让页面正文和 slot 替换结果进入模板；不要把某个站点的布局硬编码进 `src/`。
+5. 如果组件需要文案，放进 `themes/default/i18n.yml`，并同步 `src/i18n.mjs` 的默认值。
+6. 如果组件需要样式或脚本，通过 `themes/default/theme.yml` 的 `pageStyles`、`pageScripts`、`featureScripts` 或 `featureStyles` 挂载，不要在 Markdown 里写大段 CSS。
+7. 更新 README、`AGENTS.md` 和 `static/AGENTS.md` 的 slot 列表，让用户和 agent 都知道这个组件可用。
+8. 运行 `npm run generate` 和 `npm run check`。如果这是新的框架契约，也要补充检查脚本，避免后续主题回退。
+
+最小示例：
+
+```js
+const relatedPosts = renderPostList(posts.slice(0, 3), locale);
+const content = replaceSlots(pageContent.html, { relatedPosts });
+```
+
+页面里使用：
+
+```html
+<section aria-labelledby="related-title">
+  <h2 id="related-title">相关文章</h2>
+  <!-- siteforge:related-posts -->
+</section>
+```
+
+slot 组件应该自己输出完整、可访问、可运行的内部状态。不要要求用户在 slot 后面补“这里会显示结果”“输入关键词开始搜索”之类说明；这些属于组件自身的空状态、错误状态或加载状态。
 
 frontmatter 示例：
 
