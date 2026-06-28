@@ -2,6 +2,10 @@
 
 [简体中文 README](README.md)
 
+<p align="center">
+  <img src="static/siteforge-icon.png" alt="Siteforge project icon" width="160">
+</p>
+
 Siteforge is a Hexo-inspired static site and blog builder. Site settings live in
 `config.yml`, posts and pages live in `content/`, themes live in
 `themes/<name>/`, and generated output goes to `dist/`.

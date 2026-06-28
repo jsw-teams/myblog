@@ -2,6 +2,10 @@
 
 [English README](README.en.md)
 
+<p align="center">
+  <img src="static/siteforge-icon.png" alt="Siteforge project icon" width="160">
+</p>
+
 Siteforge 是一个偏 Hexo 思路的静态网站/博客构建器。站点信息放在 `config.yml`，文章和页面放在 `content/`，主题放在 `themes/<name>/`，构建输出到 `dist/`。
 
 它的目标很直接：如果你只是写博客，就像普通 Markdown 博客一样改内容；如果你要客制化站点，再进入主题、配置和构建器扩展。默认主题已经包含多语言、归档、分类、标签、搜索、feed、sitemap、robots、llms、Agent discovery、Consent 偏好和可选第三方脚本加载。
