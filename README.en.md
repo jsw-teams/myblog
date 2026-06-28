@@ -2,96 +2,79 @@
 
 [简体中文 README](README.md)
 
-Siteforge is a Hexo-inspired static site builder. Site-level configuration lives
-in `config.yml`; theme styles, layouts, scripts, and theme i18n live in
-`themes/<name>/`; content lives in `content/`; generated output goes to `dist/`.
+Siteforge is a Hexo-inspired static site and blog builder. Site settings live in
+`config.yml`, posts and pages live in `content/`, themes live in
+`themes/<name>/`, and generated output goes to `dist/`.
 
-The goal is to make ordinary content sites cheaper to customize. Most work can
-stay in Markdown, YAML, and theme files instead of rebuilding page structure,
-SEO, sitemap, feeds, local search, and third-party script loading for every
-site.
+The intent is simple: if you only want to blog, edit content like a normal
+Markdown site; if you need customization, move into config, themes, and builder
+extensions. The default theme already includes locales, archives, categories,
+tags, search, feeds, sitemap, robots, llms, agent discovery, consent preferences,
+and optional third-party script loading.
 
-## License
+## Use Directly
 
-Siteforge is licensed under `AGPL-3.0-or-later`. Modified, redistributed,
-publicly deployed, or downstream versions based on Siteforge should keep their
-corresponding source code open under the AGPL.
+For a blog or regular content site, you do not need to learn theme development
+first:
 
-Please preserve the original author attribution: `Siteforge by JSW Teams`, and
-keep or equivalently display the `NOTICE` information and original repository
-link.
+1. Edit `config.yml` for site name, description, author, locales, navigation,
+   footer, robots, llms, feeds, plugin toggles, and discovery data.
+2. Edit `content/posts/` to add or update posts.
+3. Edit `content/pages/` to customize the homepage, about page, archive,
+   categories, tags, search page, or ordinary pages.
+4. Run `npm run server` for local live preview.
+5. Run `npm run generate` and `npm run check` before publishing.
 
-## Quick Start
-
-For Hexo users:
-
-- `npm run generate` maps to `hexo generate` / `hexo g`.
-- `npm run server` maps to `hexo server` / `hexo s`.
-- `npm run check` verifies generated files, theme assets, sitemap, feed, agent
-  discovery, and WebMCP bootstrap behavior.
+Commands for Hexo users:
 
 ```bash
 npm install
+npm run server
 npm run generate
 npm run check
-npm run server
 ```
 
-Local preview runs at:
+- `npm run generate` maps to `hexo generate` / `hexo g`.
+- `npm run server` maps to `hexo server` / `hexo s`.
+- `npm run check` verifies `dist/`, theme assets, sitemap, feed, agent
+  discovery, and WebMCP bootstrap.
+
+Local preview:
 
 ```text
 http://127.0.0.1:4173/
 ```
 
-`npm run server` polls source files every 10 seconds and rebuilds only after a
-detected change. Build errors stay visible in the browser and do not stop the
-preview process. During preview, changes to
-`content/pages/<slug>/index.<locale>.md` prefer page-level incremental output
-for the matching URL; posts, themes, config, static assets, or builder code may
-still require a full generation pass. If a new path is requested while it is
-still being generated, the preview shows a temporary "building page" screen and
-refreshes after the build succeeds.
+`npm run server` polls `content/`, `themes/`, `src/`, `static/`, `config.yml`,
+and `astro.config.mjs` every 10 seconds. It rebuilds only after detected
+changes. Build errors stay visible in the browser and do not stop the preview
+process. Changes to `content/pages/<slug>/index.<locale>.md` prefer page-level
+incremental output.
 
-## Project Layout
+If PowerShell blocks `npm.ps1`, use:
 
-```text
-config.yml              # Site-level config
-content/posts/          # Localized Markdown posts
-content/pages/          # Localized Markdown/HTML pages
-src/                    # Builder, content parsing, rendering, site outputs
-static/                 # Static files copied to dist/
-themes/default/         # Default theme
-dist/                   # Generated output
+```powershell
+npm.cmd install
+npm.cmd run server
+npm.cmd run generate
+npm.cmd run check
 ```
 
-Theme layout:
+## Content And Pages
 
-```text
-themes/default/theme.yml         # Theme configuration
-themes/default/theme.example.yml # Copyable reference config
-themes/default/i18n.yml          # Theme UI strings
-themes/default/style.css         # Global theme CSS
-themes/default/styles/*.css      # Page or feature CSS
-themes/default/templates/*.html  # Page layout fragments
-themes/default/scripts/*.js      # Consent entry and feature scripts
-themes/default/source-assets/    # Theme-owned source assets
-```
-
-## Content Pages
-
-Posts live at:
+Posts:
 
 ```text
 content/posts/<slug>/index.<locale>.md
 ```
 
-Pages live at:
+Pages:
 
 ```text
 content/pages/<slug>/index.<locale>.md
 ```
 
-Default special pages use the same content-page system:
+Default special pages use the same page system:
 
 ```text
 content/pages/home/index.<locale>.md        # /<locale>/
@@ -101,13 +84,9 @@ content/pages/tags/index.<locale>.md        # /<locale>/tags/
 content/pages/search/index.<locale>.md      # /<locale>/search/
 ```
 
-Markdown under `content/pages` may contain static HTML directly. This lets users
-edit page structure, copy, component placement, and small page-level markup
-without changing theme templates or builder source. Frontmatter still owns page
-metadata such as `title`, `description`, and `translationKey`.
-
-Siteforge dynamic slots insert generated or interactive UI into page
-Markdown/HTML:
+Markdown under `content/pages` may contain HTML directly. You can write
+`<header>`, `<section>`, `<img>`, small page scripts, and place dynamic
+components exactly where they should render:
 
 ```html
 <!-- siteforge:post-list -->
@@ -118,116 +97,75 @@ Markdown/HTML:
 <!-- siteforge:languages -->
 ```
 
+For example, the homepage can write its own introduction in
+`content/pages/home/index.zh-CN.md`, then place `<!-- siteforge:post-list -->`
+where the post list belongs. An archive page can write its own heading and then
+place `<!-- siteforge:archive-list -->`. This avoids editing theme templates
+just to move generated components.
+
 Treat slots as complete components. Do not duplicate what a slot already
-renders. For example, avoid this:
+renders. Avoid this:
 
 ```html
 <!-- siteforge:search-panel -->
 <p>Enter a query to start searching.</p>
 ```
 
-The search panel already owns its input, empty state, result count, and error
-state. Put durable page explanation in the page header, then place the slot
-where the component should render.
+The search panel owns its input, empty state, result count, and error state. Put
+durable page explanation in the header, then place the slot.
 
-### Developing New Dynamic Slots
+Frontmatter example:
 
-Add a new `<!-- siteforge:xxx -->` slot only when users should control the
-placement in Markdown/HTML while the builder owns the generated output. Slots
-fit components such as post lists, pagination, archive lists, term collections,
-language links, related posts, or search panels. If the content is fixed copy,
-static links, or one-off HTML, write it directly in `content/pages` instead of
-adding a slot.
-
-Recommended workflow:
-
-1. Choose a kebab-case slot name such as `<!-- siteforge:related-posts -->`.
-   Use the matching camelCase key in code, such as `relatedPosts`.
-2. Generate the component HTML in the relevant page renderer in
-   `src/lib/theme-html.mjs`, then pass it to `replaceSlots(pageContent.html, {
-   relatedPosts })`. `replaceSlots` supports both
-   `<!-- siteforge:related-posts -->` and `{{ siteforge.relatedPosts }}`.
-3. If `src/templates.mjs` has a fallback rendering path for the same page type,
-   add the same slot there so HTML-template and fallback themes behave the same.
-4. If a theme template wraps the page, keep `{{{content}}}` in
-   `themes/default/templates/*.html` and let page Markdown plus slot output flow
-   into that template. Do not hardcode a single site's layout into `src/`.
-5. Put component UI strings in `themes/default/i18n.yml` and sync defaults in
-   `src/i18n.mjs`.
-6. Attach component CSS or JS through `themes/default/theme.yml` using
-   `pageStyles`, `pageScripts`, `featureScripts`, or `featureStyles`. Avoid
-   large CSS blocks in Markdown.
-7. Update README, `AGENTS.md`, and `static/AGENTS.md` so users and agents know
-   the slot exists.
-8. Run `npm run generate` and `npm run check`. If the slot is a new framework
-   contract, extend the check script to prevent regressions.
-
-Minimal renderer example:
-
-```js
-const relatedPosts = renderPostList(posts.slice(0, 3), locale);
-const content = replaceSlots(pageContent.html, { relatedPosts });
+```yaml
+---
+title: "Post title"
+description: "SEO summary"
+date: "2026-04-27"
+updated: "2026-04-27"
+translationKey: "welcome"
+tags: ["Announcement"]
+category: "News"
+draft: false
+sitemap: true
+cover: ""
+---
 ```
 
-Page usage:
+`draft: true` excludes content from public pages, search indexes, sitemap, feeds,
+and llms files. `sitemap: false` excludes one post or page from the sitemap.
 
-```html
-<section aria-labelledby="related-title">
-  <h2 id="related-title">Related posts</h2>
-  <!-- siteforge:related-posts -->
-</section>
-```
-
-A slot component should own its accessible markup, loading state, empty state,
-error state, and runtime behavior. Do not require users to add text such as
-"results will appear here" or "enter a query to start searching" after the slot.
-
-When Chinese content has been edited first, treat `zh-CN` as the source of
-truth for page structure and meaning, then sync `zh-TW` and `en` with the same
-structure unless a locale-specific variation is intentional.
-
-## Theme-First Customization
-
-Start new projects by copying `themes/default` to `themes/<your-theme>`, then
-set `theme.name: <your-theme>` in `config.yml`.
-
-Prefer this order:
-
-1. Read and update `config.yml` as the structured secondary-development source for site
-   name, locales, navigation, footer, plugins, consent, and other site-level
-   data.
-2. Edit `content/pages` for page copy, static HTML structure, and dynamic slot
-   placement.
-3. Edit `themes/<name>/theme.yml` for theme configuration, page styles, feature
-   scripts, consent categories, and plugin defaults.
-4. Edit `themes/<name>/templates/` for reusable page shells.
-5. Edit `themes/<name>/style.css` and `themes/<name>/styles/` for styling.
-6. Edit `themes/<name>/scripts/` for browser behavior.
-7. Edit `src/` only when improving the framework itself.
-
-## Agent Collaboration
-
-Root `AGENTS.md` is the project guide for Codex, Claude, and other coding
-agents. Ask agents to read it before changing a Siteforge project.
-
-Useful prompt:
+## Project Layout
 
 ```text
-Please read AGENTS.md and config.yml first. Treat config.yml as the structured
-source for site name, locales, navigation, footer, plugins, consent, and other
-site operations and discovery data. Prefer content/pages Markdown/HTML, config, and
-theme-level changes before editing builder source. Use Siteforge dynamic slots
-instead of hardcoding generated UI, and keep zh-CN as the source of truth when
-syncing localized pages.
+config.yml              # Site-level config
+content/posts/          # Post Markdown
+content/pages/          # Page Markdown/HTML
+src/                    # Builder, content parsing, site outputs
+static/                 # Static files that cannot be generated from config
+themes/default/         # Default theme
+dist/                   # Generated output
 ```
 
-Agents should avoid putting implementation notes into public page copy. Explain
-features in README or AGENTS documents; keep user-facing pages focused on the
-site itself.
+Theme layout:
 
-## Config
+```text
+themes/default/theme.yml         # Theme configuration
+themes/default/theme.example.yml # Copyable reference
+themes/default/i18n.yml          # Theme UI strings
+themes/default/style.css         # Global theme CSS
+themes/default/styles/*.css      # Page or feature CSS
+themes/default/templates/*.html  # Page templates
+themes/default/scripts/*.js      # Consent entry and feature scripts
+themes/default/source-assets/    # Theme images and icons
+```
 
-Minimal `config.yml` example:
+## Site Config
+
+`config.yml` is the site-level entry point. It is not just a build-parameter
+appendix; it is the main structured source for secondary development and agent
+collaboration.
+
+Minimal example:
 
 ```yaml
 siteUrl: https://example.com
@@ -240,61 +178,97 @@ theme:
   name: default
 ```
 
-When doing secondary development or asking an agent to build a new site,
-`config.yml` should be used as a development reference alongside the theme. It is
-not just a build-parameter appendix; it is structured site-operations data that
-can generate page chrome and public metadata:
+Good `config.yml` responsibilities:
 
-- `siteName`, `description`, and `author` feed titles, SEO descriptions,
-  JSON-LD, feeds, and default page text.
-- `defaultLocale` and `activeLocales` drive localized routes, language links,
-  and hreflang.
-- `nav.links` and `nav.utilityLinks` generate main navigation, search/archive
-  entries, and other site-level links.
-- `footer`, `head`, `pwa`, and `icons` generate footer content, head metadata,
-  PWA output, and icon assets.
-- `plugins`, `features`, `featureScripts`, and `featureCategories` drive search,
+- `siteName`, `description`, and `author`: titles, SEO summaries, JSON-LD,
+  feeds, and default page copy.
+- `defaultLocale` and `activeLocales`: localized routes, language links, and
+  hreflang.
+- `nav.links` and `nav.utilityLinks`: main navigation, search/archive entries,
+  and site-level links.
+- `footer`, `head`, `pwa`, and `icons`: footer content, head metadata, PWA
+  output, and icon assets.
+- `plugins`, `features`, `featureScripts`, and `featureCategories`: search,
   comments, analytics, ads, WebMCP, and consent-aware loading.
-- `robots`, `llms`, `feed`, and `discovery` generate `robots.txt`, `llms.txt`,
+- `robots`, `llms`, `feed`, and `discovery`: `robots.txt`, `llms.txt`,
   `llms-full.txt`, `feed.xml`, `openapi.json`, `.well-known/api-catalog`,
   `.well-known/mcp/server-card.json`, and `_headers`.
 
-Put this information in YAML instead of hardcoding it into frontend templates.
-During secondary development, first move the site's name, languages, navigation,
-footer, plugin switches, third-party script choices, crawler rules, and agent
-discovery metadata into `config.yml` and `theme.yml`; then adjust
-`content/pages` and theme styling. Users can fill in structured site data while
-the builder generates the matching UI and site-operations files, which lowers
-frontend communication cost.
+If a site-operations file can be derived from `config.yml`, do not maintain a
+second handwritten copy under `static/`. For robots, llms, OpenAPI, API catalog,
+MCP server card, or `_headers`, prefer config or dynamic generation.
 
-Important: if a site-operations file can be derived from `config.yml`, do not
-keep a second handwritten copy under `static/`. During secondary development, if
-`robots.txt`, `llms.txt`, `openapi.json`, the API catalog, the MCP server card,
-or `_headers` still requires manual edits, add or improve the dynamic generator
-first, then update README and AGENTS guidance.
+## Customization And Secondary Development
 
-Do not keep `default` as the long-term theme name for a new project. Copy the
-theme, rename it for the project, then update `theme.name`.
+For simple blogging, stay in `config.yml` and `content/`. Move into secondary
+development only when changing the visual system, page shell, theme scripts,
+plugin loading, or builder behavior.
 
-## Consent And Plugins
+Recommended order:
+
+1. Read `config.yml` and model site name, locales, navigation, footer, plugins,
+   consent, robots, llms, and discovery as structured config.
+2. Edit `content/pages` for page copy, static HTML structure, and dynamic slot
+   placement.
+3. Copy `themes/default` to `themes/<your-theme>` and update `theme.name`.
+4. Edit `themes/<name>/theme.yml` for theme resources, page styles, feature
+   scripts, consent categories, and plugin defaults.
+5. Edit `themes/<name>/templates/`, `style.css`, `styles/`, and `scripts/`.
+6. Edit `src/` only when the theme API cannot express the behavior.
+
+Do not keep `default` as the long-term theme name for a new project. Rename the
+theme directory to something project-specific, such as `themes/company-docs/`,
+`themes/product-site/`, or `themes/portfolio/`.
+
+## Developing Dynamic Slots
+
+Add a new `<!-- siteforge:xxx -->` slot only when users should control placement
+from Markdown/HTML while the builder owns generated output. Post lists,
+pagination, archives, term collections, language links, related posts, and
+search panels fit slots. Fixed copy, static links, and one-off HTML should stay
+directly in `content/pages`.
+
+Workflow:
+
+1. Use a kebab-case slot name such as `<!-- siteforge:related-posts -->`; use
+   the matching camelCase key in code, such as `relatedPosts`.
+2. Generate component HTML in the relevant renderer in `src/lib/theme-html.mjs`,
+   then pass it to `replaceSlots(pageContent.html, { relatedPosts })`.
+3. If `src/templates.mjs` has a fallback path, add the same slot there.
+4. Keep `{{{content}}}` in templates so Markdown and slot output flow into the
+   theme.
+5. Put component strings in `themes/default/i18n.yml` and sync defaults in
+   `src/i18n.mjs`.
+6. Attach CSS and JS through `theme.yml` using `pageStyles`, `pageScripts`,
+   `featureScripts`, or `featureStyles`.
+7. Update README, `AGENTS.md`, and `static/AGENTS.md`.
+8. Run `npm run generate` and `npm run check`; extend checks for new framework
+   contracts.
+
+A slot should own its accessible markup, loading state, empty state, error
+state, and runtime behavior. It should not require users to add "results will
+appear here" style notes after the slot.
+
+## Plugins And Consent
 
 Plugins are optional. A simple site may use none; a larger site may enable
-search, comments, analytics, ads, maps, commerce, or custom integrations.
+search, comments, analytics, RUM, ads, maps, forms, commerce, or custom scripts.
 
-Optional third-party scripts should be mapped through theme config and gated by
-consent categories such as `necessary`, `preferences`, `analytics`, and
-`marketing`. The default theme loads only its consent entry script
-unconditionally. Search, comments, analytics, RUM, ads, and other feature
-scripts load after the relevant consent choice, except necessary local features
-and the inline WebMCP discovery bootstrap.
+The default theme loads only `scripts/consent.js` unconditionally. Before the
+user saves preferences, comments, analytics, ads, and marketing scripts do not
+load. After consent is saved, the builder loads features by categories such as
+`necessary`, `preferences`, `analytics`, and `marketing`. WebMCP discovery is
+inlined by the builder so browser agents can discover site tools on page load.
 
-Only one comments provider should be active at a time.
+Only one comments provider should be active at a time. Analytics, RUM, ads, and
+other third-party scripts should live under theme `plugins` config with an
+explicit consent category.
 
 ## Generated Outputs
 
 The build generates:
 
-- Home and paginated index pages
+- Home and paginated indexes
 - Posts
 - Archive
 - Categories and category detail pages
@@ -304,15 +278,60 @@ The build generates:
 - `feed.xml`
 - `sitemap.xml`
 - `robots.txt`
-- `llms.txt`
-- Agent discovery files and headers
+- `llms.txt` and `llms-full.txt`
+- `openapi.json`
+- `.well-known/api-catalog`
+- `.well-known/mcp/server-card.json`
+- `_headers`
 
 Do not edit `dist/` by hand.
 
+## Agent Collaboration
+
+Root `AGENTS.md` is the project guide for Codex, Claude, and other coding
+agents.
+
+For blogging:
+
+```text
+Please read README.md, AGENTS.md, and config.yml first. I am using Siteforge as
+a blog. Prefer config.yml and content/ edits; do not edit themes/ or src/ unless
+I explicitly ask for theme customization or builder behavior.
+```
+
+For secondary development:
+
+```text
+Please read AGENTS.md and config.yml first. Treat config.yml as the structured
+source for site name, locales, navigation, plugins, consent, footer, robots,
+llms, OpenAPI, API catalog, MCP server card, headers, and other site operations.
+Prefer config.yml, content/pages, and theme-level changes before editing src/.
+```
+
+If [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) or
+[anthropics/skills](https://github.com/anthropics/skills/) is installed, name
+the relevant skill in the prompt. They are collaboration constraints, not runtime
+dependencies.
+
+When syncing localized pages, treat `zh-CN` as the source of content and
+structure unless a locale-specific variation is intentional.
+
+## Current Checks
+
+The current deployment reaches desktop 100 for performance, accessibility, best
+practices, and SEO; mobile performance is 98 with other scores at 100.
+Cloudflare Agent checks also pass, so the default theme is already usable for
+light rendering, accessibility, SEO basics, and agent discovery.
+
+- [PageSpeed desktop report](https://pagespeed.web.dev/analysis/https-blog-js-gripe-en/ifrxjzn6xy?hl=zh-cn)
+- [Cloudflare Agent check image](https://picture.js.gripe/api/images/692e1a39-3a94-4ac6-a6b4-b4afab049eff.png)
+
 ## Deploy
 
-GitHub Actions can generate and publish `dist/` to Cloudflare Pages from
-`main`. For Cloudflare Pages Git integration:
+Pushing to `main` runs `.github/workflows/cloudflare-pages.yml`: install,
+generate, check, then publish `dist/` to Cloudflare Pages.
+
+Cloudflare Pages Git integration:
 
 ```text
 Build command: pnpm install --frozen-lockfile && pnpm run generate
@@ -320,7 +339,7 @@ Build output directory: dist
 Node.js version: 22.12 or newer
 ```
 
-Required GitHub secrets for Wrangler direct upload:
+Wrangler Direct Upload requires GitHub Secrets:
 
 ```text
 CLOUDFLARE_ACCOUNT_ID = Cloudflare account ID
@@ -329,3 +348,13 @@ CLOUDFLARE_API_TOKEN  = API token with Account / Cloudflare Pages / Edit access
 
 Never commit Cloudflare tokens, analytics secrets, AWS keys, or real API
 secrets.
+
+## License
+
+Siteforge is licensed under `AGPL-3.0-or-later`. Modified, redistributed,
+publicly deployed, or downstream versions based on Siteforge should keep their
+corresponding source code open under the AGPL.
+
+Please preserve the original author attribution: `Siteforge by JSW Teams`, and
+keep or equivalently display the `NOTICE` information and original repository
+link.
