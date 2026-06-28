@@ -1,6 +1,7 @@
 # Siteforge Starter
 
-This site was created with Siteforge.
+This project was created by `siteforge init` from the neutral `starter/`
+template bundled in the Siteforge npm package.
 
 ## Start
 
@@ -9,18 +10,28 @@ npm install
 npm run server
 ```
 
-## Build And Check
+## Generate And Check
 
 ```bash
 npm run generate
 npm run check
 ```
 
-## Customize
+## Common Edits
 
-- Edit `config.yml` for site name, `siteUrl`, locales, robots, feed, analytics, and discovery metadata.
-- Edit `content/posts/` for posts.
-- Edit `content/pages/` for the homepage, archive, categories, tags, search, and ordinary pages.
-- Edit `themes/default/` for theme templates, CSS, assets, and optional scripts.
+- `config.yml`: site name, `siteUrl`, locales, navigation, robots, feed, analytics, and discovery metadata.
+- `content/posts/`: posts.
+- `content/pages/`: homepage, about page, archive, categories, tags, search, and other pages.
+- `themes/default/`: theme templates, CSS, assets, and optional scripts.
 
-The starter uses neutral placeholder values. Configure your own production or preview hosting, Cloudflare project, GitHub Secrets, analytics token, and robots policy before deploying.
+The starter uses neutral placeholders and contains no production or preview
+secrets. Configure your own domain, Cloudflare project, GitHub Secrets,
+analytics token, and robots policy before deploying.
+
+Cloudflare Pages example:
+
+```text
+Build command: npm install && npm run generate
+Build output directory: dist
+Node.js version: 22.12 or newer
+```

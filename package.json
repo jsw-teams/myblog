@@ -1,6 +1,6 @@
 {
   "name": "@jsw-teams/siteforge",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hexo-inspired static site and blog builder with theme-first customization and agent discovery.",
   "license": "AGPL-3.0-or-later",
   "type": "module",
@@ -16,15 +16,9 @@
     "README.en.md",
     "astro.config.mjs",
     "bin/",
-    "config.yml",
-    "content/",
-    "package-lock.json",
-    "pnpm-lock.yaml",
     "scripts/",
     "src/",
-    "starter/",
-    "static/",
-    "themes/"
+    "starter/"
   ],
   "keywords": [
     "static-site-generator",

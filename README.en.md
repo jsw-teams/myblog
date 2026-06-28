@@ -6,64 +6,52 @@
   <img src="static/siteforge-icon.png" alt="Siteforge project icon" width="160">
 </p>
 
-Siteforge is a Hexo-inspired static site and blog builder. Site settings live in
+Siteforge is a Hexo-oriented static site and blog builder. Site config lives in
 `config.yml`, posts and pages live in `content/`, themes live in
 `themes/<name>/`, and generated output goes to `dist/`.
 
-The intent is simple: if you only want to blog, edit content like a normal
-Markdown site; if you need customization, move into config, themes, and builder
-extensions. The default theme already includes locales, archives, categories,
-tags, search, feeds, sitemap, robots, llms, agent discovery, consent preferences,
-and optional third-party script loading.
+The goal is simple: if you only want to blog, edit Markdown content; if you need
+secondary development, move into themes, config, and builder extensions.
 
-## Use Directly
-
-For a blog or regular content site, you do not need to learn theme development
-first:
-
-1. Create a site with `npx @jsw-teams/siteforge@latest init my-site`.
-2. Edit `config.yml` for site name, description, author, locales, navigation,
-   footer, robots, llms, feeds, plugin toggles, and discovery data.
-3. Edit `content/posts/` to add or update posts.
-4. Edit `content/pages/` to customize the homepage, about page, archive,
-   categories, tags, search page, or ordinary pages.
-5. Run `npx siteforge server` for local live preview.
-6. Run `npx siteforge generate` and `npx siteforge check` before publishing.
-
-Commands for Hexo users:
+## Quick Start
 
 ```bash
 npx @jsw-teams/siteforge@latest init my-site
 cd my-site
 npm install
-npx siteforge server
-npx siteforge generate
-npx siteforge check
+npm run server
+npm run generate
+npm run check
 ```
 
-`siteforge init` uses the neutral template under `starter/`; it no longer copies
-the real example-site configuration from the repository root. The starter does
-not include production or preview secrets. Forks and downstream projects should
-set their own site name, `siteUrl`, analytics, robots policy, Cloudflare Pages
-project, and GitHub Secrets. The repository root may continue to act as an
-example/development site, but it is no longer the init template.
+- `siteforge init` copies the neutral `starter/` template from the npm package.
+- `npm run server` maps to `hexo server` for local live preview.
+- `npm run generate` maps to `hexo generate` and writes `dist/`.
+- `npm run check` verifies generated output, theme assets, sitemap, feed, agent discovery, and WebMCP bootstrap.
 
-- `siteforge generate` maps to `hexo generate` / `hexo g`.
-- `siteforge server` maps to `hexo server` / `hexo s`.
-- `siteforge check` verifies `dist/`, theme assets, sitemap, feed, agent
-  discovery, and WebMCP bootstrap.
+The starter contains no production or preview secrets, no real site domain, no
+real author identity, no real analytics token, and no production-specific robots
+policy. After initialization, configure your own `siteUrl`, site name,
+analytics, robots policy, Cloudflare Pages project, and GitHub Secrets.
 
-Local preview:
+The repository root may continue to serve as the Siteforge example/development
+site. It is not the source copied by `siteforge init`.
+
+## Created Project Layout
 
 ```text
-http://127.0.0.1:4173/
+config.yml              # Site-level config
+content/posts/          # Post Markdown
+content/pages/          # Page Markdown/HTML
+static/                 # Project static files
+themes/default/         # Default theme copy
+src/                    # Siteforge builder
+scripts/                # Local preview and check scripts
+dist/                   # Generated output; do not edit by hand
 ```
 
-`npx siteforge server` polls `content/`, `themes/`, `src/`, `static/`, `config.yml`,
-and `astro.config.mjs` every 10 seconds. It rebuilds only after detected
-changes. Build errors stay visible in the browser and do not stop the preview
-process. Changes to `content/pages/<slug>/index.<locale>.md` prefer page-level
-incremental output.
+The starter is intentionally small: a homepage, about page, archive page,
+categories page, tags page, search page, and one `hello-siteforge` post.
 
 ## Content And Pages
 
@@ -90,8 +78,8 @@ content/pages/search/index.<locale>.md      # /<locale>/search/
 ```
 
 Markdown under `content/pages` may contain HTML directly. You can write
-`<header>`, `<section>`, `<img>`, small page scripts, and place dynamic
-components exactly where they should render:
+`<header>`, `<section>`, `<img>`, and place dynamic components exactly where
+they should render:
 
 ```html
 <!-- siteforge:post-list -->
@@ -102,194 +90,88 @@ components exactly where they should render:
 <!-- siteforge:languages -->
 ```
 
-For example, the homepage can write its own introduction in
-`content/pages/home/index.zh-CN.md`, then place `<!-- siteforge:post-list -->`
-where the post list belongs. An archive page can write its own heading and then
-place `<!-- siteforge:archive-list -->`. This avoids editing theme templates
-just to move generated components.
-
-Treat slots as complete components. Do not duplicate what a slot already
-renders. Avoid this:
-
-```html
-<!-- siteforge:search-panel -->
-<p>Enter a query to start searching.</p>
-```
-
-The search panel owns its input, empty state, result count, and error state. Put
-durable page explanation in the header, then place the slot.
-
-Frontmatter example:
-
-```yaml
----
-title: "Post title"
-description: "SEO summary"
-date: "2026-04-27"
-updated: "2026-04-27"
-translationKey: "welcome"
-tags: ["Announcement"]
-category: "News"
-draft: false
-sitemap: true
-cover: ""
----
-```
-
-`draft: true` excludes content from public pages, search indexes, sitemap, feeds,
-and llms files. `sitemap: false` excludes one post or page from the sitemap.
-
-## Project Layout
-
-```text
-config.yml              # Site-level config
-content/posts/          # Post Markdown
-content/pages/          # Page Markdown/HTML
-src/                    # Builder, content parsing, site outputs
-static/                 # Static files that cannot be generated from config
-themes/default/         # Default theme
-dist/                   # Generated output
-```
-
-Theme layout:
-
-```text
-themes/default/theme.yml         # Theme configuration
-themes/default/theme.example.yml # Copyable reference
-themes/default/i18n.yml          # Theme UI strings
-themes/default/style.css         # Global theme CSS
-themes/default/styles/*.css      # Page or feature CSS
-themes/default/templates/*.html  # Page templates
-themes/default/scripts/*.js      # Consent entry and feature scripts
-themes/default/source-assets/    # Theme images and icons
-```
+Treat slots as complete components. For example,
+`<!-- siteforge:search-panel -->` already owns its input, empty state, result
+count, and error state.
 
 ## Site Config
 
 `config.yml` is the site-level entry point. It is not just a build-parameter
-appendix; it is the main structured source for secondary development and agent
+file; it is the main structured source for secondary development and agent
 collaboration.
 
 Minimal example:
 
 ```yaml
 siteUrl: https://example.com
-defaultLocale: zh-CN
+defaultLocale: en
 activeLocales:
-  - zh-CN
-  - zh-TW
   - en
+siteName:
+  en: Siteforge Starter
 theme:
   name: default
 ```
 
 Good `config.yml` responsibilities:
 
-- `siteName`, `description`, and `author`: titles, SEO summaries, JSON-LD,
-  feeds, and default page copy.
-- `defaultLocale` and `activeLocales`: localized routes, language links, and
-  hreflang.
-- `nav.links` and `nav.utilityLinks`: main navigation, search/archive entries,
-  and site-level links.
-- `footer`, `head`, `pwa`, and `icons`: footer content, head metadata, PWA
-  output, and icon assets.
-- `plugins`, `features`, `featureScripts`, and `featureCategories`: search,
-  comments, analytics, ads, WebMCP, and consent-aware loading.
-- `robots`, `llms`, `feed`, and `discovery`: `robots.txt`, `llms.txt`,
-  `llms-full.txt`, `feed.xml`, `openapi.json`, `.well-known/api-catalog`,
-  `.well-known/mcp/server-card.json`, and `_headers`.
+- `siteName`, `description`, and `author`
+- `defaultLocale` and `activeLocales`
+- `nav.links` and `nav.utilityLinks`
+- `footer`, `head`, `pwa`, and `icons`
+- `plugins`, `features`, `featureScripts`, and `featureCategories`
+- `robots`, `llms`, `feed`, and `discovery`
 
-If a site-operations file can be derived from `config.yml`, do not maintain a
-second handwritten copy under `static/`. For robots, llms, OpenAPI, API catalog,
-MCP server card, or `_headers`, prefer config or dynamic generation.
+The builder uses config to generate `robots.txt`, `llms.txt`, `llms-full.txt`,
+`feed.xml`, `sitemap.xml`, `openapi.json`, `.well-known/api-catalog`,
+`.well-known/mcp/server-card.json`, and `_headers`. If a site-operations file
+can be derived from `config.yml`, do not maintain a second handwritten copy
+under `static/`.
 
-## Customization And Secondary Development
+## Themes And Secondary Development
 
-For simple blogging, stay in `config.yml` and `content/`. Move into secondary
-development only when changing the visual system, page shell, theme scripts,
-plugin loading, or builder behavior.
+For simple blogging, prefer `config.yml` and `content/`.
 
-Recommended order:
+For visual, layout, or script changes:
 
-1. Read `config.yml` and model site name, locales, navigation, footer, plugins,
-   consent, robots, llms, and discovery as structured config.
-2. Edit `content/pages` for page copy, static HTML structure, and dynamic slot
-   placement.
-3. Copy `themes/default` to `themes/<your-theme>` and update `theme.name`.
-4. Edit `themes/<name>/theme.yml` for theme resources, page styles, feature
-   scripts, consent categories, and plugin defaults.
-5. Edit `themes/<name>/templates/`, `style.css`, `styles/`, and `scripts/`.
-6. Edit `src/` only when the theme API cannot express the behavior.
+1. Copy `themes/default` to `themes/<your-theme>`.
+2. Set `theme.name: <your-theme>` in `config.yml`.
+3. Edit `themes/<your-theme>/theme.yml`, `templates/`, `style.css`, `styles/`, `scripts/`, and `source-assets/`.
+4. Edit `src/` only when the theme API cannot express the behavior.
 
-Do not keep `default` as the long-term theme name for a new project. Rename the
-theme directory to something project-specific, such as `themes/company-docs/`,
-`themes/product-site/`, or `themes/portfolio/`.
-
-## Developing Dynamic Slots
-
-Add a new `<!-- siteforge:xxx -->` slot only when users should control placement
-from Markdown/HTML while the builder owns generated output. Post lists,
-pagination, archives, term collections, language links, related posts, and
-search panels fit slots. Fixed copy, static links, and one-off HTML should stay
-directly in `content/pages`.
-
-Workflow:
-
-1. Use a kebab-case slot name such as `<!-- siteforge:related-posts -->`; use
-   the matching camelCase key in code, such as `relatedPosts`.
-2. Generate component HTML in the relevant renderer in `src/lib/theme-html.mjs`,
-   then pass it to `replaceSlots(pageContent.html, { relatedPosts })`.
-3. If `src/templates.mjs` has a fallback path, add the same slot there.
-4. Keep `{{{content}}}` in templates so Markdown and slot output flow into the
-   theme.
-5. Put component strings in `themes/default/i18n.yml` and sync defaults in
-   `src/i18n.mjs`.
-6. Attach CSS and JS through `theme.yml` using `pageStyles`, `pageScripts`,
-   `featureScripts`, or `featureStyles`.
-7. Update README, `AGENTS.md`, and `static/AGENTS.md`.
-8. Run `npx siteforge generate` and `npx siteforge check`; extend checks for new framework
-   contracts.
-
-A slot should own its accessible markup, loading state, empty state, error
-state, and runtime behavior. It should not require users to add "results will
-appear here" style notes after the slot.
+Change `starter/` when changing the default template for new users. Change the
+repository-root `config.yml/content/static/themes` only when changing this
+repository's example/development site. Do not sync real production domains,
+real analytics tokens, Cloudflare config, or deployment secrets into `starter/`.
 
 ## Plugins And Consent
 
 Plugins are optional. A simple site may use none; a larger site may enable
-search, comments, analytics, RUM, ads, maps, forms, commerce, or custom scripts.
+search, comments, analytics, ads, WebMCP, or custom scripts.
 
-The default theme loads only `scripts/consent.js` unconditionally. Before the
-user saves preferences, comments, analytics, ads, and marketing scripts do not
-load. After consent is saved, the builder loads features by categories such as
-`necessary`, `preferences`, `analytics`, and `marketing`. WebMCP discovery is
-inlined by the builder so browser agents can discover site tools on page load.
+The default theme loads only the consent entry unconditionally. Comments,
+analytics, ads, and marketing scripts should be declared in theme config and
+loaded through categories such as `necessary`, `preferences`, `analytics`, and
+`marketing`. Cloudflare Web Analytics is disabled by default and uses a
+placeholder token.
 
-Only one comments provider should be active at a time. Analytics, RUM, ads, and
-other third-party scripts should live under theme `plugins` config with an
-explicit consent category.
+## Deployment
 
-## Generated Outputs
+Siteforge can deploy to Cloudflare Pages or any static hosting service that can
+serve `dist/`.
 
-The build generates:
+Cloudflare Pages Git integration example:
 
-- Home and paginated indexes
-- Posts
-- Archive
-- Categories and category detail pages
-- Tags and tag detail pages
-- Normal pages
-- Search page and search indexes
-- `feed.xml`
-- `sitemap.xml`
-- `robots.txt`
-- `llms.txt` and `llms-full.txt`
-- `openapi.json`
-- `.well-known/api-catalog`
-- `.well-known/mcp/server-card.json`
-- `_headers`
+```text
+Build command: npm install && npm run generate
+Build output directory: dist
+Node.js version: 22.12 or newer
+```
 
-Do not edit `dist/` by hand.
+This repository does not commit real Cloudflare credentials, account IDs,
+project names, zone IDs, or production deployment secrets. Forks and downstream
+projects should create their own Cloudflare projects and manage sensitive values
+through GitHub Secrets or the Cloudflare Dashboard.
 
 ## Agent Collaboration
 
@@ -312,52 +194,6 @@ source for site name, locales, navigation, plugins, consent, footer, robots,
 llms, OpenAPI, API catalog, MCP server card, headers, and other site operations.
 Prefer config.yml, content/pages, and theme-level changes before editing src/.
 ```
-
-If [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) or
-[anthropics/skills](https://github.com/anthropics/skills/) is installed, name
-the relevant skill in the prompt. They are collaboration constraints, not runtime
-dependencies.
-
-When syncing localized pages, treat `zh-CN` as the source of content and
-structure unless a locale-specific variation is intentional.
-
-## Current Checks
-
-The current deployment reaches desktop 100 for performance, accessibility, best
-practices, and SEO; mobile performance is 98 with other scores at 100.
-Cloudflare Agent checks also pass, so the default theme is already usable for
-light rendering, accessibility, SEO basics, and agent discovery.
-
-- [PageSpeed desktop report](https://pagespeed.web.dev/analysis/https-blog-js-gripe-en/ifrxjzn6xy?hl=zh-cn)
-- [Cloudflare Agent check image](https://picture.js.gripe/api/images/692e1a39-3a94-4ac6-a6b4-b4afab049eff.png)
-
-## Deployment Notes
-
-Siteforge can be deployed to Cloudflare Pages or any static hosting service that
-can serve `dist/`. This public repository does not commit real Cloudflare
-credentials, account IDs, project names, zone IDs, or production deployment
-secrets.
-
-For Cloudflare Pages Git integration, configure your own project:
-
-```text
-Build command: npm install && npx siteforge generate
-Build output directory: dist
-Node.js version: 22.12 or newer
-```
-
-If your fork or downstream project uses GitHub Actions / Wrangler Direct Upload,
-create your own Cloudflare project and manage sensitive values only through
-GitHub Secrets or the Cloudflare Dashboard. These names are placeholders:
-
-```text
-CLOUDFLARE_ACCOUNT_ID = Cloudflare account ID
-CLOUDFLARE_API_TOKEN  = Cloudflare API token
-CLOUDFLARE_PROJECT_NAME = Cloudflare Pages project name
-```
-
-Do not reuse the original project's production or preview configuration. Never
-commit Cloudflare tokens, analytics secrets, AWS keys, or real API secrets.
 
 ## License
 
