@@ -83,7 +83,7 @@ robots, or LLM discovery text, prefer adding or improving a dynamic generator in
    `themes/<your-theme>/source-assets/`.
 10. Add optional behavior under `themes/<your-theme>/scripts/`, then expose it
    from `theme.yml` through `featureScripts` and `featureCategories`.
-11. Run `npm run build` and `npm run check`.
+11. Run `npx siteforge generate` and `npx siteforge check`.
 
 If a requested customization can be done by changing theme config, templates,
 CSS, or theme scripts, do that instead of editing `src/`.
@@ -222,14 +222,14 @@ in `static/AGENTS.md`.
 
 Use Node 22 or newer.
 
-For Hexo-oriented users, prefer documenting `npm run generate` as the public
-static generation command. It maps to Hexo's `hexo generate`; `npm run build`
-remains the underlying implementation.
+For Hexo-oriented users, prefer documenting `siteforge generate` as the public
+static generation command. It maps to Hexo's `hexo generate`; `npm run generate`
+remains a compatibility wrapper.
 
 ```bash
 npm install
-npm run generate
-npm run check
+npx siteforge generate
+npx siteforge check
 ```
 
 The build output directory is `dist/`.
@@ -237,7 +237,7 @@ The build output directory is `dist/`.
 For local preview, use:
 
 ```bash
-npm run server
+npx siteforge server
 ```
 
 The preview server polls source files every 10 seconds and rebuilds only after a
@@ -247,7 +247,7 @@ theme files, config, static assets, or builder code may still require a full
 generation pass. Build errors should remain visible in the browser and must not
 terminate preview unless the user explicitly stops it.
 
-`npm run check` verifies important generated files, theme assets, sitemap shape,
+`siteforge check` verifies important generated files, theme assets, sitemap shape,
 agent discovery headers, and WebMCP bootstrap behavior. If you add new framework
 contracts, extend the check script so future themes do not silently regress.
 
@@ -278,7 +278,7 @@ When asked to build a custom site or theme with Siteforge:
    config, templates, CSS, scripts, content, or builder core.
 4. Prefer config, Markdown/HTML page edits, and theme-level changes before
    builder code.
-5. Run `npm run generate` and `npm run check`.
+5. Run `npx siteforge generate` and `npx siteforge check`.
 6. Summarize changed files and explain whether the change is structured site
    config, user-editable page
    content, reusable theme work,

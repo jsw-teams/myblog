@@ -21,26 +21,29 @@ and optional third-party script loading.
 For a blog or regular content site, you do not need to learn theme development
 first:
 
-1. Edit `config.yml` for site name, description, author, locales, navigation,
+1. Create a site with `npx @jsw-teams/siteforge@latest init my-site`.
+2. Edit `config.yml` for site name, description, author, locales, navigation,
    footer, robots, llms, feeds, plugin toggles, and discovery data.
-2. Edit `content/posts/` to add or update posts.
-3. Edit `content/pages/` to customize the homepage, about page, archive,
+3. Edit `content/posts/` to add or update posts.
+4. Edit `content/pages/` to customize the homepage, about page, archive,
    categories, tags, search page, or ordinary pages.
-4. Run `npm run server` for local live preview.
-5. Run `npm run generate` and `npm run check` before publishing.
+5. Run `npx siteforge server` for local live preview.
+6. Run `npx siteforge generate` and `npx siteforge check` before publishing.
 
 Commands for Hexo users:
 
 ```bash
+npx @jsw-teams/siteforge@latest init my-site
+cd my-site
 npm install
-npm run server
-npm run generate
-npm run check
+npx siteforge server
+npx siteforge generate
+npx siteforge check
 ```
 
-- `npm run generate` maps to `hexo generate` / `hexo g`.
-- `npm run server` maps to `hexo server` / `hexo s`.
-- `npm run check` verifies `dist/`, theme assets, sitemap, feed, agent
+- `siteforge generate` maps to `hexo generate` / `hexo g`.
+- `siteforge server` maps to `hexo server` / `hexo s`.
+- `siteforge check` verifies `dist/`, theme assets, sitemap, feed, agent
   discovery, and WebMCP bootstrap.
 
 Local preview:
@@ -49,20 +52,11 @@ Local preview:
 http://127.0.0.1:4173/
 ```
 
-`npm run server` polls `content/`, `themes/`, `src/`, `static/`, `config.yml`,
+`npx siteforge server` polls `content/`, `themes/`, `src/`, `static/`, `config.yml`,
 and `astro.config.mjs` every 10 seconds. It rebuilds only after detected
 changes. Build errors stay visible in the browser and do not stop the preview
 process. Changes to `content/pages/<slug>/index.<locale>.md` prefer page-level
 incremental output.
-
-If PowerShell blocks `npm.ps1`, use:
-
-```powershell
-npm.cmd install
-npm.cmd run server
-npm.cmd run generate
-npm.cmd run check
-```
 
 ## Content And Pages
 
@@ -246,7 +240,7 @@ Workflow:
 6. Attach CSS and JS through `theme.yml` using `pageStyles`, `pageScripts`,
    `featureScripts`, or `featureStyles`.
 7. Update README, `AGENTS.md`, and `static/AGENTS.md`.
-8. Run `npm run generate` and `npm run check`; extend checks for new framework
+8. Run `npx siteforge generate` and `npx siteforge check`; extend checks for new framework
    contracts.
 
 A slot should own its accessible markup, loading state, empty state, error
@@ -340,7 +334,7 @@ secrets.
 For Cloudflare Pages Git integration, configure your own project:
 
 ```text
-Build command: pnpm install --frozen-lockfile && pnpm run generate
+Build command: npm install && npx siteforge generate
 Build output directory: dist
 Node.js version: 22.12 or newer
 ```

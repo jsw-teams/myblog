@@ -1,10 +1,49 @@
 {
-  "name": "siteforge",
+  "name": "@jsw-teams/siteforge",
   "version": "1.0.0",
-  "private": true,
+  "description": "Hexo-inspired static site and blog builder with theme-first customization and agent discovery.",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "packageManager": "pnpm@10.18.0",
+  "bin": {
+    "siteforge": "bin/siteforge.mjs"
+  },
+  "files": [
+    "AGENTS.md",
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "README.en.md",
+    "astro.config.mjs",
+    "bin/",
+    "config.yml",
+    "content/",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "scripts/",
+    "src/",
+    "static/",
+    "themes/"
+  ],
+  "keywords": [
+    "static-site-generator",
+    "markdown",
+    "astro",
+    "llms-txt",
+    "agent-discovery",
+    "webmcp"
+  ],
+  "homepage": "https://github.com/jsw-teams/siteforge#readme",
+  "bugs": {
+    "url": "https://github.com/jsw-teams/siteforge/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsw-teams/siteforge.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "assets": "node src/assets.mjs",
     "prebuild": "node src/prebuild.mjs",
