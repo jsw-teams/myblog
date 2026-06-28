@@ -32,6 +32,8 @@ npx siteforge generate
 npx siteforge check
 ```
 
+`siteforge init` 使用仓库中的 `starter/` 中立模板，不会直接复制当前仓库根目录的真实示例站配置。starter 不包含生产/预览环境 secrets；站点名、`siteUrl`、analytics、robots、Cloudflare Pages 项目与 GitHub Secrets 都应由 fork 或二次开发者自行配置。当前仓库根目录可以继续作为示例站和开发站，但不再作为 init 模板。
+
 - `siteforge generate` 类似 `hexo generate` / `hexo g`。
 - `siteforge server` 类似 `hexo server` / `hexo s`。
 - `siteforge check` 检查 `dist/`、主题资源、sitemap、feed、Agent discovery 和 WebMCP bootstrap。

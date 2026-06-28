@@ -25,7 +25,7 @@ featureCategories:
   webMcp: necessary
 consent:
   enabled: true
-  storageKey: siteforge-consent
+  storageKey: siteforge-starter-consent
   revision: 1
   categories:
     necessary:

@@ -16,6 +16,8 @@ builder only when the theme API cannot express the needed behavior.
   copying `themes/default` and changing the copy.
 - `themes/default/theme.yml` is the active default theme configuration.
 - `themes/default/theme.example.yml` is the copyable reference for theme users.
+- `starter/` is the neutral template copied by `siteforge init`. Change starter
+  defaults there, not by copying the repository root example site.
 - `themes/default/templates/` contains HTML template fragments for page types.
 - `themes/default/style.css` is the theme baseline stylesheet.
 - `themes/default/styles/` contains page or feature styles loaded by theme
@@ -87,6 +89,12 @@ robots, or LLM discovery text, prefer adding or improving a dynamic generator in
 
 If a requested customization can be done by changing theme config, templates,
 CSS, or theme scripts, do that instead of editing `src/`.
+
+When changing the default project created for new users, edit `starter/`. When
+changing this repository's real example/development site, edit the root
+`config.yml`, `content/`, `static/`, and `themes/`. Do not sync real production
+domains, author identity, analytics tokens, Cloudflare settings, or deployment
+secrets into `starter/`.
 
 ## Theme Contracts
 

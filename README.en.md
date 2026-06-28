@@ -41,6 +41,13 @@ npx siteforge generate
 npx siteforge check
 ```
 
+`siteforge init` uses the neutral template under `starter/`; it no longer copies
+the real example-site configuration from the repository root. The starter does
+not include production or preview secrets. Forks and downstream projects should
+set their own site name, `siteUrl`, analytics, robots policy, Cloudflare Pages
+project, and GitHub Secrets. The repository root may continue to act as an
+example/development site, but it is no longer the init template.
+
 - `siteforge generate` maps to `hexo generate` / `hexo g`.
 - `siteforge server` maps to `hexo server` / `hexo s`.
 - `siteforge check` verifies `dist/`, theme assets, sitemap, feed, agent

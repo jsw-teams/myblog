@@ -5,6 +5,7 @@ import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const starterRoot = path.join(packageRoot, "starter");
 const [command, targetArg] = process.argv.slice(2);
 
 const copiedEntries = [
@@ -14,14 +15,8 @@ const copiedEntries = [
   "README.md",
   "README.en.md",
   "astro.config.mjs",
-  "config.yml",
-  "content",
-  "package-lock.json",
-  "pnpm-lock.yaml",
   "scripts",
-  "src",
-  "static",
-  "themes"
+  "src"
 ];
 
 const gitignore = `node_modules/
@@ -98,6 +93,21 @@ async function copyEntry(entry, targetRoot) {
   });
 }
 
+async function copyStarter(targetRoot) {
+  if (!(await pathExists(starterRoot))) {
+    throw new Error(`Starter template is missing: ${starterRoot}`);
+  }
+  await fs.cp(starterRoot, targetRoot, {
+    recursive: true,
+    errorOnExist: false,
+    force: true,
+    filter: (src) => {
+      const name = path.basename(src);
+      return !["node_modules", "dist", ".astro", ".cache", ".git"].includes(name);
+    }
+  });
+}
+
 async function writeStarterPackage(targetRoot) {
   const packagePath = path.join(targetRoot, "package.json");
   const data = JSON.parse(await fs.readFile(path.join(packageRoot, "package.json"), "utf8"));
@@ -137,6 +147,7 @@ async function init() {
   await assertEmptyOrMissing(targetRoot);
   await fs.mkdir(targetRoot, { recursive: true });
   for (const entry of copiedEntries) await copyEntry(entry, targetRoot);
+  await copyStarter(targetRoot);
   await writeStarterPackage(targetRoot);
   await fs.writeFile(path.join(targetRoot, ".gitignore"), gitignore);
   console.log(`Created Siteforge site in ${targetRoot}`);
@@ -144,7 +155,9 @@ async function init() {
   console.log("Next steps:");
   console.log(`  cd ${path.relative(process.cwd(), targetRoot) || "."}`);
   console.log("  npm install");
-  console.log("  npx siteforge server");
+  console.log("  npm run server");
+  console.log("  npm run generate");
+  console.log("  npm run check");
 }
 
 function run(commandName, args) {

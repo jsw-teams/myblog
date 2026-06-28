@@ -78,7 +78,7 @@ async function readImageSource(src, publicDir) {
 
     const response = await fetch(src, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; blog.js.gripe OG image builder)"
+        "User-Agent": "Mozilla/5.0 (compatible; Siteforge OG image builder)"
       }
     });
     if (!response.ok) throw new Error(`Failed to fetch OG source ${src}: HTTP ${response.status}`);

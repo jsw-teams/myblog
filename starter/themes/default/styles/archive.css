@@ -1,0 +1,7 @@
+.archive-main .archive-list {
+  margin-top: 2rem;
+}
+
+.archive-main time {
+  white-space: nowrap;
+}
