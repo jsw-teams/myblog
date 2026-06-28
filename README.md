@@ -265,11 +265,11 @@ Cloudflare Agent 检查同样通过，验证站点已暴露适合代理读取的
 
 ![cloudflare agent check](https://picture.js.gripe/api/images/692e1a39-3a94-4ac6-a6b4-b4afab049eff.png)
 
-## 部署
+## 部署说明
 
-推送到 `main` 后，GitHub Actions 会运行 `.github/workflows/cloudflare-pages.yml`，安装依赖、生成、检查，然后发布 `dist/` 到 Cloudflare Pages。
+Siteforge 可以部署到 Cloudflare Pages，也可以部署到任何能托管 `dist/` 的静态托管服务。当前公开仓库不提交真实 Cloudflare credentials、account IDs、project names、zone IDs 或生产部署 secrets。
 
-Cloudflare Pages Git 集成可使用：
+如果使用 Cloudflare Pages Git 集成，可以按自己的项目填写：
 
 ```text
 Build command: pnpm install --frozen-lockfile && pnpm run generate
@@ -277,14 +277,15 @@ Build output directory: dist
 Node.js version: 22.12 或更新
 ```
 
-Wrangler Direct Upload 需要 GitHub Secrets：
+如果你在 fork 或二次开发项目中使用 GitHub Actions / Wrangler Direct Upload，请创建自己的 Cloudflare 项目，并只通过 GitHub Secrets 或 Cloudflare Dashboard 管理敏感配置。示例变量名只能作为 placeholder：
 
 ```text
 CLOUDFLARE_ACCOUNT_ID = Cloudflare 账号 ID
-CLOUDFLARE_API_TOKEN  = 具有 Account / Cloudflare Pages / Edit 权限的 API token
+CLOUDFLARE_API_TOKEN  = Cloudflare API token
+CLOUDFLARE_PROJECT_NAME = Cloudflare Pages 项目名
 ```
 
-不要把 Cloudflare API Token、统计密钥、AWS key 或其他真实密钥写进代码、README、issue 或聊天记录。
+不要复用原项目的生产/预览配置。不要把 Cloudflare API Token、统计密钥、AWS key 或其他真实密钥写进代码、README、issue 或聊天记录。
 
 ## 开源协议
 

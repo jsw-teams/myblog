@@ -330,12 +330,14 @@ light rendering, accessibility, SEO basics, and agent discovery.
 - [PageSpeed desktop report](https://pagespeed.web.dev/analysis/https-blog-js-gripe-en/ifrxjzn6xy?hl=zh-cn)
 - [Cloudflare Agent check image](https://picture.js.gripe/api/images/692e1a39-3a94-4ac6-a6b4-b4afab049eff.png)
 
-## Deploy
+## Deployment Notes
 
-Pushing to `main` runs `.github/workflows/cloudflare-pages.yml`: install,
-generate, check, then publish `dist/` to Cloudflare Pages.
+Siteforge can be deployed to Cloudflare Pages or any static hosting service that
+can serve `dist/`. This public repository does not commit real Cloudflare
+credentials, account IDs, project names, zone IDs, or production deployment
+secrets.
 
-Cloudflare Pages Git integration:
+For Cloudflare Pages Git integration, configure your own project:
 
 ```text
 Build command: pnpm install --frozen-lockfile && pnpm run generate
@@ -343,15 +345,18 @@ Build output directory: dist
 Node.js version: 22.12 or newer
 ```
 
-Wrangler Direct Upload requires GitHub Secrets:
+If your fork or downstream project uses GitHub Actions / Wrangler Direct Upload,
+create your own Cloudflare project and manage sensitive values only through
+GitHub Secrets or the Cloudflare Dashboard. These names are placeholders:
 
 ```text
 CLOUDFLARE_ACCOUNT_ID = Cloudflare account ID
-CLOUDFLARE_API_TOKEN  = API token with Account / Cloudflare Pages / Edit access
+CLOUDFLARE_API_TOKEN  = Cloudflare API token
+CLOUDFLARE_PROJECT_NAME = Cloudflare Pages project name
 ```
 
-Never commit Cloudflare tokens, analytics secrets, AWS keys, or real API
-secrets.
+Do not reuse the original project's production or preview configuration. Never
+commit Cloudflare tokens, analytics secrets, AWS keys, or real API secrets.
 
 ## License
 

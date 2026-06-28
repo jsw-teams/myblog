@@ -208,11 +208,12 @@ footer label, comment provider preference, analytics token, or mascot image.
 
 Siteforge exposes agent-facing resources for deployed sites:
 
-- `static/_headers` defines RFC 8288 `Link` headers for useful resources.
 - `static/AGENTS.md` is the deployed site-level guide.
-- `static/llms.txt` gives a compact model-readable project summary.
-- `static/openapi.json` and `static/.well-known/api-catalog` describe public
-  discovery endpoints.
+- `_headers` is generated from config and defines RFC 8288 `Link` headers for
+  useful resources.
+- `llms.txt` and `llms-full.txt` are generated from config and content.
+- `openapi.json`, `.well-known/api-catalog`, and
+  `.well-known/mcp/server-card.json` are generated discovery endpoints.
 
 Keep repository guidance in this root `AGENTS.md`. Keep deployed-site guidance
 in `static/AGENTS.md`.
