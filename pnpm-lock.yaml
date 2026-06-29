@@ -10,7 +10,7 @@ importers:
     devDependencies:
       pagekiln:
         specifier: github:jsw-teams/pagekiln
-        version: https://codeload.github.com/jsw-teams/pagekiln/tar.gz/95808eddd32021d12003ef3372ceedd3fbd509a1(@types/markdown-it@14.1.2)(@types/node@24.13.2)(rollup@4.62.2)(terser@5.48.0)
+        version: https://codeload.github.com/jsw-teams/pagekiln/tar.gz/2f8c2492961c2bc25b9c37f2a1e1c4361f2a075c(@types/markdown-it@14.1.2)(@types/node@24.13.2)(rollup@4.62.2)(terser@5.48.0)
 
 packages:
 
@@ -1267,9 +1267,9 @@ packages:
   package-manager-detector@1.6.0:
     resolution: {integrity: sha512-61A5ThoTiDG/C8s8UMZwSorAGwMJ0ERVGj2OjoW5pAalsNOg15+iQiPzrLJ4jhZ1HJzmC2PIHT2oEiH3R5fzNA==}
 
-  pagekiln@https://codeload.github.com/jsw-teams/pagekiln/tar.gz/95808eddd32021d12003ef3372ceedd3fbd509a1:
-    resolution: {gitHosted: true, integrity: sha512-cWJco3Vvw+5IduJtkjhhDW0SgrNK9y2EhfW24CuXe0C6nCwak7uhmDSj8xbJUXzvT2JgvTj980hnFObLTzf91g==, tarball: https://codeload.github.com/jsw-teams/pagekiln/tar.gz/95808eddd32021d12003ef3372ceedd3fbd509a1}
-    version: 1.0.1
+  pagekiln@https://codeload.github.com/jsw-teams/pagekiln/tar.gz/2f8c2492961c2bc25b9c37f2a1e1c4361f2a075c:
+    resolution: {gitHosted: true, integrity: sha512-gOI5ffVBg1l/vk6ETFCy/KSzyN5dA95Ac61L5sdpDpp+seF78GWBGvGCbtxn4+qWp6/wWmMNTJHytJJHWxZMxQ==, tarball: https://codeload.github.com/jsw-teams/pagekiln/tar.gz/2f8c2492961c2bc25b9c37f2a1e1c4361f2a075c}
+    version: 1.0.0
     engines: {node: '>=22.12.0'}
     hasBin: true
 
@@ -3109,7 +3109,7 @@ snapshots:
 
   package-manager-detector@1.6.0: {}
 
-  pagekiln@https://codeload.github.com/jsw-teams/pagekiln/tar.gz/95808eddd32021d12003ef3372ceedd3fbd509a1(@types/markdown-it@14.1.2)(@types/node@24.13.2)(rollup@4.62.2)(terser@5.48.0):
+  pagekiln@https://codeload.github.com/jsw-teams/pagekiln/tar.gz/2f8c2492961c2bc25b9c37f2a1e1c4361f2a075c(@types/markdown-it@14.1.2)(@types/node@24.13.2)(rollup@4.62.2)(terser@5.48.0):
     dependencies:
       '@astrojs/rss': 4.0.18
       '@astrojs/sitemap': 3.7.3

@@ -7,6 +7,7 @@
   "type": "module",
   "packageManager": "pnpm@10.18.0",
   "scripts": {
+    "assets:site": "node scripts/generate-neutral-assets.mjs",
     "generate": "pagekiln generate",
     "build": "pagekiln generate",
     "server": "pagekiln server",
