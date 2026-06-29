@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agentskills.io/schemas/agent-skills-index-v0.2.json",
+  "skills": [
+    {
+      "name": "search_public_posts",
+      "type": "webmcp-tool",
+      "description": "Search public Blog.js.gripe posts and return matching article URLs.",
+      "url": "https://blog.js.gripe/.well-known/agent-skills/search-public-posts.md",
+      "sha256": "cfbf0bb32d1a8828c1473a7f03df0cbfb8cf65c8f8eb414a7e0aad9fcff9b449"
+    },
+    {
+      "name": "list_discovery_resources",
+      "type": "webmcp-tool",
+      "description": "List machine-readable discovery resources published by Blog.js.gripe.",
+      "url": "https://blog.js.gripe/.well-known/agent-skills/discovery-resources.md",
+      "sha256": "49818a7dd25a47e17992acfee9566b0f8cb90b0decaba1f48ca86d3cd0d88e3b"
+    }
+  ]
+}

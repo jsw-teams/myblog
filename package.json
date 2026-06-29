@@ -1,0 +1,22 @@
+{
+  "name": "myblog",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Production blog site powered by Pagekiln.",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "packageManager": "pnpm@10.18.0",
+  "scripts": {
+    "generate": "pagekiln generate",
+    "build": "pagekiln generate",
+    "server": "pagekiln server",
+    "serve": "pagekiln server",
+    "check": "pagekiln check"
+  },
+  "devDependencies": {
+    "pagekiln": "github:jsw-teams/pagekiln"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

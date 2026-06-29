@@ -1,0 +1,18 @@
+{
+  "resource": "https://blog.js.gripe/",
+  "authorization_servers": ["https://blog.js.gripe/"],
+  "scopes_supported": ["public:read"],
+  "bearer_methods_supported": ["header"],
+  "resource_documentation": "https://blog.js.gripe/auth.md",
+  "agent_auth": {
+    "skill": "https://workos.com/auth.md",
+    "register_uri": "https://blog.js.gripe/auth.md#standalone-registration-flow",
+    "claim_uri": "https://blog.js.gripe/auth.md#claims",
+    "revocation_uri": "https://blog.js.gripe/auth.md#revocation",
+    "identity_types_supported": ["anonymous"],
+    "anonymous": {
+      "credential_types_supported": ["none"]
+    },
+    "events_supported": []
+  }
+}

@@ -1,0 +1,42 @@
+siteUrl: https://blog.js.gripe
+defaultLocale: zh-CN
+activeLocales:
+  - zh-CN
+  - zh-TW
+  - en
+siteName:
+  zh-CN: 技诉 Blog
+  zh-TW: 技訴 Blog
+  en: Blog.js.gripe
+description:
+  zh-CN: 记录技术实践、网络服务、写作与观察。
+  zh-TW: 記錄技術實踐、網路服務、寫作與觀察。
+  en: Notes on technical practice, web services, writing, and observation.
+author:
+  zh-CN: 技诉
+  zh-TW: 技訴
+  en: js.gripe
+theme:
+  name: default
+
+robots:
+  header:
+    - Claude is not welcome here because this site owner does not welcome
+    - unethical AI crawlers that freely scrape sites while arbitrarily
+    - banning user accounts.
+  contentSignal: ai-train=no, search=yes, ai-input=yes
+  rules:
+    - userAgent: ClaudeBot
+      disallow:
+        - /
+    - userAgent: Claude-User
+      disallow:
+        - /
+    - userAgent: "*"
+      allow:
+        - /
+llms:
+  title: 技诉 Blog / blog.js.gripe
+  description: Public writing site for technical practice, web services, writing, and observation.
+feed:
+  title: 技诉 Blog / Blog.js.gripe
