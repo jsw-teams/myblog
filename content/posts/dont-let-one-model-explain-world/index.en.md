@@ -8,9 +8,6 @@ tags: ["AI", "Hallucinations", "Censorship", "Information Literacy", "Human Disc
 category: "Current Affairs"
 draft: false
 ---
-
-Subtitle: Hallucinations, built-in censorship defaults, sycophantic answers, and why we still need human voices in an age of information overload
-
 ## 1. The Problem Is Not "Using AI." The Problem Is When AI Is All That Is Left.
 
 I do not want to reduce people who "over-rely on AI" to laziness. Very often, people are not unwilling to look things up. They are simply out of time and energy after work. At the end of the day, they open the news, short videos, group chats, and search results, and information is everywhere. An ordinary person cannot live like a researcher every day, tracing every issue back to its original source.
