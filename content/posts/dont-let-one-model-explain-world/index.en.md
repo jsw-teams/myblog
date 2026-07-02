@@ -143,7 +143,6 @@ It is not simply that "models can be wrong."
 It is more like a contraction of the information environment.
 
 When people have no time, AI becomes the lowest-effort entry point to information.  
-When network access is restricted, AI becomes one of the few available explanatory tools.  
 When models have censorship defaults, users receive trimmed answers.  
 When models are sycophantic, users receive packaged bias.  
 When human discussion grows quiet, users become more likely to treat the model as the only reliable object.
@@ -184,9 +183,5 @@ AI really can save time, organize materials, assist with writing, and help many 
 When facing errors and bias, the right response is not simply deletion either. If an error is only deleted, it may simply circulate somewhere else. What matters more is argument, clarification, comparison, and questioning, through which new consensus can slowly form.
 
 But that process cannot be handed entirely to models.
-
-Because models make language smooth.  
-Real people make questions messy.  
-Sometimes that mess is necessary.
 
 It reminds us that the world should not be explained by only one model.
