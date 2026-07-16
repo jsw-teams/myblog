@@ -72,6 +72,38 @@ function manifestEntryIsUsable(entry, publicDir) {
   return Boolean(localPath && fsSync.existsSync(localPath));
 }
 
+async function renderOgImage(source, outputPath, sharp) {
+  // Normalize EXIF orientation once, then reuse identical pixels for both
+  // layers. The blurred layer fills the social-card canvas while the sharp
+  // foreground uses `contain`, ensuring that no part of the original cover is
+  // cropped on Facebook, X, LinkedIn, Slack, or other 1200×630 previews.
+  const normalized = await sharp(source).rotate().toBuffer();
+  const background = await sharp(normalized)
+    .resize(OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT, {
+      fit: "cover",
+      position: "attention"
+    })
+    .blur(32)
+    .modulate({ brightness: 0.58, saturation: 0.82 })
+    .toBuffer();
+  const foreground = await sharp(normalized)
+    .ensureAlpha()
+    .resize(OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT, {
+      fit: "contain",
+      background: { r: 0, g: 0, b: 0, alpha: 0 }
+    })
+    .png()
+    .toBuffer();
+
+  await sharp(background)
+    .composite([{ input: foreground, blend: "over" }])
+    .jpeg({
+      quality: 86,
+      mozjpeg: true
+    })
+    .toFile(outputPath);
+}
+
 async function readImageSource(src, publicDir) {
   if (isRemoteUrl(src)) {
     if (process.env.OG_FETCH_REMOTE_COVERS !== "true") return null;
@@ -124,17 +156,7 @@ async function makeOgImage(src, { publicDir, contentKey }) {
     const filename = `${sourceHash}.jpg`;
 
     await fs.mkdir(outputDir, { recursive: true });
-    await sharp(source)
-      .rotate()
-      .resize(OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT, {
-        fit: "cover",
-        position: "attention"
-      })
-      .jpeg({
-        quality: 86,
-        mozjpeg: true
-      })
-      .toFile(path.join(outputDir, filename));
+    await renderOgImage(source, path.join(outputDir, filename), sharp);
 
     const entry = {
       url: `${urlDir}/${filename}`,
