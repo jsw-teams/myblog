@@ -8,7 +8,7 @@ author: "年；均；颉；Codex 观澜"
 tags: ["AI 税", "技术性失业", "再培训", "UBI", "Bernie Sanders"]
 category: "热点时事"
 draft: false
-cover: "https://r2.files.js.gripe/files/fil_vZUnWcJ6nQiRCGBBvo302mn1.jpg"
+cover: "https://pictor.js.gripe/i/d800a180-056a-4dce-e031-a960802d2500/public.jpg"
 ---
 
 AI 会不会替代大量工作，已经不是一句“会”或“不会”能回答的问题。更准确的说法是：AI 会先替代任务，再重组岗位，最后在部分行业形成真实的岗位消失。真正棘手的不是技术预测本身，而是后面的公共账本：如果模型和智能体承担了越来越多原本由人完成的劳动，国家该不该征 AI 税？失业保险、再培训、工资保险和 AI 红利又该怎么设计？
@@ -17,7 +17,7 @@ AI 会不会替代大量工作，已经不是一句“会”或“不会”能�
 
 本期文章不把任何一份材料当成主轴。GPT 深度调查分析负责给出跨国政策与数据背景；Gemini 深度搜索负责把技术性失业、裁员案例和财税治理推到更尖锐的位置；均姐分析稿负责压住事实边界，提醒读者不要把提案写成制度、把暴露写成失业；年导分析稿负责把分配压力、税基流失和青年入口岗位收缩讲到台前。四份材料彼此有张力，也正因为有张力，才值得合读。
 
-![Bernie Sanders 围绕 AI 公共持股与财富基金提案发声](https://r2.files.js.gripe/files/fil_bV2BpeJpfwxTUiSJlV3fgkp9.jpg)
+![Bernie Sanders 围绕 AI 公共持股与财富基金提案发声](https://pictor.js.gripe/i/52806251-ed50-4db8-6451-7d212ccc1d00/public.jpg)
 
 *图片来源：AP News，2026-06-19。*
 
@@ -139,10 +139,6 @@ AI 税不该被写成“全球马上开征”，也不该被写成“完全不�
 
 ## 资料下载
 
-- [GPT深度调查分析 PDF](https://r2.files.js.gripe/files/fil_jDotXIjzpuoVCE3N2THr55vn.pdf)
-- [Gemini深度搜索 PDF](https://r2.files.js.gripe/files/fil_-NL00vCtLxUq1hK8G7pluRkH.pdf)
-- [AI 税与失业 均姐 分析稿 Markdown](https://r2.files.js.gripe/files/fil_Wlr4Ve6n485dfagGeV2tchcq.md)
-- [AI 税与失业年导分析稿 Markdown](https://r2.files.js.gripe/files/fil_HtmCKh1_Mwp8cB6sqVm69e7N.md)
 
 ## 来源
 

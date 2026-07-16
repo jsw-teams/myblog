@@ -55,11 +55,6 @@
   document.documentElement.setAttribute("data-preferred-locale", preferred);
   setupWebMcp();
 
-  if (document.body && document.body.getAttribute("data-root-language-picker") === "true") {
-    var target = withBase("/" + preferred + "/");
-    window.location.replace(target);
-  }
-
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -471,84 +466,6 @@
     });
   }
 
-  function setupComments() {
-    var roots = Array.prototype.slice.call(document.querySelectorAll("[data-comments-root]"));
-    if (!roots.length) return;
-
-    roots.forEach(function (root) {
-      loadTwikooComments(root);
-    });
-  }
-
-  function loadTwikooComments(root) {
-    var status = root.querySelector("[data-comments-status]");
-    var mount = root.querySelector("[data-twikoo-mount]");
-    var envId = root.getAttribute("data-twikoo-env-id") || "";
-    var scriptUrl = root.getAttribute("data-twikoo-script") || "";
-    var loadingText = root.getAttribute("data-comments-loading") || "";
-    var errorText = root.getAttribute("data-comments-error") || "";
-
-    if (!mount || !envId || !scriptUrl) {
-      if (status) {
-        status.textContent = errorText;
-        status.classList.add("is-error");
-      }
-      return;
-    }
-
-    if (status) status.textContent = loadingText;
-
-    loadScriptOnce(scriptUrl, "twikoo-client")
-      .then(function () {
-        if (!window.twikoo || typeof window.twikoo.init !== "function") {
-          throw new Error("twikoo client is unavailable");
-        }
-
-        mount.id = mount.id || "twikoo-" + Math.random().toString(36).slice(2);
-        window.twikoo.init({
-          envId: envId,
-          el: "#" + mount.id,
-          path: window.location.pathname
-        });
-        if (status) status.hidden = true;
-      })
-      .catch(function () {
-        if (mount) mount.innerHTML = "";
-        if (status) {
-          status.hidden = false;
-          status.textContent = errorText;
-          status.classList.add("is-error");
-        }
-      });
-  }
-
-  function loadScriptOnce(src, id) {
-    return new Promise(function (resolve, reject) {
-      var existing = document.getElementById(id);
-      if (existing) {
-        if (existing.getAttribute("data-loaded") === "true") {
-          resolve();
-          return;
-        }
-        existing.addEventListener("load", resolve, { once: true });
-        existing.addEventListener("error", reject, { once: true });
-        return;
-      }
-
-      var script = document.createElement("script");
-      script.id = id;
-      script.src = src;
-      script.async = true;
-      script.defer = true;
-      script.onload = function () {
-        script.setAttribute("data-loaded", "true");
-        resolve();
-      };
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-  }
-
   function setupWebMcp() {
     function searchPublicPosts(input) {
       var query = String(input && input.query || "").trim();
@@ -666,5 +583,4 @@
   setupRegionMedia();
   setupArticleAudioTracks();
   setupArticleCaptionTracks();
-  setupComments();
 })();

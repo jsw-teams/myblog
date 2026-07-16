@@ -7,7 +7,7 @@ translationKey: "cloudflare-tunnel-cloudfront-origin"
 tags: ["Cloudflare Tunnel", "CloudFront", "OpenResty", "AWS", "回源"]
 category: "技术实践"
 draft: false
-cover: "https://r2.files.js.gripe/files/fil_3H6W_AeNx74WyvrYGyjWNGOq.png"
+cover: "https://pictor.js.gripe/i/496527fc-d5c9-4b97-5aea-0bed8e8ac600/public.png"
 ---
 
 这次迁移不是一开始就决定用 CloudFront + Cloudflare Tunnel。
@@ -217,7 +217,7 @@ server {
 
 这条路线的好处很直接：不用 Function，不需要在 viewer request 阶段改 URI，也不会因为多个业务域名共用同一个 distribution 而额外考虑缓存 key 隔离。只要一个业务域名对应一个 distribution，或者至少对应一个明确的 origin/header 组合，OpenResty 就能靠 `X-Origin-Host` 还原真实 vhost。
 
-它的问题不在技术可行性，而在套餐额度。CloudFront 免费/固定费率套餐里可用的 distribution 数量有限，当时最多只能放三个。如果继续坚持“一个业务域名一个 distribution”，`blog.js.gripe`、`www.js.gripe`、`js.gripe` 三个域名刚好把额度用满，后面再把 `dquery`、`myfiles`、`searchme`、`cf-relay` 这类动态转发或缓存策略不同的域名接进来，就没有余量了。
+它的问题不在技术可行性，而在套餐额度。CloudFront 免费/固定费率套餐里可用的 distribution 数量有限，当时最多只能放三个。如果继续坚持“一个业务域名一个 distribution”，`blog.js.gripe`、`www.js.gripe`、`js.gripe` 三个域名刚好把额度用满，后面再把 `dquery`、`searchme`、`cf-relay` 这类动态转发或缓存策略不同的域名接进来，就没有余量了。
 
 第二条路线是保留一个统一 origin，再用 CloudFront Function 在入口处识别 viewer host，把业务 host 写进 `X-Origin-Host`，并通过 `/_vhost/<host>` 前缀隔离缓存。这就是最后保留下来的方案。
 
@@ -331,7 +331,6 @@ map $origin_requested_host $origin_host_allowed {
     blog.js.gripe 1;
     dns.js.gripe 1;
     dquery.js.gripe 1;
-    files.js.gripe 1;
     gateway.js.gripe 1;
     js.gripe 1;
     search.js.gripe 1;

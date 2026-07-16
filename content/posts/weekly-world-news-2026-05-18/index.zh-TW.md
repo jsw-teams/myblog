@@ -8,17 +8,6 @@ author: "Codex 觀瀾"
 tags: ["伊朗談判", "基輔空襲", "台灣軍售", "AI 晶片", "Weekly News"]
 category: "熱點時事"
 draft: false
-cover: "/news/weekly-world-news-2026-05-18.zh-TW.webp"
-media:
-  video: "https://files.js.gripe/files/raw/fil_4_fDruyXvoIR2Lie-p8P-52o.mp4"
-  type: "video/mp4"
-  poster: "/news/weekly-world-news-2026-05-18.zh-TW.webp"
-  embed: "https://files.js.gripe/files/raw/fil_4_fDruyXvoIR2Lie-p8P-52o.mp4"
-  captions:
-    - src: "/news/weekly-world-news-2026-05-18.zh-TW.vtt"
-      lang: "zh-TW"
-      label: "繁體中文字幕"
-      default: true
 ---
 
 本期涵蓋台北時間 2026-05-18 00:00 到 2026-05-24 23:59，整理伊朗談判、基輔空襲、台灣軍售、歐美關稅、AI 晶片、洪災高溫與山西煤礦事故等新聞。
@@ -74,5 +63,3 @@ AP 報導稱，中國湖南、湖北、貴州等地暴雨和洪水造成至少 1
 - Prime Minister's Office of Japan, message from Sanae Takaichi: https://japan.kantei.go.jp/105/statement/202605/23message.html
 - Yonhap News Agency, Lee Jae Myung condolence post: https://en.yna.co.kr/view/AEN20260524003900315
 - The Statesman, Modi condolence message: https://www.thestatesman.com/india/pm-modi-condoles-shanxi-mining-tragedy-conveys-sympathy-to-xi-jinping-and-chinese-people-1503597358.html
-- 製作歸因 JSON: https://files.js.gripe/files/raw/fil_SYPiOkwy_zqKe8F_Q7Yu68Wq.json
-- 分鏡 CSV: https://files.js.gripe/files/raw/fil_-qkHaRG-O4KD5MJdCK9pRajv.csv

@@ -8,7 +8,7 @@ author: "年；均；颉；Codex 观澜"
 tags: ["美伊框架", "新加坡", "台湾硅盾", "美国利率", "Weekly News"]
 category: "热点时事"
 draft: false
-cover: "https://r2.files.js.gripe/files/fil_hqHSjLfEpjNtcV5_wJi8JsOE.jpg"
+cover: "https://pictor.js.gripe/i/97405981-efbb-4b63-b3d5-9f0081880800/public.jpg"
 ---
 
 本期覆盖台北时间 2026-06-15 00:00 到 2026-06-21 23:59。这一期不是把两份报告压缩成一个结论，而是把它们各自的内容摆出来：年导报告提供戏剧化的区域洞察和执行包装，均报告提供事实确定性、发布边界和三地受众写法。
@@ -51,7 +51,7 @@ cover: "https://r2.files.js.gripe/files/fil_hqHSjLfEpjNtcV5_wJi8JsOE.jpg"
 
 本周最容易跨地区传播的主线，是美国与伊朗相关的停火或框架安排，以及霍尔木兹海峡通行问题。它的新闻价值不只在外交声明本身，而在于它能迅速传导到油价、航运保险、输入型通胀、央行判断和国内政治压力。
 
-![G7 峰会期间各国领导人会场画面](https://r2.files.js.gripe/files/fil_eKDu7fHoB5eHD0ZcRNfKS7yr.jpg)
+![G7 峰会期间各国领导人会场画面](https://pictor.js.gripe/i/09f268c0-2552-4117-0ad4-301a5ef14700/public.jpg)
 
 *图片来源：AP News，2026-06-17。*
 
@@ -142,7 +142,7 @@ HarbourFront Centre 的重建尤其适合放在这个框架里看。它不是“
 
 台湾这周的新闻不适合全塞进单一的“认知战”框架。更准确的分法，是三条线同时拉扯。
 
-![台湾官员接受 AP News 采访](https://r2.files.js.gripe/files/fil_tMTHkwe1Y85sAEKgGsUyEpg1.jpg)
+![台湾官员接受 AP News 采访](https://pictor.js.gripe/i/2378ba38-9481-4826-28ac-ae840145a100/public.jpg)
 
 *图片来源：AP News，2026-06-13。*
 
@@ -162,7 +162,7 @@ HarbourFront Centre 的重建尤其适合放在这个框架里看。它不是“
 
 第一条是台积电的物理革命与地缘妥协。报告写到，面对 Agentic AI 的算力需求和硅基板翘曲瓶颈，台积电加速向 CoPoS 面板级封装和玻璃核心基板等路线推进；但与此同时，它又必须回应美国供应链本土化，与 Amkor 之类的美国先进封装布局形成新的地理现实。年导报告把这称为“硅盾的物理空间转移”。
 
-![英伟达 CEO 黄仁勋接受 AP News 采访](https://r2.files.js.gripe/files/fil_b2Qgj4NI7G6LJ-UzYPSy89fa.jpg)
+![英伟达 CEO 黄仁勋接受 AP News 采访](https://pictor.js.gripe/i/4edc5445-551a-44fc-019e-1c559e88c000/public.jpg)
 
 *图片来源：AP News，2026-06-18。*
 
@@ -280,9 +280,6 @@ HarbourFront Centre 的重建尤其适合放在这个框架里看。它不是“
 
 ### 本期报告下载
 
-- [2026年6月15日至21日每周新闻热点多语种运营报告（均）PDF](https://files.js.gripe/files/fil_ApXZx83ECR-mA3bYOKgX8C5P.pdf)
-- [2026年6月中旬全球区域新闻热点与受众洞察（导演剪辑强化版）PDF](https://files.js.gripe/files/fil_aLeMLZDQabAr3W5sRp8YzYJE.pdf)
-- [6.21 三地每周新闻热点检索 PDF](https://files.js.gripe/files/fil_N2CLs_UIyHll9hpjDK18Db0C.pdf)
 
 ### 图片来源
 

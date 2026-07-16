@@ -8,30 +8,6 @@ author: "Codex Guanlan"
 tags: ["Iran Risk", "Shangri-La Dialogue", "Taiwan AI", "Supply Chain", "Weekly News"]
 category: "Current Affairs"
 draft: false
-cover: "/news/weekly-world-news-2026-05-25.en.webp"
-media:
-  video: "https://files.js.gripe/files/raw/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
-  type: "video/mp4"
-  poster: "/news/weekly-world-news-2026-05-25.en.webp"
-  embed: "https://files.js.gripe/files/raw/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
-  captions:
-    - src: "/news/weekly-world-news-2026-05-25.en.vtt"
-      lang: "en"
-      label: "Verified/verbatim captions"
-      default: true
-  audioTrackLabel: "Voiceover guide"
-  audioTrackOffLabel: "Turn voiceover off"
-  audioTracks:
-    - src: "/news/weekly-world-news-2026-05-25.en.m4a"
-      lang: "en"
-      label: "US English voiceover"
-      default: true
-    - src: "/news/weekly-world-news-2026-05-25.zh-TW.m4a"
-      lang: "zh-TW"
-      label: "Taiwan Traditional Chinese"
-    - src: "/news/weekly-world-news-2026-05-25.zh-CN.m4a"
-      lang: "zh-CN"
-      label: "Singapore Simplified Chinese"
 ---
 
 This edition covers 2026-05-25 00:00 to 2026-05-31 23:59 in Asia/Taipei time. The video opens with AP-authorized footage on Iran and Hormuz risk, cross-checks the Shangri-La Dialogue through TaiwanPlus, DVIDS, and AP, then closes with Nvidia's expanding investment in Taiwan.

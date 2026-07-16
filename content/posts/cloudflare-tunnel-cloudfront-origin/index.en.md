@@ -7,7 +7,7 @@ translationKey: "cloudflare-tunnel-cloudfront-origin"
 tags: ["Cloudflare Tunnel", "CloudFront", "OpenResty", "AWS", "Origin"]
 category: "Technical Practice"
 draft: false
-cover: "https://r2.files.js.gripe/files/fil_3H6W_AeNx74WyvrYGyjWNGOq.png"
+cover: "https://pictor.js.gripe/i/496527fc-d5c9-4b97-5aea-0bed8e8ac600/public.png"
 ---
 
 This migration did not start with a decision to use CloudFront plus Cloudflare Tunnel.
@@ -216,7 +216,7 @@ Both `proxy_set_header Host` and `proxy_ssl_name` must point to `$origin_request
 
 This path is straightforward: no Function, no viewer-request URI rewrite, and no extra cache-key separation problem from putting many business hostnames behind one distribution. As long as one business hostname maps to one distribution, or at least to a clear origin/header pair, OpenResty can restore the real vhost from `X-Origin-Host`.
 
-The limitation was not technical feasibility; it was plan quota. The CloudFront free or flat-rate plan only allowed a limited number of distributions, and at the time the practical ceiling was three. If we kept one distribution per business hostname, `blog.js.gripe`, `www.js.gripe`, and `js.gripe` would consume the whole allowance. There would be no room left for `dquery`, `myfiles`, `searchme`, `cf-relay`, or other dynamic forwarding and cache-policy variants.
+The limitation was not technical feasibility; it was plan quota. The CloudFront free or flat-rate plan only allowed a limited number of distributions, and at the time the practical ceiling was three. If we kept one distribution per business hostname, `blog.js.gripe`, `www.js.gripe`, and `js.gripe` would consume the whole allowance. There would be no room left for `dquery`, `searchme`, `cf-relay`, or other dynamic forwarding and cache-policy variants.
 
 The second path keeps one unified origin. A CloudFront Function reads the viewer host, writes it to `X-Origin-Host`, and prefixes the URI with `/_vhost/<host>` for cache separation. This is the path I kept.
 
@@ -330,7 +330,6 @@ map $origin_requested_host $origin_host_allowed {
     blog.js.gripe 1;
     dns.js.gripe 1;
     dquery.js.gripe 1;
-    files.js.gripe 1;
     gateway.js.gripe 1;
     js.gripe 1;
     search.js.gripe 1;

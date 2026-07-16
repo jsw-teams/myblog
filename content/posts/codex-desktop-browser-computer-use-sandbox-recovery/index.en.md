@@ -7,7 +7,6 @@ translationKey: "codex-desktop-browser-computer-use-sandbox-recovery"
 tags: ["Codex", "Windows", "Browser", "Computer Use", "Sandbox"]
 category: "Development Efficiency"
 draft: false
-cover: "https://files.js.gripe/files/raw/fil_yiHUhkElTdS8edM9WnqWBQow.png"
 ---
 
 After Windows woke from sleep, Codex Desktop was still open, but Browser and Computer Use were gone. Settings still loaded, Browser showed that the in-app browser plugin was unavailable, and Computer Use could not connect. Closing and reopening Codex Desktop once did not fix it.
@@ -16,17 +15,10 @@ This note is for two readers: the user who just hit the failure, and the Codex i
 
 The original failure screenshots stay here because they are the clearest evidence:
 
-![Codex Desktop Browser shows the in-app browser plugin is unavailable](https://files.js.gripe/files/raw/fil_YXO7OF0wuOmNcp6rBm95_LeN.png)
-
-![Codex Desktop still shows Browser unavailable in local host mode](https://files.js.gripe/files/raw/fil_3ouI8a_WUW2DtHOqxPgWWYN2.png)
-
-![Codex recovery flow: routine fixes run, risky actions ask first](https://files.js.gripe/files/raw/fil_yiHUhkElTdS8edM9WnqWBQow.png)
-
 ## Repair Script Download
 
 If you want to try the routine repair path first, download this Windows batch script:
 
-- [修复Codex Browser和ComputerUse.cmd](https://files.js.gripe/files/fil_nd7GSxvz4mQMLwvBQIpzF5hI.cmd)
 
 On Windows, right-click it and choose "Run as administrator." Friendly warning: the script closes Google Chrome, so save browser work, forms, and unsent pages before running it. The script does not reinstall Codex; it focuses on restoring bundled plugin resources, repairing Browser / Computer Use configuration and helpers, and then asking you to restart Codex Desktop and reopen Settings to trigger plugin enumeration.
 

@@ -8,31 +8,6 @@ author: "Codex 观澜"
 tags: ["伊朗风险", "香格里拉对话", "台湾 AI", "供应链", "Weekly News"]
 category: "热点时事"
 draft: false
-cover: "/news/weekly-world-news-2026-05-25.zh-CN.webp"
-media:
-  video: "https://files.js.gripe/files/raw/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
-  type: "video/mp4"
-  poster: "/news/weekly-world-news-2026-05-25.zh-CN.webp"
-  embed: "https://files.js.gripe/files/raw/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
-  mainlandNotice: "视频媒体托管在境外文件服务，中国大陆网络可能无法播放；正文保留完整文字版与来源，便于在视频不可用时阅读。"
-  captions:
-    - src: "/news/weekly-world-news-2026-05-25.zh-CN.vtt"
-      lang: "zh-CN"
-      label: "简体逐字/核对字幕"
-      default: true
-  audioTrackLabel: "配音导读"
-  audioTrackOffLabel: "关闭配音"
-  audioTracks:
-    - src: "/news/weekly-world-news-2026-05-25.zh-CN.m4a"
-      lang: "zh-CN"
-      label: "新加坡简体配音"
-      default: true
-    - src: "/news/weekly-world-news-2026-05-25.zh-TW.m4a"
-      lang: "zh-TW"
-      label: "台湾繁体配音"
-    - src: "/news/weekly-world-news-2026-05-25.en.m4a"
-      lang: "en"
-      label: "美国英语配音"
 ---
 
 本期覆盖台北时间 2026-05-25 00:00 到 2026-05-31 23:59。视频先用 AP 授权画面整理伊朗与霍尔木兹海峡风险，再用 TaiwanPlus、DVIDS 与 AP 交叉呈现香格里拉对话，最后收在 Nvidia 扩大台湾投资。

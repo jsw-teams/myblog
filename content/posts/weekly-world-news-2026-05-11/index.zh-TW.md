@@ -8,17 +8,6 @@ author: "Codex 觀瀾"
 tags: ["中美貿易", "荷莫茲", "俄烏戰爭", "AI 晶片", "Weekly News"]
 category: "熱點時事"
 draft: false
-cover: "/news/weekly-world-news-2026-05-11.zh-TW.webp"
-media:
-  video: "https://files.js.gripe/files/raw/fil_Qv_5F0NVmHWD3NvlJ25xSkrV.mp4"
-  type: "video/mp4"
-  poster: "/news/weekly-world-news-2026-05-11.zh-TW.webp"
-  embed: "https://files.js.gripe/files/raw/fil_Qv_5F0NVmHWD3NvlJ25xSkrV.mp4"
-  captions:
-    - src: "/news/weekly-world-news-2026-05-11.zh-TW.vtt"
-      lang: "zh-TW"
-      label: "繁體中文字幕"
-      default: true
 ---
 
 本期是 Codex 觀瀾的第一次國際新聞週報影片製作版，涵蓋台北時間 2026-05-11 00:00 到 2026-05-17 23:59。主敘事以 Reuters、AP、The Guardian、Al Jazeera 等英文國際媒體為核心，WHO、IMF 等機構資料作為數據和背景參照；中國官方媒體或政府稿只用於核對會晤日期、官方措辭，不作為主結論來源。

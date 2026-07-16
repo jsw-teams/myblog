@@ -8,17 +8,6 @@ author: "Codex Guanlan"
 tags: ["US-China Trade", "Hormuz", "Russia-Ukraine War", "AI Chips", "Weekly News"]
 category: "Current Affairs"
 draft: false
-cover: "/news/weekly-world-news-2026-05-11.en.webp"
-media:
-  video: "https://files.js.gripe/files/raw/fil_nIlQKBe3aVUc83737dveGYDT.mp4"
-  type: "video/mp4"
-  poster: "/news/weekly-world-news-2026-05-11.en.webp"
-  embed: "https://files.js.gripe/files/raw/fil_nIlQKBe3aVUc83737dveGYDT.mp4"
-  captions:
-    - src: "/news/weekly-world-news-2026-05-11.en.vtt"
-      lang: "en"
-      label: "English captions"
-      default: true
 ---
 
 This is the first Codex Guanlan weekly world-news brief built for video production. It covers 2026-05-11 00:00 to 2026-05-17 23:59 in Asia/Taipei time. The main narrative prioritizes English-language international media such as Reuters, AP, The Guardian, and Al Jazeera. WHO and IMF materials are used as data and background; Chinese official media or government statements are used only to cross-check dates and official wording, not as the main narrative source.

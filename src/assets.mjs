@@ -1,13 +1,15 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
+import { transform } from "esbuild";
 import { DEFAULT_OG_IMAGE } from "./og-images.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
 const publicDir = path.join(rootDir, "static");
 const assetsDir = path.join(publicDir, "assets");
-const sourceDir = path.join(rootDir, "source-assets");
+const sourceDir = path.join(rootDir, "content", "assets");
 const cacheDir = path.join(rootDir, ".cache");
 const basePath = "";
 
@@ -24,7 +26,9 @@ const { default: sharp } = await import("sharp");
 const sourceFiles = {
   daily: path.join(sourceDir, "mascot-daily-actions.png"),
   emotions: path.join(sourceDir, "mascot-emotions.png"),
-  error: path.join(sourceDir, "mascot-error-actions.png")
+  error: path.join(sourceDir, "mascot-error-actions.png"),
+  icon: path.join(sourceDir, "icon-source.png"),
+  og: path.join(sourceDir, "og-default-source.png")
 };
 
 const cropConfig = {
@@ -145,8 +149,7 @@ async function writeCrop(sourceKey, crop, outputName, width) {
 }
 
 async function makeIconPng(size, output) {
-  const crop = cropConfig.daily.crops.laptop;
-  await (await transparentCrop("daily", crop))
+  await sharp(sourceFiles.icon)
     .resize(size, size, {
       fit: "contain",
       position: "centre"
@@ -214,44 +217,36 @@ async function writeManifest() {
 }
 
 async function copyBaseFiles() {
-  await fs.copyFile(path.join(rootDir, "src", "styles.css"), path.join(assetsDir, "site.css"));
-  await fs.copyFile(path.join(rootDir, "src", "client.js"), path.join(assetsDir, "client.js"));
+  const files = [
+    ["styles.css", "site.css", "css"],
+    ["client.js", "client.js", "js"],
+    ["consent.js", "consent.js", "js"]
+  ];
+  const staleAssets = await fs.readdir(assetsDir);
+  await Promise.all(staleAssets
+    .filter((file) => /^(?:site|client|consent)(?:\.[a-f0-9]{12})?\.(?:css|js)$/.test(file))
+    .map((file) => fs.rm(path.join(assetsDir, file), { force: true })));
+  const manifest = {};
+  await Promise.all(files.map(async ([source, output, loader]) => {
+    const input = await fs.readFile(path.join(rootDir, "src", source), "utf8");
+    const result = await transform(input, {
+      legalComments: "none",
+      loader,
+      minify: true,
+      target: loader === "js" ? "es2018" : undefined
+    });
+    const content = result.code.trim();
+    const parsed = path.parse(output);
+    const hash = crypto.createHash("sha256").update(content).digest("hex").slice(0, 12);
+    const hashedName = `${parsed.name}.${hash}${parsed.ext}`;
+    manifest[output] = `/assets/${hashedName}`;
+    await fs.writeFile(path.join(assetsDir, hashedName), content, "utf8");
+  }));
+  await fs.writeFile(path.join(assetsDir, "asset-manifest.json"), `${JSON.stringify(manifest)}\n`, "utf8");
 }
 
 async function writeOgImage() {
-  const mascot = await (await transparentCrop("daily", cropConfig.daily.crops.reading))
-    .resize({ width: 390 })
-    .png()
-    .toBuffer();
-
-  const svg = `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
-    <rect width="1200" height="630" fill="#f8f4ec"/>
-    <rect x="54" y="54" width="1092" height="522" rx="28" fill="#fffdfa" stroke="#241f1a" stroke-width="4"/>
-    <circle cx="1042" cy="118" r="44" fill="#e6b352"/>
-    <circle cx="988" cy="520" r="58" fill="#4d8f85"/>
-    <rect x="92" y="138" width="360" height="42" rx="6" fill="#161616"/>
-    <rect x="92" y="212" width="520" height="22" rx="4" fill="#2f6f68"/>
-    <rect x="92" y="260" width="450" height="22" rx="4" fill="#d99a27"/>
-    <rect x="92" y="346" width="78" height="78" rx="8" fill="#2f6f68"/>
-    <rect x="190" y="346" width="78" height="78" rx="8" fill="#d99a27"/>
-    <rect x="288" y="346" width="78" height="78" rx="8" fill="#b94b4b"/>
-    <rect x="386" y="346" width="78" height="78" rx="8" fill="#241f1a"/>
-    <path d="M92 486H560" stroke="#d7ccbd" stroke-width="16" stroke-linecap="round"/>
-    <path d="M92 526H438" stroke="#d7ccbd" stroke-width="16" stroke-linecap="round"/>
-  </svg>`;
-
-  const image = sharp({
-    create: {
-      width: 1200,
-      height: 630,
-      channels: 4,
-      background: "#f8f4ec"
-    }
-  })
-    .composite([
-      { input: Buffer.from(svg), top: 0, left: 0 },
-      { input: mascot, top: 152, left: 730 }
-    ]);
+  const image = sharp(sourceFiles.og).resize(1200, 630, { fit: "cover" });
 
   await image.clone()
     .png({ compressionLevel: 9, adaptiveFiltering: true })

@@ -6,8 +6,8 @@ import { formatTaipeiWeekLabel, getPreviousTaipeiWeek } from "./lib/taipei-week.
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const sourcesPath = path.join(rootDir, "config/news-mvp.sources.json");
-const assetsPath = process.env.MYFILES_ASSET_MANIFEST
-  ? path.join(rootDir, process.env.MYFILES_ASSET_MANIFEST)
+const assetsPath = process.env.PICTOR_ASSET_MANIFEST
+  ? path.join(rootDir, process.env.PICTOR_ASSET_MANIFEST)
   : path.join(rootDir, "config/news-mvp.assets.json");
 
 function jsonString(value) {
@@ -53,17 +53,16 @@ function renderAttachmentManifest(assets, publicBase) {
   const images = Array.isArray(assets.images) ? assets.images : [];
   return [
     `- publicBase: ${publicBase}`,
-    `- cover: ${assets.cover || `${publicBase}/f/news-mvp/cover.webp`}`,
-    `- video: ${assets.video || `${publicBase}/f/news-mvp/weekly-world-news.mp4`}`,
+    `- cover: ${assets.cover || "待上传至 Pictor（非公开）"}`,
     "- images:",
-    ...(images.length ? images.map((image) => `  - ${image}`) : [`  - ${publicBase}/f/news-mvp/placeholder.webp`]),
+    ...(images.length ? images.map((image) => `  - ${image}`) : ["  - 待上传至 Pictor（非公开）"]),
   ].join("\n");
 }
 
 function fallbackBrief(week, sourceConfig) {
   return {
     title: `国际新闻周报：${formatTaipeiWeekLabel(week)}`,
-    description: "面向人工复核的国际新闻周报草稿，包含中文报告、视频旁白、时间线、素材关键词、英文来源列表与 myfiles 附件占位。",
+    description: "面向人工复核的国际新闻周报草稿，包含中文报告、时间线、素材关键词、英文来源列表与 Pictor 图片占位。",
     items: sourceConfig.defaultTopics.map((topic) => ({
       date: week.startDate,
       title: topic.title,
@@ -94,7 +93,7 @@ draft: true
 cover: ${jsonString(assets.cover || "")}
 ---
 
-这是一篇由 Weekly News MVP 生成的草稿，归档区间为台北时间 ${weekLabel}。内容用于人工编辑、事实核查和视频制作排期；发布前请逐条复核英文来源、机构原文、图片/视频授权与 myfiles 附件状态。
+这是一篇由 Weekly News MVP 生成的草稿，归档区间为台北时间 ${weekLabel}。内容用于人工编辑和事实核查；发布前请逐条复核英文来源、机构原文与图片授权。
 
 署名：Codex 观澜。
 
@@ -111,10 +110,6 @@ cover: ${jsonString(assets.cover || "")}
 
 ${renderHighlights(brief.items)}
 
-## 视频旁白稿
-
-${renderVoiceover(brief.items, weekLabel)}
-
 ## 时间线
 
 ${renderTimeline(brief.items)}
@@ -123,7 +118,7 @@ ${renderTimeline(brief.items)}
 
 ${renderAssetKeywords(brief.items)}
 
-## myfiles 附件占位
+## Pictor 图片占位
 
 ${renderAttachmentManifest(assets, publicBase)}
 
@@ -135,8 +130,8 @@ ${renderSourceList(uniqueSources)}
 
 - 核对每条新闻是否落在台北时间 ${weekLabel}。
 - 优先使用英文报道、国际机构、政府一手资料；中国官方媒体仅作辅助交叉验证。
-- 不直接搬运未授权图片或视频，素材只保留关键词或 myfiles 已托管链接。
-- 确认封面、视频、图片附件是否已经上传到 myfiles，再将草稿改为发布状态。
+- 不直接搬运未授权图片，素材只保留关键词或 Pictor 返回的托管链接。
+- 确认封面和正文图片已经以非公开资源上传到 Pictor，再将草稿改为发布状态。
 `;
 }
 
@@ -149,9 +144,12 @@ async function main() {
   }
 
   const week = getPreviousTaipeiWeek(referenceDate);
-  const publicBase = process.env.MYFILES_PUBLIC_BASE || "https://files.js.gripe";
+  const publicBase = "https://pictor.js.gripe";
   const sourceConfig = await readJson(sourcesPath);
-  const assetManifest = await readJson(assetsPath);
+  const assetManifest = await readJson(assetsPath).catch((error) => {
+    if (error.code === "ENOENT") return {};
+    throw error;
+  });
   const brief = sourceConfig.weeklyBriefs?.[week.key] ?? fallbackBrief(week, sourceConfig);
   const assets = assetManifest[week.key] ?? {};
   const outputDir = path.join(rootDir, "content/posts", week.slug);

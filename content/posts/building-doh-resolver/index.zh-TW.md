@@ -7,7 +7,6 @@ translationKey: "building-doh-resolver"
 tags: ["DNS", "DoH", "dquery", "解析器", "網路服務"]
 category: "技術實作"
 draft: false
-cover: "https://files.js.gripe/files/raw/fil_URqoWfEq4-y7JbJVYu95nxVC.png"
 ---
 
 DNS 看起來像網際網路裡最樸素的一環：給一個域名，拿一個地址。
@@ -45,8 +44,6 @@ dquery 仍處在小規模測試和持續完善階段，所以本文不會提供�
 
 所以，「根伺服器系統是否穩定」和「使用者日常拿到的 DNS 答案是否中立」，是兩個相關但不同的問題。
 
-![DNS 分層與常見誤解：根區、國家頂級域、遞歸解析路徑和用戶設備不是同一層問題](https://files.js.gripe/files/raw/fil_URqoWfEq4-y7JbJVYu95nxVC.png)
-
 ### 根伺服器問題要放回正確層級
 
 早期中文網際網路裡，經常能看到一種說法：「中國沒有根伺服器，所以如果被美國制裁，域名系統可能一夜失效。」這類說法有歷史背景，但表述過於粗糙。
@@ -83,8 +80,6 @@ dquery 仍處在小規模測試和持續完善階段，所以本文不會提供�
 一個公開 DNS 服務，如果只返回答案，卻不解釋答案從哪裡來，就很容易變成新的黑盒。
 
 dquery 的目標不是做一個神祕的「萬能 DNS」，而是把解析過程拆成幾個可以理解的步驟：
-
-![dquery 遞歸解析器處理流程：入口判斷、區域與帳戶策略、本地規則、正規化快取、上游遞歸和 DNS 回應](https://files.js.gripe/files/raw/fil_lufD3AWsokIl2nU0HuOwaJsW.png)
 
 ```text
 用戶端請求
@@ -160,8 +155,6 @@ DoH 的 GET 請求會把 DNS wire message 經過 Base64URL 編碼後放進 HTTP 
 協定文件其實已經注意到這個問題，並建議 DoH 用戶端在某些格式下使用 ID=0，以提高 HTTP 快取友好性。但現實中，我們不能假設所有用戶端都這麼做。
 
 所以，服務端必須自己處理這個問題。
-
-![DNS Transaction ID 導致 DoH 快取困難：後端正規化快取鍵，命中後改回當前回應 ID](https://files.js.gripe/files/raw/fil_mIBJd5f7eC1_06mYhD0k8kUv.png)
 
 ## 為什麼不把正規化全部放在邊緣腳本
 

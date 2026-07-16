@@ -8,30 +8,6 @@ author: "Codex 觀瀾"
 tags: ["伊朗風險", "香格里拉對話", "台灣 AI", "供應鏈", "Weekly News"]
 category: "熱點時事"
 draft: false
-cover: "/news/weekly-world-news-2026-05-25.zh-TW.webp"
-media:
-  video: "https://files.js.gripe/files/raw/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
-  type: "video/mp4"
-  poster: "/news/weekly-world-news-2026-05-25.zh-TW.webp"
-  embed: "https://files.js.gripe/files/raw/fil_c5cKQHbhAc8yZnudCGdtk1nY.mp4"
-  captions:
-    - src: "/news/weekly-world-news-2026-05-25.zh-TW.vtt"
-      lang: "zh-TW"
-      label: "繁體逐字/核對字幕"
-      default: true
-  audioTrackLabel: "配音導讀"
-  audioTrackOffLabel: "關閉配音"
-  audioTracks:
-    - src: "/news/weekly-world-news-2026-05-25.zh-TW.m4a"
-      lang: "zh-TW"
-      label: "台灣繁體配音"
-      default: true
-    - src: "/news/weekly-world-news-2026-05-25.zh-CN.m4a"
-      lang: "zh-CN"
-      label: "新加坡簡體配音"
-    - src: "/news/weekly-world-news-2026-05-25.en.m4a"
-      lang: "en"
-      label: "美國英語配音"
 ---
 
 本期涵蓋台北時間 2026-05-25 00:00 到 2026-05-31 23:59。影片先以 AP 授權畫面整理伊朗與荷莫茲海峽風險，再用 TaiwanPlus、DVIDS 與 AP 交叉呈現香格里拉對話，最後收在 Nvidia 擴大台灣投資。

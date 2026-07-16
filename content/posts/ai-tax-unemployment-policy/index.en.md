@@ -8,7 +8,7 @@ author: "Nian (年); Jun (均); Jie (颉); Codex Guanlan (Codex 观澜)"
 tags: ["AI Tax", "Technological Unemployment", "Reskilling", "UBI", "Bernie Sanders"]
 category: "Current Affairs"
 draft: false
-cover: "https://r2.files.js.gripe/files/fil_vZUnWcJ6nQiRCGBBvo302mn1.jpg"
+cover: "https://pictor.js.gripe/i/d800a180-056a-4dce-e031-a960802d2500/public.jpg"
 ---
 
 Whether AI will replace large numbers of jobs can no longer be answered with a simple yes or no. The sharper answer is that AI first replaces tasks, then reorganizes jobs, and eventually creates real job losses in some sectors. The difficult question is the public ledger behind that shift: if models and agents perform more work once done by humans, should governments tax AI, and how should unemployment insurance, reskilling, wage insurance, and AI dividends be designed?
@@ -17,7 +17,7 @@ Whether AI will replace large numbers of jobs can no longer be answered with a s
 
 This article does not make any one source the axis. GPT Deep Research Analysis supplies cross-country policy and data context. Gemini Deep Search pushes the job-loss and fiscal-governance pressure harder. Jun (均)'s analysis keeps the factual boundaries in place: do not turn proposals into enacted systems, and do not turn exposure into unemployment. Nian (年)'s analysis brings distributional stress, shrinking labor-tax bases, and disappearing entry-level pathways to the foreground.
 
-![Bernie Sanders speaking around an AI public-ownership and wealth-fund proposal](https://r2.files.js.gripe/files/fil_bV2BpeJpfwxTUiSJlV3fgkp9.jpg)
+![Bernie Sanders speaking around an AI public-ownership and wealth-fund proposal](https://pictor.js.gripe/i/52806251-ed50-4db8-6451-7d212ccc1d00/public.jpg)
 
 *Image source: AP News, 2026-06-19.*
 
@@ -122,10 +122,6 @@ AI is not simply stealing jobs, and it will not automatically create prosperity.
 
 ## Downloads
 
-- [GPT Deep Research Analysis PDF](https://r2.files.js.gripe/files/fil_jDotXIjzpuoVCE3N2THr55vn.pdf)
-- [Gemini Deep Search PDF](https://r2.files.js.gripe/files/fil_-NL00vCtLxUq1hK8G7pluRkH.pdf)
-- [Jun (均) Analysis On AI Tax And Unemployment Markdown](https://r2.files.js.gripe/files/fil_Wlr4Ve6n485dfagGeV2tchcq.md)
-- [Nian (年) Analysis On AI Tax And Unemployment Markdown](https://r2.files.js.gripe/files/fil_HtmCKh1_Mwp8cB6sqVm69e7N.md)
 
 ## Sources
 

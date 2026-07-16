@@ -8,7 +8,7 @@ author: "Nian; Jun; Jie; Codex Guanlan"
 tags: ["US-Iran Framework", "Singapore", "Taiwan Silicon Shield", "US Rates", "Weekly News"]
 category: "Current Affairs"
 draft: false
-cover: "https://r2.files.js.gripe/files/fil_hqHSjLfEpjNtcV5_wJi8JsOE.jpg"
+cover: "https://pictor.js.gripe/i/97405981-efbb-4b63-b3d5-9f0081880800/public.jpg"
 ---
 
 This edition covers Taipei time from 2026-06-15 00:00 to 2026-06-21 23:59. It does not compress two source reports into one tidy conclusion. Instead, it keeps their contents visible: Nian's report supplies the dramatic regional operating frame, while Jun's report supplies factual guardrails, publishing boundaries, and audience-specific writing advice.
@@ -35,7 +35,7 @@ Read together, the keyword is not "turning point." It is "buffer." Nian's report
 
 Nian's report frames the US-Iran arrangement as "fragile peace forced by inflation." In its reading, the US is not calmly claiming a diplomatic victory. It is searching for a ceasefire window under domestic macroeconomic pressure, fuel costs, and inflation anxiety.
 
-![World leaders during the G7 summit](https://r2.files.js.gripe/files/fil_eKDu7fHoB5eHD0ZcRNfKS7yr.jpg)
+![World leaders during the G7 summit](https://pictor.js.gripe/i/09f268c0-2552-4117-0ad4-301a5ef14700/public.jpg)
 
 *Image source: AP News, 2026-06-17.*
 
@@ -72,13 +72,13 @@ Guanlan read: Nian sees Singapore adding armor through infrastructure. Jun asks 
 
 Nian's Taiwan section is built around a clash between hard technology and soft influence. On TSMC and advanced packaging, it argues that agentic AI demand, silicon substrate warpage, CoPoS panel-level packaging, and glass core substrates are pushing packaging into a new physical structure. At the same time, US supply-chain localization and Amkor-style advanced-packaging investments complicate the geographic meaning of the silicon shield.
 
-![A Taiwan official in an AP News interview](https://r2.files.js.gripe/files/fil_tMTHkwe1Y85sAEKgGsUyEpg1.jpg)
+![A Taiwan official in an AP News interview](https://pictor.js.gripe/i/2378ba38-9481-4826-28ac-ae840145a100/public.jpg)
 
 *Image source: AP News, 2026-06-13.*
 
 The second Taiwan line is culture. Nian uses costume drama, forum appearances, and celebrity circulation as examples of how softer content can enter the emotional field of younger Taiwan audiences with lower hostility and lower friction than direct political messaging.
 
-![Nvidia CEO Jensen Huang in an AP News interview](https://r2.files.js.gripe/files/fil_b2Qgj4NI7G6LJ-UzYPSy89fa.jpg)
+![Nvidia CEO Jensen Huang in an AP News interview](https://pictor.js.gripe/i/4edc5445-551a-44fc-019e-1c559e88c000/public.jpg)
 
 *Image source: AP News, 2026-06-18.*
 
@@ -114,9 +114,6 @@ Jun's report answers how the article should remain responsible to readers: facts
 
 ### Report Downloads
 
-- [Weekly Multilingual News Operations Report, June 15-21, 2026 (Jun) PDF](https://files.js.gripe/files/fil_ApXZx83ECR-mA3bYOKgX8C5P.pdf)
-- [Global Regional News Hotspots And Audience Insights, Director's Cut PDF](https://files.js.gripe/files/fil_aLeMLZDQabAr3W5sRp8YzYJE.pdf)
-- [June 21 Tri-Region Weekly News Hotspot Retrieval PDF](https://files.js.gripe/files/fil_N2CLs_UIyHll9hpjDK18Db0C.pdf)
 
 ### Image Sources
 

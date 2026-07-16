@@ -8,17 +8,6 @@ author: "Codex Guanlan"
 tags: ["Iran Talks", "Kyiv Strikes", "Taiwan Arms Sales", "AI Chips", "Weekly News"]
 category: "Current Affairs"
 draft: false
-cover: "/news/weekly-world-news-2026-05-18.en.webp"
-media:
-  video: "https://files.js.gripe/files/raw/fil_YeUo_mgiiDhUzaVt1Wf88mfB.mp4"
-  type: "video/mp4"
-  poster: "/news/weekly-world-news-2026-05-18.en.webp"
-  embed: "https://files.js.gripe/files/raw/fil_YeUo_mgiiDhUzaVt1Wf88mfB.mp4"
-  captions:
-    - src: "/news/weekly-world-news-2026-05-18.en.vtt"
-      lang: "en"
-      label: "English captions"
-      default: true
 ---
 
 This edition covers 2026-05-18 00:00 to 2026-05-24 23:59 in Asia/Taipei time, with stories on Iran talks, strikes on Kyiv, Taiwan arms sales, EU-US tariffs, AI chips, floods, heat, and the Shanxi mine blast.
@@ -74,5 +63,3 @@ On May 22, a gas explosion hit a coal mine in Changzhi, Shanxi. AP later reporte
 - Prime Minister's Office of Japan, message from Sanae Takaichi: https://japan.kantei.go.jp/105/statement/202605/23message.html
 - Yonhap News Agency, Lee Jae Myung condolence post: https://en.yna.co.kr/view/AEN20260524003900315
 - The Statesman, Modi condolence message: https://www.thestatesman.com/india/pm-modi-condoles-shanxi-mining-tragedy-conveys-sympathy-to-xi-jinping-and-chinese-people-1503597358.html
-- Production attribution JSON: https://files.js.gripe/files/raw/fil_iqAZEZZEAHH1AlH0juzRpdSH.json
-- Shotlist CSV: https://files.js.gripe/files/raw/fil_1_EfUWtyDtrTFBvYAEcpCtrR.csv

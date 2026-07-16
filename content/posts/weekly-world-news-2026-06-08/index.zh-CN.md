@@ -23,8 +23,6 @@ cover: "./news-images/northern-arabian-sea-rescue-dvids-2026-06-14.jpg"
 
 GPT 报告把 30 条入选新闻归为六类：安全 7 条，占 23%；经济 6 条，占 20%；政治和文化各 5 条，各占 17%；科技 4 条，占 13%；环境 3 条，占 10%。这说明本周不是一条战争新闻压倒一切，而是安全、价格、平台技术和区域治理同时抢占议程。
 
-![2026 年 6 月 14 日，北阿拉伯海救援现场中的商船与海空救援画面](https://files.js.gripe/files/raw/fil_iLrPHm_x6fa1JwAn8mT3cyEz.jpg)
-
 图片补充：北阿拉伯海救援现场用于承接本周海湾航道、霍尔木兹与美印阿曼湾摩擦的海上风险背景。图片来源：DVIDS / U.S. Navy public domain，2026-06-14。
 
 ## 内容提要
@@ -49,8 +47,6 @@ GPT 报告把美国 5 月 CPI 排在美国榜单第二，新加坡榜单第四�
 
 6 月 8 日这一天，GPT 时间轴上同时出现三件科技相关事件：Apple WWDC 发布 Siri AI，五角大楼更新中国涉军企业名单，联合国发布第三次世界海洋评估。科技、国家安全和环境治理并排出现，是本周很有代表性的画面。
 
-![Apple 在 WWDC26 展示 Apple Intelligence、Siri AI 与多平台软件更新](https://files.js.gripe/files/raw/fil_UWkwfpPpxMwC0aS1kbqTzTzU.jpg)
-
 图片补充：Apple Newsroom 发布的 WWDC26 官方图，用于呈现本周科技平台与 AI 终端体验的新闻线。图片来源：Apple Newsroom，2026-06-08。
 
 Apple 的新闻在美国排第四、台湾和新加坡都排第五。美国看的是 Apple 能否补上 AI 平台竞争的短板；台湾会多看硬件、供应链和终端设备能见度；新加坡则把它放进资本市场和平台周期里。
@@ -63,8 +59,6 @@ GPT 报告还把 CrowdStrike 中国资安警报列入美国榜单第九。它没
 
 GPT 的繁中台湾榜单里，台湾最显著的独有事件是“中国灰带压力与太平岛事件”，排第二。报告把它解释为台湾媒体对主权与安全的高敏感排序。也就是说，本周台湾读者不是只看美伊、通胀或 AI，而是在问：区域压力如何进入台湾自己的安全日常。
 
-![中国公务船三沙执法 301 出现在太平岛周边海域](https://files.js.gripe/files/raw/fil_kU3GvucKpzbgReBEYG8FjD0u.jpg)
-
 图片补充：这张由台湾海巡署提供、Focus Taiwan/CNA 发布的现场图，对应本周太平岛禁限制水域事件。图片来源：Focus Taiwan / CNA，CGA photo，2026-06-11。
 
 Gemini 报告则把镜头转向内部制度：2026 年中央政府总预算卡关、废除监察院争论、替代役逃兵处罚加重、演艺圈闪兵案、AI 智能眼镜作弊与校园安全事件。它们看似分散，其实都指向一个问题：当安全环境变紧，台湾如何公平分摊防务、预算、教育和公共安全成本。
@@ -74,8 +68,6 @@ Gemini 报告则把镜头转向内部制度：2026 年中央政府总预算卡�
 ### 5. 新加坡：中立不是姿态，是节点建设
 
 Gemini 报告对新加坡的处理最成体系。它把新加坡写成科技、金融、交通与水资源四条线共同构成的中立节点。
-
-![SuperAI Singapore 2026 在新加坡举行，现场展示参会规模与 AI 产业聚集](https://files.js.gripe/files/raw/fil_qqVgCEFVZZl287bkX7JPoS4c.jpg)
 
 图片补充：SuperAI Singapore 2026 会场资料图，用于承接新加坡 AI 周、会展平台和中立技术节点叙事。图片来源：PR Newswire / SuperAI，2026-06-09。
 
@@ -102,6 +94,3 @@ GPT 报告把 48 队世界杯开幕、联合国海洋评估、反 G7 示威和�
 ## 来源
 
 ### 本期报告下载
-
-- [ChatGPT Deep Research：2026-06-08 至 2026-06-14 全球新闻热点三语观察](https://files.js.gripe/files/raw/fil_q8aWRc5e7QrUXen5g-BKWNk3.pdf)
-- [Gemini DeepSearch：全球政治经济博弈、制度转型与科技前沿深度研究报告](https://files.js.gripe/files/raw/fil_QJS42tlmMKsTIY44HUYIQcAC.pdf)

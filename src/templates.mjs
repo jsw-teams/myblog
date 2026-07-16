@@ -1,6 +1,22 @@
 import { formatDate, htmlLang, localeLabel, LOCALES, t } from "./i18n.mjs";
+import fs from "node:fs";
+import path from "node:path";
 
 export const basePath = "";
+
+function readAssetManifest() {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(process.cwd(), "static", "assets", "asset-manifest.json"), "utf8"));
+  } catch {
+    return {};
+  }
+}
+
+const assetManifest = readAssetManifest();
+
+function builtAsset(name) {
+  return assetManifest[name] || `/assets/${name}`;
+}
 
 export function withBase(urlPath) {
   const value = String(urlPath || "");
@@ -106,6 +122,7 @@ function renderFooter(site, locale) {
     <nav class="footer-links" aria-label="${escapeHtml(t(locale, "sitemap"))}">
       <a href="${withBase(`/${locale}/feed.xml`)}">${escapeHtml(t(locale, "feed"))}</a>
       <a href="${withBase(`/${locale}/about/`)}">${escapeHtml(t(locale, "privacy"))}</a>
+      <button class="privacy-settings" type="button" data-consent-manage>${escapeHtml(t(locale, "privacySettings"))}</button>
       <a href="${withBase("/sitemap/")}">${escapeHtml(t(locale, "sitemap"))}</a>
     </nav>
   </footer>`;
@@ -205,7 +222,7 @@ export function renderLayout({
   <meta name="twitter:image" content="${escapeHtml(imageUrl)}">
   <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}">
   <script>window.JSGripeBasePath=${JSON.stringify(basePath)};</script>
-  <link rel="stylesheet" href="${withBase("/assets/site.css?v=20260623")}">
+  <link rel="stylesheet" href="${withBase(builtAsset("site.css"))}">
   ${renderJsonLd(jsonLd)}
 </head>
 <body${renderAttributes(bodyAttrs)}>
@@ -213,7 +230,8 @@ export function renderLayout({
   ${renderNav(site, locale, current)}
   ${main}
   ${renderFooter(site, locale)}
-  <script src="${withBase("/assets/client.js?v=20260623")}" defer></script>
+  <script src="${withBase(builtAsset("consent.js"))}" defer></script>
+  <script type="text/plain" data-consent-category="necessary" data-consent-src="${withBase(builtAsset("client.js"))}"></script>
 </body>
 </html>`;
 }
@@ -230,13 +248,17 @@ export function renderLanguageAvailability(locale, translations) {
   </nav>`;
 }
 
-export function renderPostCard(post, locale) {
+export function renderPostCard(post, locale, { featured = false } = {}) {
   const tags = post.tags.map((tag) => `<a href="${post.tagUrls[tag]}">${escapeHtml(tag)}</a>`).join("");
-  return `<article class="post-card">
-    <h3><a href="${post.url}">${escapeHtml(post.title)}</a></h3>
-    <p class="post-card-meta">${escapeHtml(formatDate(post.date, locale))} · <a href="${post.categoryUrl}">${escapeHtml(post.category)}</a></p>
-    <p>${escapeHtml(post.description)}</p>
-    <div class="tag-row">${tags}</div>
+  const image = post.cover || post.ogImage;
+  return `<article class="post-card${featured ? " post-card-featured" : ""}">
+    ${image ? `<a class="post-card-media" href="${post.url}" tabindex="-1" aria-hidden="true"><img src="${escapeHtml(image)}" alt="" loading="${featured ? "eager" : "lazy"}" width="1200" height="630"></a>` : ""}
+    <div class="post-card-body">
+      <p class="post-card-meta"><a href="${post.categoryUrl}">${escapeHtml(post.category)}</a><span>${escapeHtml(formatDate(post.date, locale))}</span></p>
+      <h3><a href="${post.url}">${escapeHtml(post.title)}</a></h3>
+      <p class="post-card-description">${escapeHtml(post.description)}</p>
+      <div class="tag-row">${tags}</div>
+    </div>
   </article>`;
 }
 
@@ -310,24 +332,6 @@ function renderMediaPlayer(post, locale) {
   </section>`;
 }
 
-function renderCommentSection(post, locale) {
-  return `<section class="article-comments"
-    data-comments-root
-    data-twikoo-env-id="https://api-comments.js.gripe"
-    data-twikoo-script="https://registry.npmmirror.com/twikoo/1.7.13/files/dist/twikoo.min.js"
-    data-comments-readonly="${escapeHtml(t(locale, "commentsReadOnlyMainland"))}"
-    data-comments-loading="${escapeHtml(t(locale, "commentsLoading"))}"
-    data-comments-empty="${escapeHtml(t(locale, "commentsEmpty"))}"
-    data-comments-error="${escapeHtml(t(locale, "commentsError"))}">
-    <div class="section-heading">
-      <h2>${escapeHtml(t(locale, "commentsTitle"))}</h2>
-    </div>
-    <p class="comments-note">${escapeHtml(t(locale, "commentsRules"))}</p>
-    <p class="comments-status" data-comments-status>${escapeHtml(t(locale, "commentsLoading"))}</p>
-    <div class="twikoo-mount" data-twikoo-mount></div>
-  </section>`;
-}
-
 function renderTermLinks(terms, emptyText) {
   if (!terms.length) return `<p class="empty">${escapeHtml(emptyText)}</p>`;
   return `<ul class="term-grid">
@@ -342,9 +346,11 @@ function renderPostList(posts, locale) {
 
 export function renderHomePage({ site, locale, posts }) {
   const description = site.description[locale] ?? site.description["zh-CN"];
+  const [featuredPost, ...recentPosts] = posts;
   const main = `<main id="main" class="page-main home-main">
     <section class="home-hero" aria-labelledby="home-title">
-      <div>
+      <div class="home-hero-copy">
+        <p class="home-kicker">Ideas · Technology · Life</p>
         <h1 id="home-title">${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</h1>
         <p class="lead">${escapeHtml(t(locale, "siteIntro"))}</p>
       </div>
@@ -353,8 +359,10 @@ export function renderHomePage({ site, locale, posts }) {
     <section class="home-section" aria-labelledby="latest-posts">
       <div class="section-heading">
         <h2 id="latest-posts">${escapeHtml(t(locale, "latestPosts"))}</h2>
+        <a href="/${locale}/archive/">${escapeHtml(t(locale, "archive"))} →</a>
       </div>
-      ${renderPostList(posts, locale)}
+      ${featuredPost ? renderPostCard(featuredPost, locale, { featured: true }) : `<p class="empty">${escapeHtml(t(locale, "noPosts"))}</p>`}
+      ${recentPosts.length ? `<div class="post-list">${recentPosts.map((post) => renderPostCard(post, locale)).join("")}</div>` : ""}
     </section>
   </main>`;
   return renderLayout({
@@ -371,7 +379,7 @@ export function renderHomePage({ site, locale, posts }) {
 }
 
 export function renderRootPage({ site }) {
-  const locale = "zh-CN";
+  const locale = LOCALES.includes(site.defaultLocale) ? site.defaultLocale : "zh-CN";
   const description = "选择语言入口开始阅读。選擇語言入口開始閱讀。 Choose a language to start reading.";
   const languageButtons = LOCALES.map((entryLocale, index) => {
     const className = index === 0 ? "button-link" : "button-link button-link-secondary";
@@ -381,21 +389,18 @@ export function renderRootPage({ site }) {
     <section class="language-choice" aria-labelledby="root-title">
       <img src="/assets/mascot-reading.png" alt="" width="230" height="345">
       <div>
-        <h1 id="root-title">${escapeHtml(site.siteName["zh-CN"])} / ${escapeHtml(site.siteName.en)}</h1>
+        <h1 id="root-title">${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])} / ${escapeHtml(site.siteName.en)}</h1>
         <p class="lead">${escapeHtml(description)}</p>
-        <div class="language-choice-links">
-          ${languageButtons}
-        </div>
+        <div class="language-choice-links">${languageButtons}</div>
       </div>
     </section>
   </main>`;
   return renderLayout({
     site,
     locale,
-    title: `${site.siteName["zh-CN"]} / ${site.siteName.en}`,
+    title: `${site.siteName[locale] ?? site.siteName["zh-CN"]} / ${site.siteName.en}`,
     description,
     url: "/",
-    current: "",
     main,
     alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/` })).concat({ hreflang: "x-default", url: "/" }),
     jsonLd: baseJsonLd(site, locale),
@@ -456,7 +461,6 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
       <div class="prose">
         ${post.html}
       </div>
-      ${renderCommentSection(post, locale)}
       <footer class="article-footer">
         <div class="article-end">
           <img src="/assets/mascot-happy.png" alt="" width="130" height="174">

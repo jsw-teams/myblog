@@ -554,14 +554,16 @@ Sitemap: ${absoluteUrl(site, "/sitemap.xml")}
 export function buildLlmsTxt(site, posts) {
   const latest = posts.slice(0, 60);
   const languageLines = LOCALES
-    .map((locale) => `- ${localeLabel(locale)}: ${absoluteUrl(site, `/${locale}/`)}`)
+    .map((locale) => `- [${localeLabel(locale)}](${absoluteUrl(site, `/${locale}/`)}): ${site.description[locale] ?? site.description[DEFAULT_LOCALE]}`)
     .join("\n");
   const articleLines = latest
-    .map((post) => `- ${post.title}: ${absoluteUrl(site, post.markdownUrl)}`)
+    .map((post) => `- [${post.title}](${absoluteUrl(site, post.markdownUrl)}): ${post.description}`)
     .join("\n");
   return `# 技诉 Blog / blog.js.gripe
 
-Public writing site for technical practice, web services, writing, and observation.
+> Public multilingual writing site for technical practice, web services, writing, and observation.
+
+Use the Markdown mirrors below for inference-time reading. Crawling and model-training preferences are declared separately in robots.txt and the Content-Signal response header; this file is a curated content guide, not a replacement for those controls.
 
 ## Languages
 

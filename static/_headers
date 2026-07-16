@@ -18,11 +18,11 @@
   Content-Signal: ai-train=no, search=yes, ai-input=yes
 
 /llms.txt
-  Content-Type: text/plain; charset=utf-8
+  Content-Type: text/markdown; charset=utf-8
   Content-Signal: ai-train=no, search=yes, ai-input=yes
 
 /llms-full.txt
-  Content-Type: text/plain; charset=utf-8
+  Content-Type: text/markdown; charset=utf-8
   Content-Signal: ai-train=no, search=yes, ai-input=yes
 
 /.well-known/api-catalog

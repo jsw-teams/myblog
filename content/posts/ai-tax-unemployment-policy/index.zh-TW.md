@@ -8,7 +8,7 @@ author: "年；均；頡；Codex 觀瀾"
 tags: ["AI 稅", "技術性失業", "再培訓", "UBI", "Bernie Sanders"]
 category: "熱點時事"
 draft: false
-cover: "https://r2.files.js.gripe/files/fil_vZUnWcJ6nQiRCGBBvo302mn1.jpg"
+cover: "https://pictor.js.gripe/i/d800a180-056a-4dce-e031-a960802d2500/public.jpg"
 ---
 
 AI 會不會取代大量工作，已經不是一句「會」或「不會」能回答的問題。更準確的說法是：AI 會先取代任務，再重組崗位，最後在部分產業形成真實的崗位消失。真正棘手的不是技術預測本身，而是後面的公共帳本：如果模型和智能體承擔了越來越多原本由人完成的勞動，國家該不該課 AI 稅？失業保險、再培訓、工資保險和 AI 紅利又該怎麼設計？
@@ -17,7 +17,7 @@ AI 會不會取代大量工作，已經不是一句「會」或「不會」能�
 
 本期文章不把任何一份材料當成主軸。GPT 深度調查分析負責給出跨國政策與數據背景；Gemini 深度搜尋負責把技術性失業、裁員案例和財稅治理推到更尖銳的位置；均姐分析稿負責壓住事實邊界，提醒讀者不要把提案寫成制度、把暴露寫成失業；年導分析稿負責把分配壓力、稅基流失和青年入口崗位收縮講到台前。
 
-![Bernie Sanders 圍繞 AI 公共持股與財富基金提案發聲](https://r2.files.js.gripe/files/fil_bV2BpeJpfwxTUiSJlV3fgkp9.jpg)
+![Bernie Sanders 圍繞 AI 公共持股與財富基金提案發聲](https://pictor.js.gripe/i/52806251-ed50-4db8-6451-7d212ccc1d00/public.jpg)
 
 *圖片來源：AP News，2026-06-19。*
 
@@ -122,10 +122,6 @@ AI 稅不該被寫成「全球馬上開徵」，也不該被寫成「完全不�
 
 ## 資料下載
 
-- [GPT 深度調查分析 PDF](https://r2.files.js.gripe/files/fil_jDotXIjzpuoVCE3N2THr55vn.pdf)
-- [Gemini 深度搜尋 PDF](https://r2.files.js.gripe/files/fil_-NL00vCtLxUq1hK8G7pluRkH.pdf)
-- [AI 稅與失業 均姐分析稿 Markdown](https://r2.files.js.gripe/files/fil_Wlr4Ve6n485dfagGeV2tchcq.md)
-- [AI 稅與失業 年導分析稿 Markdown](https://r2.files.js.gripe/files/fil_HtmCKh1_Mwp8cB6sqVm69e7N.md)
 
 ## 來源
 

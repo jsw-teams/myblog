@@ -7,7 +7,6 @@ translationKey: "claude-fable-mythos-5-export-control-rumor"
 tags: ["Claude", "Anthropic", "AI 安全", "出口管制", "輿論操縱"]
 category: "熱點時事"
 draft: false
-cover: "https://files.js.gripe/files/raw/fil_Am7n9MIP8GDxSsVv5eZydQnO.jpg"
 ---
 
 如果一個商業 AI 模型上線三天後，因為國家安全和出口管制理由被迫全球關停，這件事就不只是某家公司的一次產品事故。Claude Fable 5 / Mythos 5 的短暫上線和突然下線，更像一次預演：當前沿模型能力進入網路攻防、關鍵基礎設施和情報安全的灰區，真正決定模型命運的，未必是產品發表會上的技術指標，而是雲平台、國家安全機構和出口管制體系之間的力量關係。
@@ -150,6 +149,4 @@ Claude Fable 5 / Mythos 5 的下線風波，最值得記住的不是某個模型
 - [Business Insider: Inside the whirlwind 24 hours that led the White House to slap export controls on Anthropic](https://www.businessinsider.com/why-white-house-ordered-export-controls-anthropic-mythos-fable-2026-6)
 - [Reuters via The Economic Times: Amazon CEO raised concerns about Anthropic AI models before Trump crackdown](https://m.economictimes.com/tech/artificial-intelligence/amazon-ceo-raised-concerns-about-anthropic-ai-models-before-trump-crackdown-report/amp_articleshow/131708526.cms)
 - [TechTimes: Amazon Triggered Claude Fable 5 Shutdown](https://www.techtimes.com/articles/318350/20260614/amazon-triggered-claude-fable-5-shutdown-investor-cloud-host-now-regulator.htm)
-- [OpenAI 2026 年 6 月威脅報告](https://files.js.gripe/files/raw/fil_14A_JP9rnDi4GVX_P8ArKUnR.pdf)
-- [Claude 5 傳聞解析 PDF](https://files.js.gripe/files/raw/fil_rDyn6xRPnixAfUm_Dkhz2M-z.pdf)
 - 封面圖：[Datacenter.jpg](https://commons.wikimedia.org/wiki/File:Datacenter.jpg)，Wil Weterings / Wikimedia Commons，Public Domain
