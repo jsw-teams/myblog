@@ -1,8 +1,8 @@
 ---
-title: "From Global Governance Back to the Individual: Whether Models Are Open Determines Whether Users Can Leave"
-description: "Starting from the global debate between frontier-model protection and open cooperation, this article asks how users and developers can preserve the ability to migrate, replace, and exit."
+title: "From Global Governance Back to the Individual: Whether Models Are Open Ultimately Determines Whether Users Can Leave"
+description: "Starting from competing approaches to frontier-model protection, open cooperation, and multi-model platforms, this article examines how users and developers can preserve the ability to migrate data, replace models, and leave a platform."
 date: "2026-07-17"
-updated: "2026-07-17"
+updated: "2026-07-18"
 translationKey: "open-models-and-the-right-to-leave"
 tags: ["AI Governance", "Open Models", "Closed Models", "Platform Lock-in", "Portability"]
 category: "AI Commentary"
@@ -10,204 +10,147 @@ draft: false
 cover: "https://pictor.js.gripe/i/2296a6c8-5d9f-41af-63d2-b902aa8e7800/public.jpg"
 ---
 
-Demis Hassabis’s proposal for protecting frontier models and WAIC’s emphasis on open cooperation appear to concern global governance. Ultimately, however, they lead to a very practical question:
+Demis Hassabis has proposed creating a frontier AI standards body that would test models above a defined capability threshold before release and, when necessary, prevent high-risk models from entering the market. The proposal focuses on the most serious class of risk: preventing a model release that has not been adequately evaluated from causing irreversible harm to society. ([The Verge][1])
 
-When a model raises prices, degrades in quality, changes its rules, restricts regional access, or disappears altogether, can individual users and developers keep working?
+When Microsoft CEO Satya Nadella shared the article, he described the goal as building a frontier ecosystem that advances both “innovation and choice” while preventing a single model drop from “breaking the world.” Here, “model drop” means the release of a new model rather than a service outage. Sam Altman called it a thoughtful proposal. Their responses suggest that leading model companies are increasingly receptive to stricter frontier evaluations, but they do not establish that those companies agree on the proposed body’s powers, funding, or control over market access. ([X][2])
 
-For ordinary users, AI is not merely a search box that can be replaced at any time. After prolonged use, a platform may contain extensive conversation history, writing preferences, project context, files, memories, and workflows. Even when none of this material is used to train a model, it may remain tied to one account, history system, and set of product features. When the service changes, the user loses more than a model. They risk losing an established working environment.
-
-The dependency is deeper for developers. An application may be bound to one vendor’s model names, message format, tool-calling protocol, file APIs, vector storage, moderation rules, and billing system. The model is only one component. The system built around it is often far harder to migrate.
-
-The open-versus-closed debate should therefore examine more than whether model weights are published. It should ask whether users can migrate, substitute, and leave.
+Nor should Nadella’s “choice” be understood merely as putting more models inside one cloud platform. For individual consumers and developers, real choice includes another capability: when a model raises prices, changes its rules, is retired, or is no longer trustworthy, can users take their data and workflows somewhere else?
 
 <!--more-->
 
-### Closed Models Offer Convenience but Give Platforms Control over Continuity
+## Two Governance Approaches Ultimately Converge on the Same User
 
-The advantages of closed models are clear.
+Hassabis’s proposal represents a frontier-protection approach. The closer a model’s capabilities come to high-risk areas such as cyberattacks, biological design, and autonomous action, the stronger the case for testing it in a controlled environment. Some benchmarks and attack methods cannot be fully disclosed, and release decisions cannot be left entirely to developers themselves.
 
-Users do not need to obtain GPUs, configure deployment environments, or employ operations staff. They can register an account or call an API and immediately use a capable model. Security updates, vulnerability fixes, infrastructure scaling, and some compliance obligations remain primarily with the provider. For most individuals and small developers, this is far more accessible than self-hosting.
+The open-cooperation approach represented by WAIC puts a different risk first. If high-performance models, compute, and infrastructure remain concentrated among a small number of US companies, other countries, developers, and ordinary users will be limited to buying access instead of participating meaningfully in model development and localization. The 2025 *Global AI Governance Action Plan* released at WAIC called for cross-border open-source communities and the sharing of platforms, technical documentation, and non-sensitive resources. Discussions at WAIC in 2026 have continued to emphasize open-source models and capacity building in the Global South. ([Ministry of Foreign Affairs][3])
 
-The problem is that users receive access to a service, not control over a model.
+The two approaches are designed to prevent two different failures:
 
-A platform can change prices and quotas.
+One side fears that dangerous capabilities cannot be recalled once released; the other fears that AI capabilities will remain permanently sealed inside a handful of platforms.
 
-It can replace an older version with a new one.
+For individuals, this is not an abstract dispute between national strategies. A model’s degree of openness ultimately determines whether alternatives remain if it disappears, whether users can migrate when platform rules change, and whether the knowledge they previously gave a model must remain trapped in the original account.
 
-It can alter content rules and tool permissions.
+## Openness and Closure Are Not Synonyms for Maintenance Burden and Convenience
 
-It can restrict access for particular countries, regions, or accounts.
+Discussions of open models often fall into the same false contrast: users of open models supposedly have to buy GPUs, configure an environment, and shoulder all maintenance, while closed models are portrayed as inherently stable, convenient, and suitable for ordinary people.
 
-And after a government request, commercial decision, or security incident, it can stop offering a model entirely.
+Reality is more complicated.
 
-The controversy around Fable 5 and Mythos 5 mattered not only because two frontier models were reportedly affected by export restrictions. It exposed how little power users and developers of closed services have when access is interrupted. Once a model is suspended, the writing habits, coding workflows, and applications built around it may be disrupted at the same time.
+Multiple Qwen3 variants were released with open weights. Users can deploy them on servers through tools such as vLLM or run them on personal devices with Ollama, LM Studio, and llama.cpp. Open weights make self-deployment possible; they do not require every user to deploy locally. ([Qwen][4])
 
-Users cannot preserve the model itself or verify that a restored version behaves exactly as before. Developers may redirect an endpoint to another provider, only to discover that differences in behavior, context length, tool schemas, and safety boundaries break the application.
+Open models can also be hosted by cloud platforms. The Microsoft Foundry model catalog includes models from OpenAI, Anthropic, Meta, DeepSeek, Hugging Face, and other providers. Users may bring their own models or use versions managed by the platform. In the latter case, the cloud provider still handles compute, scaling, and basic operations. ([Microsoft Learn][5])
 
-Closed platforms can repair risk centrally. They can also decide centrally who is still permitted to use the model.
+Whether a model is open and whether a service is hosted are therefore separate questions:
 
-### Open Models Offer an Exit Route but Transfer Maintenance to the User
+An open model can be maintained by its user or by a platform; a closed model can be offered by its developer or accessed through several cloud providers.
 
-The value of an open-weight model is not limited to researchers inspecting parameters or carrying out fine-tuning. More importantly, it provides an exit route that does not depend completely on the original provider.
+The real difference appears when the hosted service ends: can the user still obtain the model and continue running it another way?
 
-As long as the weights, license, and runtime tools remain available, the model does not vanish merely because one company closes an API. Individuals and organizations can deploy it locally or run the same model through different cloud providers. Developers can preserve a tested version instead of being forced through an automatic upgrade.
+## Open Models Offer More Exit Routes, but Those Routes Require Preparation
 
-This portability also matters to individual consumers.
+For individual users, the most direct value of an open model is preserving a way to run it outside a platform.
 
-Users can process sensitive files in a local environment.
+Users can process confidential material locally, retain a verified model version, or fall back to a less capable but continuously available local model for basic tasks when a commercial service is unavailable. The point is not necessarily to pursue the strongest performance. It is to prevent all work from stopping when one account fails.
 
-They can retain a particular version and avoid sudden behavioral changes.
+Open weights, however, do not automatically create independence.
 
-They can adapt a model to their language and tasks.
+A user who always accesses an open model through the same cloud platform, without saving data, prompts, or model versions, can still become dependent on that platform. If a developer relies on proprietary file storage, agent systems, and vector databases, downloading the underlying model may not make the application easy to move.
 
-And when a commercial service becomes inaccessible, they can preserve at least a minimum fallback.
+Open weights are not necessarily the same as fully open source. A model may publish its parameters without disclosing its training data, data-processing pipeline, or complete training code. Users can run it without fully understanding how it was created, and weights alone cannot resolve every question about data and safety.
 
-But an open model is not automatically free, easy, or safe.
+Open models therefore provide more exit routes, not a migration plan that has already been completed.
 
-Local deployment requires hardware, storage, electricity, and maintenance. Model updates, security patches, access control, and data protection shift from the platform to the operator. For an ordinary consumer, being able to download a model does not mean being able to run it securely.
+## Closed Models Carry More Service Responsibility, but Users Still Do Not Own Them
 
-Developers must also deal with license restrictions, fragmented versions, inference-framework compatibility, and hardware costs. An open model may theoretically replace a closed API while failing to match its quality, latency, or total cost.
+The advantages of closed platforms are real as well.
 
-Open models offer independence, not convenience without effort.
+Individual users can access file analysis, web search, voice, memory, and cross-device synchronization without understanding inference frameworks or hardware requirements. Developers can leave model training, inference clusters, capacity management, and security updates to the provider.
 
-### The Reverse Information Paradox: The Better a Model Knows You, the More Expensive It May Be to Leave
+Closed models are not always tied to a single cloud. Some Anthropic models are available through Anthropic’s own API as well as Amazon Bedrock, Google Cloud, and Microsoft Foundry. That can reduce an organization’s dependence on any one cloud infrastructure provider. ([Claude Platform Docs][6])
 
-Under the “reverse information paradox” discussed previously, AI users pay more than a subscription or API bill.
+Multi-cloud availability does not, however, change model ownership.
 
-To receive useful help, they continually provide context: work material, project structure, writing habits, standards of judgment, client requirements, unpublished ideas, and professional knowledge.
+Anthropic defines active, deprecated, and retired stages for its models. Once a model is retired, applications that depend on it must migrate or their requests will stop working. Retirement dates on partner platforms may also differ from those of Anthropic’s own API. ([Claude Platform Docs][7])
 
-Traditional software generally asks users to issue commands and then performs a task. Generative AI asks users to supply the background, reasoning, and tacit knowledge surrounding the task before it can produce an apparently tailored answer.
+Developers may therefore be able to change cloud providers without being able to preserve the model. As long as the weights remain closed, the model company retains control over version changes, service termination, and final retirement.
 
-Users may therefore pay twice:
+Data export in consumer products solves only part of the problem. ChatGPT lets users export their chat history and account data, allowing them to preserve their written records. ([OpenAI Help Center][8]) But an exported conversation cannot reproduce the original model’s behavior, memory system, file tools, and product environment on another platform.
 
-First with money.
+What users delegate to a closed service is therefore not only maintenance, but also continuity of access.
 
-Then with the information required for the model to understand them.
+## A Large Model Catalog Does Not Mean Freedom from the Platform
 
-Whether a specific platform stores this information, uses it for training, or retains it for a particular period depends on its privacy policy and enterprise agreements. But even when a provider promises not to train on user content, the user may still become dependent on platform history, memory, file storage, and workflows.
+Nadella’s emphasis on “innovation and choice” aligns with Microsoft’s strategy of developing a multi-model platform. Letting developers compare closed models, open models, and services from different vendors within one cloud is genuinely more flexible than restricting them to a single model.
 
-The better the model appears to know the user, the smoother the experience becomes. The smoother the experience, the more background the user must reconstruct when moving elsewhere.
+But two different layers of concentration remain.
 
-This reveals another side of the reverse information paradox. AI is meant to reduce human work, yet maintaining its usefulness can require people to organize, expose, and repeatedly re-enter their own knowledge. The platform accumulates increasingly complete task context while the user finds it increasingly difficult to leave the environment that already “knows” them.
+The first is model concentration: an application can use only the models of one laboratory.
 
-For developers, this lock-in is less visible but often more extensive:
+The second is platform concentration: an application can choose among many models, but its identity, data, logs, deployment, and billing all remain inside one cloud ecosystem.
 
-* prompts become optimized for one model’s habits;
-* tool calls depend on one provider’s proprietary parameter structure;
-* evaluations are built around one model’s output style;
-* application data lives inside vendor-specific file, memory, or vector stores;
-* incident procedures assume that a particular model will always exist.
+Moving from the first kind of concentration to the second can reduce the disruption caused by one model’s retirement, but it does not eliminate platform lock-in.
 
-Once these dependencies accumulate, changing providers means changing more than an endpoint. It can mean redesigning the product architecture.
+Real portability cannot be measured by the size of a model catalog alone. It depends on four things:
 
-### Avoiding Dependence on One Model Does Not Mean Asking Three Models Every Time
+Whether the model weights or an alternative model can be obtained;
 
-“Do not depend on one platform” should not become another unrealistic demand.
+whether user data and business records can be exported;
 
-Not everyone can subscribe to several models, and not every region has stable access to multiple services. Sending every question to three or four systems and comparing each response takes time and attention. Ordinary users neither need nor want a full audit of every routine conversation.
+whether prompts, tools, and evaluation methods can be reused elsewhere;
 
-A more practical approach is to decide whether a second path is necessary according to the stakes.
+and whether an application can change suppliers without rebuilding all of its infrastructure.
 
-For routine editing, formatting, and low-risk creative work, one familiar model is often enough. Occasional differences usually have limited consequences.
+A platform can offer a thousand models, but if users cannot take their data and business logic with them, choice still exists only inside that platform.
 
-For medical, legal, or financial questions; employment decisions; public events; historical disputes; or important technical configurations, the same model should not serve simultaneously as information source, interpreter, and final judge. At minimum, consult an original source, a source from another information environment, or a different model.
+## The Reverse Information Paradox: The Better a Model Knows You, the More You Must Re-explain When You Leave
 
-The goal is not to prove that one model is always correct. It is to see whether different environments produce materially different facts, omissions, and conclusions.
+Under the “reverse information paradox,” users must continuously provide background material, writing preferences, project rules, and standards of judgment to get better model output.
 
-If an answer changes substantially after switching platforms, changing the source set, or entering a different regional information environment, the original response may reflect training data, product rules, regional compliance, or sycophantic behavior.
+The more a model knows about a user, the smoother the service often feels. But the more information accumulates inside a platform, the more the user must reorganize and explain when moving to another model.
 
-AI can continue to organize evidence and compare arguments, but it should not form a closed epistemic loop in which one model supplies an answer, receives every challenge to that answer, and then declares itself sound.
+Individuals may gradually leave article drafts, research, long-term plans, and important judgments in chat histories. Developers may encode system prompts, tool definitions, and business decisions in forms tailored to a specific model.
 
-### Individuals Need a Minimum Exit Capability, Not Complete Independence
+At that point, model dependence is no longer merely technical. It becomes information dependence. The platform supplies computing power while gradually becoming the gateway through which users organize personal knowledge and understand the world.
 
-Ordinary users do not need a complex local AI cluster simply to avoid platform dependence. What they need is a minimum ability to exit.
+“Do not rely on one model” does not mean asking three platforms every question. It is entirely reasonable to use one convenient model for routine editing, summaries, and low-risk creative work.
 
-Important articles, research material, and project records should not exist only in chat history. Critical model conclusions should be stored locally alongside their sources, original files, and the user’s own judgment.
+A second path matters most for tasks with serious consequences: medical, legal, and financial matters; public events and historical disputes; employment decisions; and critical technical configurations. In those cases, users should at least return to the original material or compare another model and sources from a different region.
 
-Prompts, writing rules, and project context needed over the long term should not rely entirely on platform memory. They can be organized in ordinary text or Markdown so they can be supplied to another model instead of remaining trapped in one account.
+The same model should not be allowed to supply the facts, interpret the controversy, answer every objection, and then prove that its original answer was correct.
 
-Sensitive information should follow the principle of minimum disclosure. A model needs only what is necessary to complete the task. A more personalized experience is not a good reason to provide a complete identity, customer records, or unpublished files.
+## Exit Capability Can Be Implemented in Concrete Ways
 
-Users can also keep a simple fallback. It does not have to be a second paid model of equal capability. It can be another official service, a locally runnable open model, or—in high-stakes situations—a return to primary sources and human judgment.
+Individuals do not need to build complex local-model clusters, but important information should not exist only inside a chat platform.
 
-Opaque discount relays should not be treated as reliable multi-platform backup. A proxy may alter requests, log data, substitute models, or reduce quality. Presenting access to several models does not necessarily reduce dependence; it may simply insert another unauditable layer.
+Long-term project context, writing rules, and frequently used prompts can be stored as plain text or Markdown. Important conclusions should be saved alongside their original sources, and sensitive data should be limited to the minimum needed for the task. Users can also maintain a different platform or a local open model as a backup entry point.
 
-A real fallback should make clear which model is in use, who handles the data, and who is responsible when something goes wrong.
+Developers likewise do not need to integrate every model at once. They need to make replaceability part of the architecture.
 
-### Developers Need to Build for Replaceability, Not Pretend That Models Are Interchangeable
+User files and business data should remain in storage the developer controls. System prompts, tool definitions, and test cases should be versioned. Differences between provider APIs should be isolated in adapter layers. Every model upgrade or switch should be retested against the application’s own evaluation set rather than judged solely by public leaderboards.
 
-Developers often speak of “multi-model architecture,” but implementing it requires more than adding a model-name dropdown.
+An open model does not need to carry the entire production workload. It can serve only privacy-sensitive tasks, local testing, or continuity during an outage. A closed model can remain the primary service as long as the application has not locked all its data and workflows inside the supplier.
 
-Models differ in how they understand prompts, produce structured output, call tools, manage context, and refuse requests. Similar API formats do not guarantee that an application can switch providers without testing.
+## Real Choice Means Retaining the Ability to Leave
 
-The reasonable goal is not identical behavior across all models. It is ensuring that replacement does not require rebuilding the system from scratch.
+Hassabis worries that one dangerous model release could cause irreversible harm to the world. Nadella emphasizes a frontier ecosystem that supports innovation and choice. The WAIC approach adds that AI capabilities should not remain under the long-term control of a small number of countries and closed platforms.
 
-Raw application data, user files, and business records should remain in storage the developer controls, not only in a vendor’s proprietary file system.
+These positions are not necessarily incompatible.
 
-System prompts, tool definitions, evaluation examples, and output schemas should live in the project’s own version control. Provider-specific parameters belong in an adapter layer instead of being scattered throughout business logic.
+Frontier models can undergo strict pre-release testing. Non-sensitive safety tools, evaluation methods, and foundation models should remain open. Individuals need data export and migration capabilities. Developers need multi-provider and self-hosting paths. Regulators must not use safety as a reason to expand technical review without limit into market exclusion and identity-based restrictions.
 
-Developers also need a small evaluation set of their own. Whenever a model or version changes, representative production tasks should test accuracy, format stability, refusal behavior, latency, and cost. Public leaderboards alone cannot determine whether one model can replace another in a real application.
+A healthy AI ecosystem does not require everyone to reject closed models, nor does it require every model to publish its weights immediately.
 
-Critical workflows should retain human confirmation or deterministic safeguards. Models can classify, summarize, and recommend, but irreversible actions—payments, data deletion, account changes, or formal notifications—should not depend solely on model judgment.
+It should let users enjoy the convenience of hosted services without losing the right to take their data. It should let developers rely on the best-performing commercial models while retaining the technical conditions needed to replace them. It should let governments restrict genuinely dangerous capabilities while requiring the grounds, duration, and review process for those restrictions to remain transparent.
 
-An open model can serve as a testing or outage fallback without being forced to handle every production task. A closed model can remain the primary service as long as the application has not locked all data, workflows, and evaluation criteria inside the supplier.
+The most important distinction between open and closed systems ultimately lies not in slogans, but in how much choice remains after a model or platform changes.
 
-Developers need replaceability, not the illusion of uniform interfaces.
+Real choice is not the number of models a user can click on a page. It is whether individuals and developers can still take their data and continue their work elsewhere when one of those models changes, shuts down, or can no longer be trusted.
 
-### Frontier AI Governance Should Include Continuity for Consumers
-
-Hassabis’s proposed standards institution focuses on cybersecurity, biological risk, autonomous agents, and national security. It says less about what happens to ordinary users and developers after a model is restricted or withdrawn.
-
-This issue does not necessarily belong to a frontier-safety body alone, but it should be part of a more complete AI governance framework.
-
-Unless an emergency requires immediate action, providers should offer reasonable notice and migration time before ending an important model service.
-
-Platforms should let users export conversations, files, and essential configuration.
-
-Developers should be able to identify the exact model version being called instead of being silently moved to another system.
-
-Providers should explain substantial changes in model behavior, capability, or safety rules.
-
-Emergency restrictions should distinguish among the base model, API service, individual tools, and affected regions rather than expanding an imprecise restriction into a global shutdown.
-
-Affected users and developers should have basic channels for information and appeal.
-
-This does not require dangerous models to remain available forever. It means safety governance should not leave users to absorb every cost of interruption.
-
-The open ecosystem promoted by WAIC can provide more alternatives and more opportunities for local deployment. Yet open weights alone do not protect consumers. Open models also need clear licenses, durable version availability, reliable documentation, and security updates.
-
-Hassabis’s protection route can require laboratories to bear greater responsibility before releasing powerful systems. It must also prevent closed providers from using safety as a permanent justification for lock-in.
-
-One side needs stronger safety responsibility. The other needs stronger exit rights and portability.
-
-## The Future Is Not Yet Written: Freedom Means Being Able to Leave
-
-Frontier AI governance should discuss not only whether a model is powerful enough to require controls, or open enough to inspect. It should also address how ordinary people bear the consequences of those choices.
-
-Closed models can deliver integrated services and centralized security fixes, but they can make users dependent on a platform that may change prices, rules, and geographic access at any time.
-
-Open models can reduce that dependence and survive the departure of their original developer, but they distribute deployment cost, maintenance work, and misuse risk across communities and users.
-
-Neither route solves the problem by itself.
-
-If protection through closure is the only priority, AI may become proprietary infrastructure controlled by a few states and companies. If unrestricted diffusion is the only priority, dangerous capabilities and safety responsibility may become impossible to recall after release.
-
-For users and developers, the practical principle is neither rejecting every closed service nor moving every task on-premises. It is avoiding a situation in which data, knowledge, workflows, and judgment can exist only inside one platform.
-
-Users may rely primarily on one model, but important questions should not be answered by that model alone.
-
-Developers may choose one primary provider, but their data and business logic should not exist only inside that provider.
-
-Platforms may restrict models for safety reasons, but they should offer explanations, export tools, and migration mechanisms.
-
-Open communities may release models, but they should not omit licenses, data provenance, or continuing security responsibility.
-
-The reverse information paradox reminds us that the more useful AI becomes, the more information users are encouraged to give it and the more likely they are to rebuild their working habits around it. The danger is not only that a model might give a wrong answer. It is that the model, platform, and accumulated habits may combine into a closed environment from which the user can no longer return easily to primary sources, switch services, or exercise independent judgment.
-
-A healthy AI ecosystem does not require every person to become independent of platforms. It ensures that no platform can make departure nearly impossible merely because it has accumulated a user’s information and habits.
-
-The future is not yet written.
-
-Its openness should not be measured only by the number of models that publish their weights, nor only by the number of frontier labs that pass a safety test. The more important standard is whether ordinary users can take their data with them, developers can replace models, researchers can independently verify claims, and society can reconsider the balance among safety, convenience, and autonomy.
-
-The real freedom to choose is not the permanent right to use one particular model. It is the ability to leave when that model changes, shuts down, or no longer deserves trust.
+[1]: https://www.theverge.com/tech/965270/google-deepmind-demis-hassabis-global-ai-watchdog?utm_source=chatgpt.com "Google's Demis Hassabis says it's time for a global AI watchdog - led by the US"
+[2]: https://x.com/satyanadella/status/2077063479232795024?utm_source=chatgpt.com "An important piece from Demis. We need more of this kind ..."
+[3]: https://www.fmprc.gov.cn/mfa_eng/xw/zyxw/202507/t20250729_11679232.html?utm_source=chatgpt.com "Global AI Governance Action Plan_Ministry of Foreign ..."
+[4]: https://qwenlm.github.io/blog/qwen3/?utm_source=chatgpt.com "Qwen3: Think Deeper, Act Faster"
+[5]: https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-models-overview?utm_source=chatgpt.com "Microsoft Foundry Models overview"
+[6]: https://docs.anthropic.com/en/release-notes/api?utm_source=chatgpt.com "Claude Platform release notes"
+[7]: https://docs.anthropic.com/en/docs/about-claude/model-deprecations?utm_source=chatgpt.com "Model deprecations - Claude Platform Docs"
+[8]: https://help.openai.com/en/articles/7260999-exporting-your-chatgpt-history-and-data?utm_source=chatgpt.com "Exporting your ChatGPT history and data"
