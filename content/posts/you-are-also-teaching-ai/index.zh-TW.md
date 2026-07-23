@@ -5,7 +5,7 @@ date: "2026-07-16"
 updated: "2026-07-16"
 translationKey: "you-are-also-teaching-ai"
 tags: ["人工智慧", "反向資訊悖論", "AI 隱私", "資料控制", "模型使用痕跡"]
-category: "AI 觀察"
+category: "熱點時事"
 draft: false
 cover: "https://pictor.js.gripe/i/f28004ae-a2ac-4320-b689-8c0dcb6f7400/public.webp"
 ---

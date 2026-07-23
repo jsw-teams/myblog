@@ -5,7 +5,7 @@ date: "2026-07-17"
 updated: "2026-07-18"
 translationKey: "open-models-and-the-right-to-leave"
 tags: ["AI Governance", "Open Models", "Closed Models", "Platform Lock-in", "Portability"]
-category: "AI Commentary"
+category: "Current Affairs"
 draft: false
 cover: "https://pictor.js.gripe/i/2296a6c8-5d9f-41af-63d2-b902aa8e7800/public.jpg"
 ---

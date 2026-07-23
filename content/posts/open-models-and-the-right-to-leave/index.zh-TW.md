@@ -5,7 +5,7 @@ date: "2026-07-17"
 updated: "2026-07-18"
 translationKey: "open-models-and-the-right-to-leave"
 tags: ["人工智慧治理", "開放模型", "閉源模型", "平臺鎖定", "遷移能力"]
-category: "AI 觀察"
+category: "熱點時事"
 draft: false
 cover: "https://pictor.js.gripe/i/2296a6c8-5d9f-41af-63d2-b902aa8e7800/public.jpg"
 ---
