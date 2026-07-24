@@ -1305,6 +1305,8 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.65rem); }
 }
 
 .post-card-featured .post-card-media { aspect-ratio: 16 / 10; }
+.post-card-featured .post-card-media img { object-fit: contain; }
+.post-card-featured:hover .post-card-media img { transform: none; }
 .post-card-featured .post-card-body { justify-content: center; padding: clamp(1.5rem, 4vw, 3rem); }
 .post-card-featured h3 { font-size: clamp(1.8rem, 3.5vw, 3rem); }
 
