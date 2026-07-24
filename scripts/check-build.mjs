@@ -28,13 +28,16 @@ if (!sitemap.startsWith("<?xml")) {
   throw new Error("sitemap.xml must start with an XML declaration");
 }
 if (sitemap.includes("<?xml-stylesheet")) {
-  throw new Error("sitemap.xml must not rely on XSLT processing instructions");
+  throw new Error("sitemap.xml must use the browser-native XML viewer without XSLT");
 }
 if (!/<urlset\b[^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/.test(sitemap)) {
   throw new Error("sitemap.xml is missing the sitemap urlset namespace");
 }
 if (!/<url>\s*<loc>https:\/\/blog\.js\.gripe\//.test(sitemap)) {
   throw new Error("sitemap.xml does not contain absolute site URLs");
+}
+if (sitemap.includes("<xhtml:link")) {
+  throw new Error("sitemap.xml must not include xhtml:link elements that break Chromium's native XML viewer");
 }
 
 const headers = await fs.readFile(path.join(publicDir, "_headers"), "utf8");

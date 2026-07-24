@@ -421,11 +421,10 @@ function latestDate(items, fallback = today) {
 export async function buildSitemapXml() {
   const { site, posts, pages } = await loadBlogData();
   const entries = [];
-  const add = (url, updated, alternates = []) => {
+  const add = (url, updated) => {
     entries.push({
       url,
-      updated: normalizeDate(updated, today),
-      alternates
+      updated: normalizeDate(updated, today)
     });
   };
   const siteUpdated = latestDate([...posts, ...pages]);
@@ -434,26 +433,23 @@ export async function buildSitemapXml() {
 
   const postsByTranslation = groupBy(posts, (post) => post.translationKey);
   for (const group of postsByTranslation.values()) {
-    const alternates = translationsFor(group);
     for (const post of group) {
-      add(post.url, post.updated, alternates);
+      add(post.url, post.updated);
     }
   }
 
   const pagesByTranslation = groupBy(pages, (page) => page.translationKey);
   for (const group of pagesByTranslation.values()) {
-    const alternates = translationsFor(group);
     for (const page of group) {
-      add(page.url, page.updated, alternates);
+      add(page.url, page.updated);
     }
   }
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
 ${entries.map((entry) => `  <url>
     <loc>${escapeXml(absoluteUrl(site, entry.url))}</loc>
     <lastmod>${escapeXml(entry.updated)}</lastmod>
-${entry.alternates.map((alt) => `    <xhtml:link rel="alternate" hreflang="${escapeXml(alt.locale)}" href="${escapeXml(absoluteUrl(site, alt.url))}" />`).join("\n")}
   </url>`).join("\n")}
 </urlset>
 `;
