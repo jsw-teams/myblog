@@ -50,6 +50,8 @@ Separate anecdotes should not be merged into a single story that the evidence do
 
 Operationally, however, the two mechanisms meet at response time. Wherever cross-session memory is stored, it must re-enter the current context before the model can use it. Memory is not a second brain operating independently of context. It is more like a product selecting a few notes from an old archive and placing them on the new workbench. If a note is stale, it influences the answer as part of the “new” context.
 
+![Jie discusses her increasingly blurred memory in *Arknights* TA-7](https://pictor.js.gripe/i/b09ea333-ca0a-4173-2ee8-90f3f7c6d400/public.png)
+
 The treatment of Jie and history in *Arknights* TA-7 offers a compact analogy: when the same system repeatedly organizes and writes history, the recorded version gradually appears more stable and authoritative while change itself fades from view. AI can behave similarly. When a system repeatedly extracts, compresses, and recalls old material, one version can become fixed and continue shaping judgments about the present.
 
 This is why cross-session memory needs more transparency than an ordinary chat log. Users can at least scroll through a conversation. With extracted memory, they may not know which conversation it came from, when it was recorded, why it was selected, or whether newer facts have invalidated it. When a model accurately recalls a few personal details, users may also overestimate how well it understands the entire project.
