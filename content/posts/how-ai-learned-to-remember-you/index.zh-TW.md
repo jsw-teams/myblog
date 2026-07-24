@@ -5,7 +5,7 @@ date: "2026-07-24"
 updated: "2026-07-24"
 translationKey: "how-ai-learned-to-remember-you"
 tags: ["AI 記憶", "上下文視窗", "跨會話記憶", "RAG", "人工智慧"]
-category: "熱點時事"
+category: "AI觀察"
 draft: false
 cover: "https://pictor.js.gripe/i/b09ea333-ca0a-4173-2ee8-90f3f7c6d400/public.png"
 ---
