@@ -218,17 +218,17 @@ async function writeManifest() {
 
 async function copyBaseFiles() {
   const files = [
-    ["styles.css", "site.css", "css"],
-    ["client.js", "client.js", "js"],
-    ["consent.js", "consent.js", "js"]
+    [[path.join(rootDir, "src", "styles.css"), path.join(rootDir, "theme", "styles", "support-card.css"), path.join(rootDir, "node_modules", "katex", "dist", "katex.min.css"), path.join(rootDir, "node_modules", "markdown-it-texmath", "css", "texmath.css")], "site.css", "css"],
+    [[path.join(rootDir, "src", "client.js")], "client.js", "js"],
+    [[path.join(rootDir, "src", "consent.js")], "consent.js", "js"]
   ];
   const staleAssets = await fs.readdir(assetsDir);
   await Promise.all(staleAssets
     .filter((file) => /^(?:site|client|consent)(?:\.[a-f0-9]{12})?\.(?:css|js)$/.test(file))
     .map((file) => fs.rm(path.join(assetsDir, file), { force: true })));
   const manifest = {};
-  await Promise.all(files.map(async ([source, output, loader]) => {
-    const input = await fs.readFile(path.join(rootDir, "src", source), "utf8");
+  await Promise.all(files.map(async ([sources, output, loader]) => {
+    const input = (await Promise.all(sources.map((source) => fs.readFile(source, "utf8")))).join("\n");
     const result = await transform(input, {
       legalComments: "none",
       loader,
@@ -242,6 +242,7 @@ async function copyBaseFiles() {
     manifest[output] = `/assets/${hashedName}`;
     await fs.writeFile(path.join(assetsDir, hashedName), content, "utf8");
   }));
+  await fs.cp(path.join(rootDir, "node_modules", "katex", "dist", "fonts"), path.join(assetsDir, "fonts"), { recursive: true });
   await fs.writeFile(path.join(assetsDir, "asset-manifest.json"), `${JSON.stringify(manifest)}\n`, "utf8");
 }
 

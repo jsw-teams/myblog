@@ -5,6 +5,7 @@ import path from "node:path";
 
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
+export const OG_SQUARE_IMAGE_SIZE = 600;
 export const DEFAULT_OG_IMAGE = "/assets/og-default.jpg";
 
 const generatedOgImages = new Map();
@@ -72,6 +73,12 @@ function manifestEntryIsUsable(entry, publicDir) {
   return Boolean(localPath && fsSync.existsSync(localPath));
 }
 
+function manifestSquareEntryIsUsable(entry, publicDir) {
+  if (!entry || typeof entry !== "object" || !entry.squareUrl) return false;
+  const localPath = publicPathFor(entry.squareUrl, publicDir);
+  return Boolean(localPath && fsSync.existsSync(localPath));
+}
+
 async function renderOgImage(source, outputPath, sharp) {
   // Normalize EXIF orientation once, then reuse identical pixels for both
   // layers. The blurred layer fills the social-card canvas while the sharp
@@ -89,6 +96,37 @@ async function renderOgImage(source, outputPath, sharp) {
   const foreground = await sharp(normalized)
     .ensureAlpha()
     .resize(OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT, {
+      fit: "contain",
+      background: { r: 0, g: 0, b: 0, alpha: 0 }
+    })
+    .png()
+    .toBuffer();
+
+  await sharp(background)
+    .composite([{ input: foreground, blend: "over" }])
+    .jpeg({
+      quality: 86,
+      mozjpeg: true
+    })
+    .toFile(outputPath);
+}
+
+async function renderSquareOgImage(source, outputPath, sharp) {
+  // WeChat commonly renders external-link artwork as a square thumbnail. A
+  // dedicated square composition keeps the complete cover visible instead of
+  // relying on the client to center-crop the 1200×630 social card.
+  const normalized = await sharp(source).rotate().toBuffer();
+  const background = await sharp(normalized)
+    .resize(OG_SQUARE_IMAGE_SIZE, OG_SQUARE_IMAGE_SIZE, {
+      fit: "cover",
+      position: "attention"
+    })
+    .blur(28)
+    .modulate({ brightness: 0.56, saturation: 0.8 })
+    .toBuffer();
+  const foreground = await sharp(normalized)
+    .ensureAlpha()
+    .resize(OG_SQUARE_IMAGE_SIZE, OG_SQUARE_IMAGE_SIZE, {
       fit: "contain",
       background: { r: 0, g: 0, b: 0, alpha: 0 }
     })
@@ -138,30 +176,51 @@ async function makeOgImage(src, { publicDir, contentKey }) {
     const manifest = await readOgManifest(publicDir);
     const key = manifestKey(src, contentKey);
     const existing = manifest.images[key];
-    if (manifestEntryIsUsable(existing, publicDir)) {
+    const hasLandscape = manifestEntryIsUsable(existing, publicDir);
+    const hasSquare = manifestSquareEntryIsUsable(existing, publicDir);
+    if (hasLandscape && hasSquare) {
       return {
         url: existing.url,
         width: existing.width || OG_IMAGE_WIDTH,
-        height: existing.height || OG_IMAGE_HEIGHT
+        height: existing.height || OG_IMAGE_HEIGHT,
+        squareUrl: existing.squareUrl,
+        squareWidth: existing.squareWidth || OG_SQUARE_IMAGE_SIZE,
+        squareHeight: existing.squareHeight || OG_SQUARE_IMAGE_SIZE
       };
     }
 
     const source = await readImageSource(src, publicDir);
-    if (!source) return null;
+    if (!source) {
+      return hasLandscape ? {
+        url: existing.url,
+        width: existing.width || OG_IMAGE_WIDTH,
+        height: existing.height || OG_IMAGE_HEIGHT
+      } : null;
+    }
 
     const { default: sharp } = await import("sharp");
     const sourceHash = crypto.createHash("sha1").update(source).digest("hex").slice(0, 12);
     const urlDir = `/assets/og/${normalizedContentKey(contentKey)}`;
     const outputDir = path.join(publicDir, urlDir.replace(/^\/+/, ""));
     const filename = `${sourceHash}.jpg`;
+    const squareFilename = `${sourceHash}-square.jpg`;
 
     await fs.mkdir(outputDir, { recursive: true });
-    await renderOgImage(source, path.join(outputDir, filename), sharp);
+    if (!hasLandscape) {
+      await renderOgImage(source, path.join(outputDir, filename), sharp);
+    }
+    if (!hasSquare) {
+      await renderSquareOgImage(source, path.join(outputDir, squareFilename), sharp);
+    }
 
     const entry = {
-      url: `${urlDir}/${filename}`,
+      ...existing,
+      url: hasLandscape ? existing.url : `${urlDir}/${filename}`,
       width: OG_IMAGE_WIDTH,
       height: OG_IMAGE_HEIGHT,
+      squareUrl: hasSquare ? existing.squareUrl : `${urlDir}/${squareFilename}`,
+      squareWidth: OG_SQUARE_IMAGE_SIZE,
+      squareHeight: OG_SQUARE_IMAGE_SIZE,
       contentKey,
       source: src
     };
@@ -171,7 +230,10 @@ async function makeOgImage(src, { publicDir, contentKey }) {
     return {
       url: entry.url,
       width: entry.width,
-      height: entry.height
+      height: entry.height,
+      squareUrl: entry.squareUrl,
+      squareWidth: entry.squareWidth,
+      squareHeight: entry.squareHeight
     };
   } catch (error) {
     console.warn(`Could not generate local OG image for ${src}: ${error.message}`);

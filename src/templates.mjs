@@ -82,6 +82,28 @@ function imageType(imageUrl = "") {
   return "image/png";
 }
 
+function localizedValue(value, locale, fallback = "") {
+  if (typeof value === "string") return value;
+  return value?.[locale] ?? value?.["zh-CN"] ?? value?.en ?? fallback;
+}
+
+function renderSupportCard(site, locale) {
+  const support = site.support;
+  if (!support?.url) return "";
+  const provider = support.provider || "Ko-fi";
+  const title = localizedValue(support.title, locale, provider);
+  const description = localizedValue(support.description, locale);
+  const cta = localizedValue(support.cta, locale, provider);
+  return `<aside class="support-card" aria-label="${escapeHtml(title)}">
+    <span class="support-card-icon" aria-hidden="true">☕</span>
+    <div class="support-card-copy">
+      <strong>${escapeHtml(title)}</strong>
+      ${description ? `<p>${escapeHtml(description)}</p>` : ""}
+    </div>
+    <a class="support-card-link" href="${escapeHtml(support.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(cta)} <span aria-hidden="true">↗</span></a>
+  </aside>`;
+}
+
 function renderNav(site, locale, current) {
   const navItems = [
     ["home", `/${locale}/`],
@@ -176,6 +198,9 @@ export function renderLayout({
   ogImage = "/assets/og-default.jpg",
   ogImageWidth = 1200,
   ogImageHeight = 630,
+  ogSquareImage = "",
+  ogSquareImageWidth = 600,
+  ogSquareImageHeight = 600,
   bodyAttrs = {},
   robots = "index,follow"
 }) {
@@ -183,6 +208,8 @@ export function renderLayout({
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
   const canonical = absoluteUrl(site, url);
   const imageUrl = absoluteUrl(site, ogImage);
+  const squareImageUrl = ogSquareImage ? absoluteUrl(site, ogSquareImage) : "";
+  const discoveryImageUrl = squareImageUrl || imageUrl;
   const imageAlt = `${title} | ${siteName}`;
   return `<!doctype html>
 <html lang="${escapeHtml(htmlLang(locale))}">
@@ -200,16 +227,22 @@ export function renderLayout({
   <link rel="apple-touch-icon" href="${withBase("/apple-touch-icon.png")}">
   <link rel="manifest" href="${withBase("/site.webmanifest")}">
   <link rel="alternate" type="application/rss+xml" title="${escapeHtml(siteName)}" href="${withBase(`/${locale}/feed.xml`)}">
-  <link rel="image_src" href="${escapeHtml(imageUrl)}">
+  <link rel="image_src" href="${escapeHtml(discoveryImageUrl)}">
   <meta itemprop="name" content="${escapeHtml(fullTitle)}">
   <meta itemprop="description" content="${escapeHtml(description)}">
-  <meta itemprop="image" content="${escapeHtml(imageUrl)}">
+  <meta itemprop="image" content="${escapeHtml(discoveryImageUrl)}">
   <meta property="og:site_name" content="${escapeHtml(siteName)}">
   <meta property="og:locale" content="${escapeHtml(htmlLang(locale).replace("-", "_"))}">
   <meta property="og:title" content="${escapeHtml(fullTitle)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:type" content="${escapeHtml(ogType)}">
   <meta property="og:url" content="${escapeHtml(canonical)}">
+  ${squareImageUrl ? `<meta property="og:image" content="${escapeHtml(squareImageUrl)}">
+  <meta property="og:image:secure_url" content="${escapeHtml(squareImageUrl)}">
+  <meta property="og:image:type" content="${escapeHtml(imageType(squareImageUrl))}">
+  <meta property="og:image:width" content="${escapeHtml(ogSquareImageWidth)}">
+  <meta property="og:image:height" content="${escapeHtml(ogSquareImageHeight)}">
+  <meta property="og:image:alt" content="${escapeHtml(imageAlt)}">` : ""}
   <meta property="og:image" content="${escapeHtml(imageUrl)}">
   <meta property="og:image:secure_url" content="${escapeHtml(imageUrl)}">
   <meta property="og:image:type" content="${escapeHtml(imageType(imageUrl))}">
@@ -466,6 +499,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
           <img src="/assets/mascot-happy.png" alt="" width="130" height="174">
           <span>${escapeHtml(t(locale, "articleEnd"))}</span>
         </div>
+        ${renderSupportCard(site, locale)}
         <nav class="post-neighbors" aria-label="${escapeHtml(t(locale, "archive"))}">
           ${nextPost ? `<a href="${nextPost.url}"><span>${escapeHtml(t(locale, "newerPost"))}</span><strong>${escapeHtml(nextPost.title)}</strong></a>` : "<span></span>"}
           ${previousPost ? `<a href="${previousPost.url}"><span>${escapeHtml(t(locale, "olderPost"))}</span><strong>${escapeHtml(previousPost.title)}</strong></a>` : "<span></span>"}
@@ -490,7 +524,10 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
     ogType: "article",
     ogImage: post.ogImage,
     ogImageWidth: post.ogImageWidth,
-    ogImageHeight: post.ogImageHeight
+    ogImageHeight: post.ogImageHeight,
+    ogSquareImage: post.ogSquareImage,
+    ogSquareImageWidth: post.ogSquareImageWidth,
+    ogSquareImageHeight: post.ogSquareImageHeight
   });
 }
 

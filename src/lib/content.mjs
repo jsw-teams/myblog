@@ -6,6 +6,8 @@ import fg from "fast-glob";
 import matter from "gray-matter";
 import MarkdownIt from "markdown-it";
 import anchor from "markdown-it-anchor";
+import texmath from "markdown-it-texmath";
+import katex from "katex";
 import { DEFAULT_LOCALE, LOCALES, formatDate, localeLabel, t } from "../i18n.mjs";
 import {
   absoluteUrl,
@@ -22,7 +24,7 @@ import {
   renderTermIndexPage,
   renderTermPage
 } from "../templates.mjs";
-import { DEFAULT_OG_IMAGE, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, makeOgImageFromCover } from "../og-images.mjs";
+import { DEFAULT_OG_IMAGE, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, OG_SQUARE_IMAGE_SIZE, makeOgImageFromCover } from "../og-images.mjs";
 
 const rootDir = process.cwd();
 const contentDir = path.join(rootDir, "content");
@@ -34,7 +36,9 @@ const today = "2026-04-27";
 export { DEFAULT_LOCALE, LOCALES, absoluteUrl };
 
 export async function readSiteConfig() {
-  return JSON.parse(await fs.readFile(path.join(contentDir, "site.config.json"), "utf8"));
+  const site = JSON.parse(await fs.readFile(path.join(contentDir, "site.config.json"), "utf8"));
+  const theme = JSON.parse(await fs.readFile(path.join(rootDir, "theme", "config.json"), "utf8"));
+  return { ...site, ...theme };
 }
 
 function normalizeDate(value, fallback = today) {
@@ -99,6 +103,10 @@ function createMarkdownRenderer(baseDir, contentKey) {
     typographer: true
   }).use(anchor, {
     slugify: headingSlug
+  }).use(texmath, {
+    engine: katex,
+    delimiters: ["dollars", "brackets"],
+    katexOptions: { throwOnError: false, strict: "warn" }
   });
   const defaultLinkOpen = md.renderer.rules.link_open ?? ((tokens, idx, options, env, self) => self.renderToken(tokens, idx, options));
   md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
@@ -211,6 +219,9 @@ export async function loadPosts() {
       ogImage: generatedOgImage?.url || DEFAULT_OG_IMAGE,
       ogImageWidth: generatedOgImage?.width || OG_IMAGE_WIDTH,
       ogImageHeight: generatedOgImage?.height || OG_IMAGE_HEIGHT,
+      ogSquareImage: generatedOgImage?.squareUrl || "",
+      ogSquareImageWidth: generatedOgImage?.squareWidth || OG_SQUARE_IMAGE_SIZE,
+      ogSquareImageHeight: generatedOgImage?.squareHeight || OG_SQUARE_IMAGE_SIZE,
       markdownBody: parsed.content.replace(moreMarker, "").trim(),
       html: renderMarkdown(parsed.content, baseDir, contentKey),
       url: `/${locale}/posts/${slug}/`,

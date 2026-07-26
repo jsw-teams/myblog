@@ -8,6 +8,8 @@ import fg from "fast-glob";
 import matter from "gray-matter";
 import MarkdownIt from "markdown-it";
 import anchor from "markdown-it-anchor";
+import texmath from "markdown-it-texmath";
+import katex from "katex";
 import { minify } from "html-minifier-terser";
 import { Feed } from "feed";
 import { generateAssets } from "./assets.mjs";
@@ -28,7 +30,7 @@ import {
   renderTermIndexPage,
   renderTermPage
 } from "./templates.mjs";
-import { DEFAULT_OG_IMAGE, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, makeOgImageFromCover } from "./og-images.mjs";
+import { DEFAULT_OG_IMAGE, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, OG_SQUARE_IMAGE_SIZE, makeOgImageFromCover } from "./og-images.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
@@ -60,7 +62,14 @@ async function cleanPublic() {
 
 async function copyBaseFiles() {
   await ensureDir(publicAssetsDir);
-  await fs.copyFile(path.join(__dirname, "styles.css"), path.join(publicAssetsDir, "site.css"));
+  const styles = await Promise.all([
+    path.join(__dirname, "styles.css"),
+    path.join(rootDir, "theme", "styles", "support-card.css"),
+    path.join(rootDir, "node_modules", "katex", "dist", "katex.min.css"),
+    path.join(rootDir, "node_modules", "markdown-it-texmath", "css", "texmath.css")
+  ].map((file) => fs.readFile(file, "utf8")));
+  await fs.writeFile(path.join(publicAssetsDir, "site.css"), styles.join("\n"), "utf8");
+  await fs.cp(path.join(rootDir, "node_modules", "katex", "dist", "fonts"), path.join(publicAssetsDir, "fonts"), { recursive: true });
   await fs.copyFile(path.join(__dirname, "client.js"), path.join(publicAssetsDir, "client.js"));
 }
 
@@ -167,6 +176,10 @@ function createMarkdownRenderer(baseDir, contentKey) {
     typographer: true
   }).use(anchor, {
     slugify: headingSlug
+  }).use(texmath, {
+    engine: katex,
+    delimiters: ["dollars", "brackets"],
+    katexOptions: { throwOnError: false, strict: "warn" }
   });
   const defaultLinkOpen = md.renderer.rules.link_open ?? ((tokens, idx, options, env, self) => self.renderToken(tokens, idx, options));
   md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
@@ -277,6 +290,9 @@ async function loadPosts() {
       ogImage: generatedOgImage?.url || DEFAULT_OG_IMAGE,
       ogImageWidth: generatedOgImage?.width || OG_IMAGE_WIDTH,
       ogImageHeight: generatedOgImage?.height || OG_IMAGE_HEIGHT,
+      ogSquareImage: generatedOgImage?.squareUrl || "",
+      ogSquareImageWidth: generatedOgImage?.squareWidth || OG_SQUARE_IMAGE_SIZE,
+      ogSquareImageHeight: generatedOgImage?.squareHeight || OG_SQUARE_IMAGE_SIZE,
       markdownBody: parsed.content.replace(moreMarker, "").trim(),
       html: renderMarkdown(parsed.content, baseDir, contentKey),
       url: `/${locale}/posts/${slug}/`,
@@ -396,7 +412,11 @@ ${markdown}
 
 let cachedConfig;
 async function siteConfig() {
-  if (!cachedConfig) cachedConfig = await readJson(path.join(contentDir, "site.config.json"));
+  if (!cachedConfig) {
+    const site = await readJson(path.join(contentDir, "site.config.json"));
+    const theme = await readJson(path.join(rootDir, "theme", "config.json"));
+    cachedConfig = { ...site, ...theme };
+  }
   return cachedConfig;
 }
 

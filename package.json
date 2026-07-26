@@ -20,8 +20,10 @@
     "feed": "^4.2.2",
     "gray-matter": "^4.0.3",
     "html-minifier-terser": "^7.2.0",
+    "katex": "^0.18.1",
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^9.2.0",
+    "markdown-it-texmath": "^1.0.0",
     "sharp": "^0.34.1"
   },
   "engines": {

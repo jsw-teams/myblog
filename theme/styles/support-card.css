@@ -1,0 +1,44 @@
+.support-card {
+  align-items: center;
+  background: color-mix(in srgb, #ff5e5b 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, #ff5e5b 38%, var(--border));
+  border-radius: 16px;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  margin: 1.5rem 0;
+  padding: 1rem 1.15rem;
+}
+
+.support-card-icon {
+  align-items: center;
+  background: #ff5e5b;
+  border-radius: 50%;
+  color: #fff;
+  display: inline-flex;
+  font-size: 1.3rem;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+}
+
+.support-card-copy strong { display: block; line-height: 1.35; }
+.support-card-copy p { color: var(--muted); font-size: 0.88rem; line-height: 1.55; margin: 0.25rem 0 0; }
+
+.support-card-link {
+  background: #ff5e5b;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 0.6rem 0.9rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.support-card-link:hover { background: #e94745; color: #fff; transform: translateY(-1px); }
+
+@media (max-width: 680px) {
+  .support-card { grid-template-columns: auto minmax(0, 1fr); }
+  .support-card-link { grid-column: 1 / -1; text-align: center; }
+}

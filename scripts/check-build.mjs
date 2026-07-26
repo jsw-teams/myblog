@@ -8,7 +8,13 @@ const rootDir = path.resolve(new URL("..", import.meta.url).pathname);
 const publicDir = path.join(rootDir, "public");
 const publicAssetsDir = path.join(publicDir, "assets");
 const contentAssetsDir = path.join(rootDir, "content", "assets");
+const themeConfigFile = path.join(rootDir, "theme", "config.json");
+const themeSupportStylesFile = path.join(rootDir, "theme", "styles", "support-card.css");
 const locales = ["zh-CN", "zh-TW", "en"];
+
+if (!fsSync.existsSync(themeConfigFile) || !fsSync.existsSync(themeSupportStylesFile)) {
+  throw new Error("Ko-fi configuration and styles must be loaded from the theme directory");
+}
 
 function hasHeaderBlock(headers, pathPattern, headerPattern) {
   const blockPattern = new RegExp(`(?:^|\\n)${pathPattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\n(?<body>(?:\\s+[^\\n]+\\n?)+)`, "m");
@@ -75,6 +81,35 @@ for (const file of htmlFiles) {
   if (!/<script[^>]+type=["']text\/plain["'][^>]+data-consent-category=["']necessary["'][^>]+data-consent-src=["'][^"']*client(?:\.[a-f0-9]{12})?\.js/i.test(html)) {
     throw new Error(`${file} is missing the consent-gated client.js placeholder`);
   }
+  if (/<meta\s+property=["']og:type["']\s+content=["']article["']/i.test(html)) {
+    const ogImages = [...html.matchAll(/<meta\s+property=["']og:image["']\s+content=["']([^"']+)["']/gi)].map((match) => match[1]);
+    if (ogImages.some((image) => image.includes("/assets/og/posts/"))) {
+      if (ogImages.length < 2) throw new Error(`${file} must expose square and landscape OG images`);
+      if (!/-square\.jpg(?:[?#].*)?$/.test(ogImages[0])) throw new Error(`${file} must list the WeChat square OG image first`);
+      if (/-square\.jpg(?:[?#].*)?$/.test(ogImages[1])) throw new Error(`${file} must list the landscape OG image second`);
+      const twitterImage = html.match(/<meta\s+name=["']twitter:image["']\s+content=["']([^"']+)["']/i)?.[1];
+      if (twitterImage !== ogImages[1]) throw new Error(`${file} must use the landscape image for the X large-image card`);
+      if (!/<meta\s+property=["']og:image:width["']\s+content=["']600["']/i.test(html)
+        || !/<meta\s+property=["']og:image:height["']\s+content=["']600["']/i.test(html)) {
+        throw new Error(`${file} is missing 600x600 OG image dimensions`);
+      }
+    }
+    if (!/class=["'][^"']*support-card-link[^"']*["'][^>]+href=["']https:\/\/ko-fi\.com\/jsgripe["']/i.test(html)) {
+      throw new Error(`${file} is missing the configured Ko-fi support card`);
+    }
+  }
+}
+
+for (const locale of locales) {
+  const articleFile = path.join(publicDir, locale, "posts", "after-open-weights-three-way-transition", "index.html");
+  const html = await fs.readFile(articleFile, "utf8");
+  if (!html.includes('class="katex"') || !html.includes("10^{25}")) {
+    throw new Error(`${articleFile} is missing the server-rendered FLOP formula`);
+  }
+}
+
+if (!(await fg("fonts/KaTeX_*.woff2", { cwd: publicAssetsDir, onlyFiles: true })).length) {
+  throw new Error("KaTeX webfonts were not copied into the generated assets");
 }
 
 const assetManifest = JSON.parse(await fs.readFile(path.join(publicAssetsDir, "asset-manifest.json"), "utf8"));
