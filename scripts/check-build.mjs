@@ -124,14 +124,6 @@ for (const file of htmlFiles) {
   }
 }
 
-for (const locale of locales) {
-  const articleFile = path.join(publicDir, locale, "posts", "after-open-weights-three-way-transition", "index.html");
-  const html = await fs.readFile(articleFile, "utf8");
-  if (!html.includes('class="katex"') || !html.includes("10^{25}")) {
-    throw new Error(`${articleFile} is missing the server-rendered FLOP formula`);
-  }
-}
-
 if (fsSync.existsSync(path.join(publicDir, "zh-CN"))) {
   throw new Error("The retired zh-CN locale must not be generated");
 }

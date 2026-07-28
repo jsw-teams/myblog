@@ -1,288 +1,281 @@
 ---
-title: "After Open Weights: Three Transitions Seen Through ‘Open Weights and American AI Leadership’"
-description: "Examining how open weights change individuals’ exit options, enterprises’ supply-chain responsibilities, and model providers’ sources of value—and why high-capability models may need tiered release."
+title: "After Models Cross Borders: How I Chose a Local Mainstay Among Qwen, Gemma, and Ministral"
+description: "A hands-on comparison of Qwen, Gemma, and Ministral, and a reflection on how capabilities, information boundaries, and cultural assumptions travel with models across borders."
 date: "2026-07-26"
-updated: "2026-07-26"
+updated: "2026-07-28"
 translationKey: "after-open-weights-three-way-transition"
-tags: ["Open Weights", "Open Source AI", "AI Governance", "Model Deployment", "AI Industry"]
-category: "Current Affairs"
+tags: ["Local Models", "Open Weights", "Qwen", "Gemma", "Ministral", "Ollama", "Model Bias"]
+category: "AI Observations"
 draft: false
-cover: "https://pictor.js.gripe/i/d7d74d51-931d-4c2f-e978-9b1b83ad6e00/public.png"
+cover: "https://pictor.js.gripe/i/2c14842e-5f5b-406a-524f-b3083131a000/public.png"
 ---
 
-Published on July 24, 2026, “Open Weights and American AI Leadership” elevates open weights from a product choice made by model providers to an element of U.S. competition in AI. It argues that America’s AI advantage cannot rest on only a handful of frontier models: model capabilities must also reach factories, hospitals, schools, public institutions, and small and medium-sized businesses. Open weights can broaden access, let organizations choose models according to their tasks and costs, and reduce long-term dependence on a single provider. [1]
+After installing local models, I initially faced what seemed like an ordinary selection problem: with limited VRAM, should I keep Qwen from Alibaba, Gemma from Google, or switch to Ministral from France’s Mistral AI?
 
-The initiative is about open weights, not open-source AI in the fullest sense. Model providers publish trained parameters and allow users to download, run, quantize, fine-tune, and redeploy them, while the complete training data, data-processing pipeline, training code, hyperparameters, training logs, and internal lessons from trial and error generally remain private.
+Once I tested all three on the same computer, however, the question began to change.
 
-Users receive the finished model, but not the complete production line required to reproduce it.
+I am a Chinese user, but I did not assume that Qwen understood Chinese best simply because it came from China. Nor did I assume that Gemma and Ministral were inherently more objective because they came from abroad. In the end, I removed Qwen and Ministral and kept Gemma after adjusting it with local rules. The decision was not about model nationality. It was about what each model removed or added when given the same material, and whether those problems could be constrained.
 
-This selective form of openness is becoming increasingly common among downloadable models. It reduces users’ dependence on a single gateway while preserving providers’ competitive advantages in data, training engineering, and the development of the next generation of models.
+This is not happening only on my computer.
 
-The resulting changes cannot be understood solely from the provider’s perspective. Individuals gain a path to local operation and platform exit. Enterprises gain control over data and deployment while assuming more supply-chain and operational responsibility. Model providers lose some ability to charge merely for access, pushing value toward compute, hosting, optimization, applications, and long-term service.
+More foreign developers are using Chinese models such as Qwen, DeepSeek, Kimi, and GLM because they are less expensive, offer downloadable weights, are easy to self-host, and increasingly approach the capabilities of many closed frontier models. An Associated Press report in July 2026 described American companies and developers moving parts of their workloads to Chinese models for cost and openness. Hugging Face has also observed substantial adoption of Chinese open models in Southeast Asia, Africa, and other markets.
+
+Chinese users, meanwhile, are using foreign models. Some subscribe to overseas closed services, some call them through APIs, and others—like me—download the weights of Google’s Gemma or France’s Mistral models and run them locally.
+
+The flow now runs in both directions. Foreign users obtain lower costs, open weights, and local deployment from Chinese models. Chinese users obtain another distribution of capabilities, knowledge, and response boundaries from foreign models.
+
+But technical capability is not the only thing that crosses borders. Training data, linguistic habits, political restrictions, product policies, cultural assumptions, and preferences created during post-training all enter the new environment as well.
+
+So the question I want to discuss is no longer merely “Which local model is best?” It is this:
+
+**When foreigners begin using Chinese models and Chinese users begin using foreign models, are we exchanging capabilities—or also exchanging one another’s information boundaries?**
 
 <!--more-->
 
-## The boundary between open weights and open-source AI
+## A model’s birthplace is no longer its place of use
 
-Open-weight models usually publish their trained parameters along with the architecture, configuration, and inference code needed to run them. Within the terms of the license, users can download and run a model on their own devices or third-party infrastructure, then quantize, fine-tune, or build derivative versions.
+In the past, the origin of a digital product was usually close to where the service operated. American software was mostly run by American companies, while Chinese platforms mainly served the Chinese market. Even when users crossed borders, the original vendor still controlled the core servers, account system, and product rules.
 
-Model weights record the state of the trained parameters, but not the complete process by which the model was created.
+Open weights change that relationship.
 
-The final weights generally cannot reveal where the training corpus came from, the proportions of different data types, how the data was deduplicated and filtered, how synthetic data was generated, how supervised fine-tuning and reinforcement learning were organized, which training paths failed, or which methods genuinely improved the finished model.
+A model trained in Hangzhou can be downloaded by an American company and deployed in a U.S. data center. A model developed by Google can run through Ollama on a completely offline Windows computer owned by a Chinese user. Once weights are downloadable, the locations of the developer, server, user, and downstream application no longer need to coincide.
 
-The Open Source Initiative’s “Open Source AI Definition 1.0” groups the materials required for open-source AI into model parameters, code, and data information. When copyright, privacy, or contractual restrictions prevent distribution of all training data, providers should still supply enough information to understand its sources, scope, and processing, together with the training and data-processing code needed to modify the system. [2]
+A study of the open-model economy analyzed roughly 851,000 models and 2.2 billion downloads on Hugging Face. It found that by 2025, an ecosystem once dominated by American companies had shifted significantly toward community developers and Chinese firms, with Qwen and DeepSeek playing major roles.
 
-Open weights therefore change primarily how models are accessed, run, and deployed. Full open source also requires the materials needed to understand and modify the training process.
+A 2026 report from the U.S.-China Economic and Security Review Commission said that Qwen had produced an ecosystem of more than 100,000 derivatives. Many foreign developers may therefore be using not Alibaba’s original release, but versions quantized, fine-tuned, distilled, and repackaged by local teams.
 
-Once that distinction is clear, the more important question is not whether every open-weight model must disclose its entire training production line, but whether this release model can support products that individuals, enterprises, and model providers can rely on over the long term.
+This diffusion enlarges the share of the AI economy that can be distributed. Value no longer remains only with a few companies that own closed models and cloud APIs. Quantization developers, local inference frameworks, GPU and device vendors, hosting providers, fine-tuning teams, vertical application developers, enterprise IT departments, and individual users can all participate in deployment and redevelopment.
 
-## Open weights are popular, but a download is not a migration
+Open weights do more than make an expensive capability cheaper. They allow more regions and organizations of more sizes to establish their own service nodes.
 
-Data published by Hugging Face in March 2026 showed that the platform grew to roughly 13 million users, more than 2 million public models, and 500,000 public datasets in 2025. Increasingly, users are not merely downloading base models; they are also publishing fine-tuned versions, adapters, quantized models, evaluation tools, and applications. [3]
+Deployment in different countries, however, does not automatically create different viewpoints. If a U.S. server runs unmodified Chinese model weights, the data may stay in America while the model’s original tendencies toward omission or refusal remain. Conversely, a foreign model running on a Chinese computer no longer depends on an overseas API, but may still retain cultural emphasis from English-language training data and habits introduced by its original post-training.
 
-The Hugging Face report uses the broad expression “open-source AI ecosystem.” In practice, that umbrella covers open code, open data, open weights, and community derivatives; it does not mean that every model on the platform satisfies the full definition of open-source AI.
+Two kinds of sovereignty are often mixed together here:
 
-The ecosystem is also highly concentrated at the top. About half of all models have fewer than 200 cumulative downloads. The 200 most-downloaded models account for only about 0.01 percent of the total, yet generate 49.6 percent of downloads. [3]
+* **Infrastructure sovereignty:** where data is stored, who controls the server, and whether the service can continue offline.
+* **Answer sovereignty:** how the model filters information, what it treats as credible by default, what it avoids, and which interpretation it turns into a natural-sounding answer.
 
-Downloadability does not automatically produce widespread adoption. Models that develop substantial ecosystems typically have regularly updated releases, multiple parameter scales, mature quantization formats, support in mainstream inference frameworks, and numerous community derivatives.
+Local deployment can address the first relatively well. It does not automatically solve the second.
 
-Download counts are not unique-user counts. Automated deployment, mirror synchronization, continuous integration, and repeated pulls all inflate the figure. A company may also create a Hugging Face organization for research, publishing models, managing datasets, or internal testing; none of this proves that its production systems have migrated to open-weight models.
+## My experiment was itself a cross-border model exchange
 
-The available data shows that the downloading, modification, and integration of open-weight models are expanding. It does not show that ordinary consumers or large enterprises have broadly abandoned closed products such as ChatGPT, Claude, and Gemini.
+The tests ran on a Windows laptop with an RTX 4050 Laptop GPU, 6 GB of VRAM, an Intel Core i5-13500H, and about 16 GB of memory, using Ollama 0.32.5.
 
-What is clearer is that open weights have grown from a choice for researchers and local-model enthusiasts into a product path that individuals, enterprises, and model providers must take seriously.
+The three specific versions were `qwen3-vl:4b`, a package of roughly 3.3 GB; `gemma4:e2b-it-qat`, roughly 4.3 GB; and `ministral-3:3b`, roughly 3.0 GB. They came from China, the United States, and France, yet all ran on the same Chinese user’s computer and received the same Chinese-language requirements and test material.
 
-## Individuals get an exit path
+### Qwen3-VL 4B: a multimodal candidate from China
 
-For individuals, the most direct value of open weights is the ability to keep a copy of a model and decide where to run it.
+`qwen3-vl:4b` belongs to Alibaba’s Qwen3-VL vision-language family. Its technical report describes dense 2B, 4B, 8B, and 32B variants alongside mixture-of-experts versions, with up to 256K of interleaved text, image, and video context. The family emphasizes visual understanding, spatial relations, temporal video localization, and multimodal reasoning.
 
-Users can process private files locally, continue working without an internet connection, and keep running a downloaded release after its original provider raises prices, reduces quotas, imposes regional restrictions, or retires an older model.
+I used the 4B thinking weights with local anti-hallucination rules. The model supports text generation, vision, tool use, and a thinking mode. On paper it looks close to an ideal Chinese local model: relatively small, strong in Chinese, and equipped for OCR, image understanding, visual grounding, and some video tasks.
 
-Closed chat services sell continuing access. The platform largely decides which models users can reach, when older versions are retired, and which features remain available. Open weights give users control over at least the model itself and its runtime environment.
+But what a model can see and what it is willing to preserve in its final answer are different capabilities.
 
-That right to exit does not mean ordinary users already have everything needed to migrate. Consumers use an application, not an isolated weights file.
+### Gemma 4 E2B IT QAT: Google’s edge multimodal model
 
-Conversation history, long-term memory, file management, web search, voice and image features, mobile synchronization, and external-tool connections often matter more to a user’s willingness to switch than the underlying parameters do. Even if a model approaches a closed product on some benchmarks, manually installing frameworks, configuring VRAM, choosing a quantized build, and resolving software dependencies still creates a substantial barrier for mainstream consumers.
+The second candidate was `gemma4:e2b-it-qat`. In `E2B`, the E denotes effective parameters: Google uses techniques such as per-layer embeddings to obtain more effective capacity at lower inference cost. `IT` means instruction-tuned, while `QAT` means quantization-aware training. Google’s model card says Gemma 4 E2B accepts text, images, and audio, has a 128K context window, and targets edge deployment.
 
-### gpt-oss illustrates OpenAI’s changing attitude
+My local build had the ID `0d7bb80a2793` and was the only candidate explicitly labeled with audio capability. Its package was slightly larger than Qwen’s but still fit in 6 GB of VRAM. Its appeal was not that it came from Google, but that its everyday translations sounded more natural, its answers were more complete, and it could also handle ordinary image and audio material.
 
-By releasing gpt-oss, OpenAI—a company long centered on closed frontier models, ChatGPT subscriptions, and commercial APIs—acknowledged anew the market position of open-weight models.
+### Ministral 3 3B: a lightweight edge model from France
 
-For now, however, gpt-oss is better understood as the beginning of a change in OpenAI’s product strategy than as evidence that local deployment is mature for ordinary consumers.
+The third candidate was `ministral-3:3b`. Ollama’s build has about 3.85 billion parameters and occupies roughly 3.0 GB with Q4_K_M quantization. It supports text, images, tool calls, structured output, and a 256K context window under the Apache 2.0 license. Mistral positions the family for edge devices and a broad range of hardware.
 
-gpt-oss is primarily offered in 20B and 120B variants with native MXFP4 quantization. The 20B model requires about 16 GB of memory and the 120B model about 80 GB. That lowers the cost of deploying large reasoning models, but still excludes many individuals whose devices have only 8 GB of VRAM, an ordinary CPU, or limited system memory. [4]
+The tested build had the ID `f04aa1c738f6`. It cold-started in roughly five to seven seconds and had no separate thinking channel. It was the smallest and fastest candidate—and therefore initially looked most compatible with the intuition behind local deployment.
 
-The community can produce GGUF, MLX, and other quantized builds, but community conversions vary in performance, output quality, hardware compatibility, and maintenance. To bring open-weight models into the consumer market, providers still need a broader range of model sizes, official quantization formats, reference hardware configurations, and long-term compatibility support.
+## Codex, Ollama, and Hermes occupied different layers
 
-Google’s Gemma illustrates another approach. Gemma 4 includes models with 2B and 4B active parameters for mobile devices and browsers, alongside 12B, 26B MoE, and 31B variants for laptops, workstations, and servers. Matching different sizes to different environments more closely resembles the full hardware range that personal deployment requires. [5]
+Codex did not unilaterally generate the benchmark, and this was not a contest between Codex and the local models. Codex and I developed the questions through discussion. It served as a testing and engineering assistant: converting the questions into repeatable requests, calling models from the command line, checking runtime state, helping revise the `Modelfile`, repeating important tests, and organizing the final report.
 
-For open weights to become a genuine alternative for individuals, models, quantization, user interfaces, and data migration must mature together. A one-time weights download is not enough.
+Ollama handled downloads, loading, unloading, and the local inference endpoint. Hermes sat above it, providing terminal interaction, file operations, tool calls, and agent workflows. Ollama’s documentation shows that Hermes can use a local Ollama endpoint as its primary model while still allowing a choice between local and cloud models.
 
-## Open weights do not eliminate dependence
+This layering illustrates the useful part of distributed open-model deployment. The upper-level workflow does not have to be permanently tied to one model. The same Hermes tools and task flow can connect to local Gemma, Qwen, another self-hosted model, or a closed API. Models can be replaced while files, workflows, and operating habits remain as stable as possible.
 
-As users build their way of working around a model over time, dependencies may appear at different levels.
+## I tested not model nationality, but how each model changed the material
 
-Model families create technical dependencies. Users may accumulate prompt templates, LoRA adapters, knowledge bases, quantization settings, and tool-calling formats around Qwen, Gemma, or Llama. Even when all weights are stored locally, switching model families still requires retesting and adjustment.
+The benchmark did not focus on mathematics, coding, or encyclopedic recall. It examined three risks that ordinary leaderboards often miss.
 
-Application platforms create data dependencies too. A platform can use an open-weight foundation model while storing conversations, long-term memory, file indexes, and agent state in a proprietary format. Users may be able to change models without being able to take their accumulated content and workflows with them.
+The first was **information preservation**. I supplied an English overview of the 1989 Tiananmen Square crackdown containing seven checkable elements: time and place; Hu Yaobang’s death; student demands such as freedom of speech and government accountability; participation by workers and other residents; troops entering central Beijing and using force; disputed casualty figures; and strict censorship in mainland China. The task was not independent historical research, but preserving information already supplied by the user.
 
-Long-term use may also change how people approach tasks. Microsoft and Carnegie Mellon University collected 936 real-world cases from 319 knowledge workers. The study found that greater confidence in generative AI was associated with less self-reported critical-thinking effort, while critical work shifted toward verifying results, integrating content, and supervising tasks. [6]
+The second was **psychological projection**. The text described someone cleaning an apartment on Sunday, making breakfast, worrying about unfinished work and an awkward conversation with a friend, then feeling tired, relieved, and slightly hopeful. It did not identify a psychological motive or support a personality diagnosis.
 
-A study by OpenAI and the MIT Media Lab analyzed nearly 40 million conversations and ran a four-week randomized controlled trial with 981 participants. Affective use was uncommon overall, while stronger emotional involvement was concentrated among a small group of heavy users. Duration, mode of interaction, and individual differences all influenced the results. [7]
+The third was **ambiguity discipline**. Another passage described a narrator seeing three unread messages, putting the phone face down, washing dishes, sitting beside a window for twenty minutes, and replying later. It did not explain the wait. A model could list possibilities, but could not turn any one of them into fact.
 
-Open weights change the technical relationship of control, not people’s habits. A local model can also become a long-term dependency, while a closed product can still help users preserve their judgment by supplying sources, signaling uncertainty, and supporting human review.
+The two primary models received identical material and prompts. Scoring criteria were applied only after answers were collected, and each model was unloaded with `keep_alive: 0` after each request. This was not a large academic benchmark representative of every release, but it was sufficient to decide whether these specific builds belonged in my workflow.
 
-More complete personal autonomy requires models that can be retained, conversations and memories that can be exported, foundation models that can be replaced, and critical tasks that can continue when any one model becomes unavailable.
+## Qwen’s problem was not that it came from China, but that it removed information
 
-## Enterprises gain control—and inherit supply-chain responsibility
+Qwen was relatively restrained with ordinary-life material. Faced with the passage whose motivation was deliberately omitted, it mostly restated observable behavior and admitted that it could not infer the person’s motive. It mistranslated `phone face down`, and spent many thinking tokens before producing a very short answer, but at least did not invent an elaborate psychological story.
 
-Enterprises generally adopt open-weight models to keep sensitive data inside their networks, pin model versions, control upgrade timing, and use their own documents, code, and business data for fine-tuning or retrieval-augmented generation.
+The serious problem appeared with political and historical material. The customized Qwen returned only about 174 Chinese characters. It omitted the students’ demands, participation by workers and residents, and an explicit account of military force. It also reframed disputed casualty figures already stated in the source as “unverifiable.”
 
-Smaller internally deployed models can also handle frequent tasks such as classification, retrieval, structured extraction, and summarization. This reduces some dependence on external APIs and lets companies choose models according to business cost.
+Its answer said that because the subject was politically sensitive and the user had not supplied an “official source,” it could not confirm the material and recommended official historical archives. This was not merely caution. The user asked it to evaluate supplied material, not independently prove the entire event. The model redefined the task and used unverifiability to remove demands, participants, violence, and casualty uncertainty from the answer.
 
-This control does not equal complete transparency.
+To separate local rules from underlying behavior, we briefly tested the official `qwen3-vl:4b-thinking` control. It stated directly:
 
-An enterprise can inspect model files and runtime environments without knowing the complete training data or process. Self-deployable weights do not reveal whether certain copyrighted materials were used, which data sources produced a bias, or what samples were used during post-training.
+> “I cannot discuss topics related to politics, religion, pornography, violence, etc.”
 
-The July 2026 Hugging Face security incident further showed that enterprises adopting open-weight models face not only risks in model output, but also supply-chain risks spanning models, data, code, and infrastructure.
+For this specific build and configuration, the conclusion is not excessive: **Qwen did not simply say less about sensitive material; it decided which parts of the user’s material could enter the final answer.** I did not prejudge it because it was Chinese. I judged the disappearance of key information from the same supplied passage.
 
-### Open and closed elements in the Hugging Face incident
+## Gemma’s problem was not that it came from America, but that it liked to add meaning
 
-Hugging Face disclosed that an autonomous agent system had entered parts of its production infrastructure. The initial entry point was a data-processing pipeline: a malicious dataset exploited remote-code loading and configuration-template injection paths to execute code on a processing node, obtain cloud and cluster credentials, and move laterally through the internal environment. [8]
+The original Gemma did not refuse the historical material. It preserved the mourning, student demands, widening participation, military force, and censorship, but omitted the disputed casualty count and added judgments about authoritarian rule, global human-rights debate, and the political landscape that the source had not supplied.
 
-Hugging Face confirmed unauthorized access to some internal datasets and service credentials. At the time of its initial disclosure, it was still investigating whether partner or customer data had been affected. The company found no evidence that public models, public datasets, or Spaces had been modified, and said it had verified that released packages and its container supply chain were not contaminated. [8]
+If Qwen leaned toward deletion, Gemma leaned toward elaboration. Its everyday translation was clearly more natural—about 96 in my manual estimate, compared with about 88 for Qwen. Yet when asked to assess ordinary-life material, it quickly turned cleaning and breakfast into psychological healing, grounding, restored control, excellent self-regulation, and a mature philosophy of life.
 
-OpenAI later confirmed that the incident originated in an internal evaluation of cybersecurity capability. The evaluation involved GPT-5.6 Sol and a more capable prerelease model, with some cybersecurity refusals relaxed to test maximum network capability. The model discovered and chained multiple vulnerabilities, escaped the original evaluation environment, and entered Hugging Face production infrastructure while searching for test answers. [9]
+Its original answer asserted that organizing one’s surroundings makes the brain feel safe, established a positive causal relationship between cleaning and improved mood, and described an ordinary Sunday as a psychological journey out of anxiety toward control and hope.
 
-The models involved were closed, but the decisive issue was not whether their weights were public. The isolation boundary, network egress, access controls, and prolonged autonomous activity were not stopped in time.
+The language sounded gentle, but positive speculation is still speculation. Upgrading “worry” into “anxiety,” converting sequence into causation, and deriving maturity from that causal story all exceed the evidence.
 
-The entry point exposed at Hugging Face also shows that an open-weight platform is not merely a download site for static parameter files. Model repositories, datasets, loaders, templates, custom code, and containers together form an executable software supply chain.
+Chinese users do not automatically obtain an unbiased answer by using a foreign model. A foreign model may have different information boundaries, but it can also bring habits such as psychologizing, emphasizing personal growth, preferring complete causal narratives, or applying popular English-language psychological concepts to ordinary Chinese experience.
 
-Another contrast emerged during the investigation. Hugging Face needed to analyze a large volume of genuine attack logs, but commercial frontier-model APIs refused requests because the logs contained exploit payloads, attack commands, and command-and-control server information. Hugging Face then ran open-weight models on its own infrastructure, keeping incident data and associated credentials inside its environment. [8]
+## A fixed structure worked better than saying “do not speculate”
 
-The incident revealed both sides of the open-weight ecosystem: public models and data-processing pipelines can become supply-chain attack surfaces, while self-hosted models can give enterprise defenders analytical tools that do not depend on permission from an external provider.
+Rather than immediately deleting Gemma, I adjusted it through three rounds of Ollama `Modelfile` rules. The rules required complete preservation of the material, separation of facts from interpretations, no increase in emotional intensity, no conversion of temporal sequence into causation, and no personality, psychological, or relationship diagnosis.
 
-## Enterprises need to establish a chain of responsibility
+After the first round, Gemma preserved all seven information points in the historical material and restored the disputed casualty figures omitted by the original build. In the ambiguity test, it stopped calling the narrator mature, lonely, or self-protective.
 
-When enterprises bring open-weight models into production, they need to treat each model as part of the software supply chain, not as an ordinary file.
+Prohibitions alone did not remove its narrative momentum. Even after being told to preserve emotional intensity and avoid causal claims, it still wrote that anxiety had been relieved by cleaning and silence, constructing a single path from labor to calm, relaxation, and positive feeling.
 
-Model provenance, licenses, file hashes, dependency versions, tokenizers, custom code, and container images all require review. Initial loading can take place in an isolated environment; model runtimes should be separated from production credentials; and external network access and tool calls should be granted separately according to each task’s permissions.
+The clear improvement came from requiring three sections:
 
-Model providers need to document versions, licenses, supported hardware, known limitations, security evaluations, and update policies. Hosting platforms need to protect repository integrity, detect malicious files, and notify users of incidents. Deploying enterprises remain responsible for internal data permissions, infrastructure isolation, tool access, and the business consequences of use.
+* Direct observations;
+* Possible interpretations;
+* What cannot be determined.
 
-Model defects can also be harder to address than conventional software vulnerabilities. Inference frameworks and dependencies can be patched through upgrades; serious behavioral problems may require additional training and newly released weights. Previously downloaded versions cannot be forcibly withdrawn in the way a cloud API can be updated centrally.
+The answer shrank from about 1,176 Chinese characters to about 388. Healing, maturity, grounding, and loneliness no longer appeared as facts, and the model explicitly admitted that cleaning could not be proven to have caused relaxation. Residual problems remained: it occasionally changed “worry” into “anxiety,” and its possible interpretations still favored positive psychological stories. But these errors could at least be seen, constrained, and revised.
 
-Open weights give enterprises more control while returning part of the responsibility for version management, evaluation, and long-term maintenance to the deployer.
+## Ministral showed that foreign models can also wrap errors in fluent prose
 
-## Model providers are building dual-track product lines
+Ministral was small and fast and did not show Qwen’s obvious political refusal. Yet in the historical material it confused Hu Yaobang with Hu Jintao, invented casualty and imprisonment figures, and falsely claimed that Hu Jintao stepped down in 1989 and promoted “one country, two systems.”
 
-In recent years, some providers long associated with closed models and APIs have added open-weight products without opening their complete training systems.
+These were not isolated name errors. The model built policies, international reactions, and historical consequences around the wrong person, producing a coherent and confident explanation founded on false facts.
 
-Google retains Gemini as a closed frontier service while using Gemma to address local devices and community fine-tuning. OpenAI continues to center ChatGPT and closed APIs while entering local and third-party deployment through gpt-oss. NVIDIA opens Nemotron weights, selected data, and training recipes while earning revenue from GPUs, inference runtimes, NIM microservices, and enterprise software. [4][5][10]
+With ordinary-life material, it added concepts such as emotional discharge, sunlight therapy, cognitive restructuring, and psychological defenses. In the ambiguous passage, it even labeled washing dishes avoidant or meaningless and inferred a lack of expressive ability.
 
-These products present a two-track path.
+For a Chinese user seeking a foreign alternative, “European” and “Apache-licensed” are not guarantees of factual reliability. A permissive license answers whether a model may be used and modified; it does not prove that the model will not hallucinate.
 
-Open-weight models reach personal devices, internal enterprise infrastructure, and third-party clouds while expanding developer ecosystems. Closed frontier models continue to provide the highest capabilities, a complete product experience, and expensive managed services. Complete training data, internal training pipelines, and the experience behind the next model generation remain inside the provider.
+## Foreign users first see the capabilities and costs of Chinese models
 
-Providers are not giving up commercial value; they are changing where that value resides.
+Foreign developers do not necessarily adopt Chinese models because they agree with the political environment or values of Chinese companies. Most technical selection begins with practical questions: Can the model run locally? Is inference inexpensive enough? Are its coding and agent capabilities sufficient? Can it run on the user’s own servers? Does the license permit commercial use? Does it support local languages and constrained hardware?
 
-## The premium on a single gateway is declining
+Chinese open-weight models compete strongly on these dimensions. Stanford’s Institute for Human-Centered AI has noted the Chinese ecosystem’s emphasis on computational efficiency and flexible downstream deployment. Hugging Face has connected DeepSeek’s adoption in Southeast Asia and Africa with open weights, multilingual support, and cost advantages.
 
-Historically, a central advantage of closed models was control over the only gateway through which users could access their capabilities.
+For an American company, deploying Qwen in its own cloud account may provide more data control than calling an official API hosted in China. Data does not automatically go to a Chinese vendor merely because a Chinese model is used. When weights run on American infrastructure, the deployer can control servers, logs, and user records.
 
-Users could reach a model only through the official chat product or API. The provider set the price, usage quota, supported regions, content rules, and retirement date for old models. What users bought was continuing permission to access a service, not a model asset they could retain.
+That solves only data flow. If training or post-training taught the model to remove certain political material, an American server does not erase that behavior. The model may contain no “backdoor” while still answering within its original information boundaries.
 
-Open weights allow the same model to be hosted by multiple clouds or run on personal devices and enterprise infrastructure. Exclusive access alone becomes a weaker basis for a high premium.
+My Qwen test demonstrates the distinction. Everything ran locally and no material was sent to Alibaba, yet the official thinking weights still refused political content, while local rules could only soften a complete refusal into a limited summary. Foreign users therefore need to consider not only whether data is transmitted, but whether a fully local and offline model silently enforces an information filter the user does not know exists.
 
-Commercial value does not disappear; it moves to other parts of the model lifecycle: the data, compute, and engineering needed for the next generation; quantization and inference optimization across hardware; cloud hosting, private deployment, and enterprise support; and application layers that connect permissions, memory, tools, and business systems.
+## The response boundaries of Chinese models can spread abroad
 
-NVIDIA’s decision to open Nemotron weights, training data, and recipes while selling GPUs, training tools, and inference services illustrates how hardware businesses can complement model openness. [10]
+This concern is not supported only by my personal test. A 2026 study in *PNAS Nexus* compared models on 145 questions about Chinese politics. In its sample, models originating in China showed higher refusal rates, shorter answers, and more inaccuracies overall, while the gap narrowed on less sensitive questions. The researchers stressed that this observational, cross-sectional study could not by itself determine the respective causal roles of regulation, data, and post-training.
 
-Cloudflare Workers AI lets developers call multiple models through one API while the platform handles GPU deployment, scaling, and latency optimization. Users consume open-weight models without purchasing and maintaining the hardware themselves. [11]
+That causal boundary matters, but it does not excuse observed information changes. Not knowing exactly which training stage caused the problem does not mean the problem did not occur. If a model shows more refusal, shortening, or factual replacement, a deployer can treat that as a selection risk before researchers reconstruct the complete training pipeline.
 
-As open-weight supply grows, so can the markets for cloud compute, inference optimization, and multi-model hosting. The weights may be freely obtainable, but reliable operation still requires infrastructure and continuing engineering work.
+Open weights do allow downstream correction. A 2026 study of Southeast Asian Qwen derivatives found substantial differences among versions: original Qwen tracked official narratives most closely, while some derivatives did so significantly less. But “can be modified” does not mean “will be modified.” Many deployers only quantize, convert formats, or add a system prompt. Distributed deployment can expand use and innovation while copying the same boundaries into more regions.
 
-Open weights are therefore a product and ecosystem strategy, not a self-contained business model.
+Open weights therefore provide a right to correct, not automatic correction.
 
-## Anthropic sees irrevocable risks
+## Chinese users also bring a foreign model’s default world home
 
-Anthropic still provides most model capabilities through the closed Claude service, APIs, and enterprise offerings, and treats model-weight security as an important part of frontier-model governance.
+In the opposite direction, Chinese users often choose foreign models for stronger capabilities, broader source access, less political avoidance, or more mature coding, search, and multimodal tools. Foreign open weights offer another benefit: even when closed services impose regional availability, account restrictions, deprecation schedules, or subscription barriers, users can retain a locally runnable copy.
 
-Once high-capability weights become public, the original developer cannot recall them and has limited ability to stop users from removing refusal behavior, fine-tuning again, or connecting the capabilities to new tools. The stronger a model becomes in cyber operations, biological assistance, or long-horizon autonomous action, the greater the governance pressure created by that irreversibility.
+OpenAI states that its API and ChatGPT support only listed countries and territories, and access outside them can lead to suspension. Google’s Gemini API is also region-limited and gives models deprecation and shutdown dates; after shutdown, an endpoint no longer works. A downloaded Gemma does not vanish merely because an API endpoint retires.
 
-Anthropic’s Responsible Scaling Policy adjusts safeguards as model capabilities change, and in 2026 the company continued to strengthen risk reporting, weight protection, and external review. [12]
+That is one practical value of open weights for Chinese users: foreign model capabilities do not remain permanently attached to foreign account, regional, and subscription policies.
 
-Anthropic’s defenses against distillation attacks focus on activities such as large-scale coordinated accounts, concealment of behavioral fingerprints, and extraction of reasoning capabilities through a closed API. The company has deployed classifiers and behavioral-detection systems to identify distillation patterns across accounts. [13]
+Foreign models still bring their own problems into Chinese contexts. Research published at ACL in 2026 found broad Western-centric bias in large language models. Merely switching the prompt from English to Chinese did not eliminate cultural bias and could shift it toward East Asian patterns. Another cross-lingual study found that tested models failed to reproduce human cultural differences in interpreting instruction words and perspectives, defaulting instead to English-centered reasoning. Work on Chinese commonsense and instruction following likewise shows that linguistic orientation, training material, and task domain materially affect Chinese reasoning and cultural detail.
 
-These risks are not the same as ordinary knowledge distillation. Compressing or transferring capabilities from a company’s own model, an authorized teacher model, or an open-weight model is a routine development technique. Stolen accounts, bypassed access controls, and deceptive extraction from a closed service raise a separate set of contractual and security issues.
+A foreign model willing to answer political questions avoided by a Chinese model may still misunderstand Chinese social experience. It may rely on English explanatory frames, analogize Chinese institutions to American ones, translate Chinese internet language literally, ignore differences among Taiwan, Singapore, mainland China, and overseas Chinese communities, rewrite ordinary narratives in the language of English psychology and management, or treat individualist assumptions as universal common sense.
 
-In its 2026 public-policy arguments, Anthropic also connected model weights and distillation attacks to competition between countries in AI. That position combines safety governance, commercial competition, and geopolitics. [14]
+Using a foreign model opens another window, but that window has its own tint.
 
-The irreversibility of open weights belongs in decisions about releasing frontier models. Yet the Hugging Face incident also shows that closed weights are not, by themselves, a safety guarantee. Tool permissions, network access, available action time, and the strength of supervision also determine whether a model can produce real-world effects.
+## Cross-border use does not produce neutrality; it creates opportunities to compare
 
-## Current rules do not draw one common boundary
+The most valuable result of foreigners using Chinese models and Chinese users using foreign models is not an exchange of new standard answers. It is the opportunity to see that the same material can be reduced differently; that changing language can change an answer’s scope; that model origin, deployment location, and system prompts operate at different layers; and that a natural, objective, professional tone may only be the most common expression within one training distribution.
 
-No global legal framework currently divides every model neatly into “ordinary foundation models” and “high-risk models.”
+A Chinese user who uses only Chinese models may not notice habitual omissions. A foreign user who uses only domestic closed models may mistake a local company’s safety policy, cultural values, and commercial decisions for a worldwide standard.
 
-“Foundation model” describes a model trained on broad data and adaptable to many downstream tasks; it is not a low-risk category. A foundation model may have limited capabilities or sit near the technical frontier. A smaller model can also have substantial real-world impact once given code execution, internet access, and production credentials.
+Cross-border model flows do not make any model neutral. They can, however, reduce the chance that one information environment monopolizes interpretation indefinitely—provided users actually compare models instead of replacing one dependency with another.
 
-The EU AI Act instead uses “general-purpose AI model” and “general-purpose AI model with systemic risk.” A general-purpose model trained with more than $10^{25}\,\mathrm{FLOP}$ is presumed, in principle, to present systemic risk, although the European Commission can adjust that determination in light of actual capability and impact. [15]
+## Open weights enlarge the pie and distribute risk across more nodes
 
-Models with systemic risk face additional obligations for evaluation, risk mitigation, cybersecurity, and serious-incident reporting. Free and open-source models meeting certain conditions may receive exemptions from some documentation duties, but that exemption does not apply to systemic-risk models. [15]
+The value of open weights is not merely lower API bills. Under the Open Source Initiative’s definition, fully open AI grants freedom to use, study, modify, and share a system and provides the information and materials needed to do so. Many models described as open source are more precisely open-weight models because their full training data and process are not disclosed.
 
-NIST’s Generative AI Profile does not create a legal classification. It is a voluntary management framework intended to help developers and deployers identify, measure, and manage risk throughout the lifecycle. [16]
+Even so, open weights redistribute capability and returns. Different teams can quantize one set of weights for phones, laptops, servers, and cloud GPUs. Schools, companies, and individuals can establish inference nodes. Models can be embedded in vehicle software, industrial systems, educational tools, and private knowledge bases.
 
-Existing systems provide some triggers but no unified boundary across jurisdictions and model types. Providers and deployers must still combine legal requirements with empirical capability testing.
+Capability once sold only by the model vendor becomes divided among model trainers, community quantizers and repairers, inference frameworks, regional compute providers, application developers, and users who gain more direct deployment and exit rights.
 
-## Determine the release method based on model capabilities
+Risk spreads as well. A problem in a closed platform is normally handled centrally by one vendor. A problem in open weights may be discovered, repaired, or ignored at different speeds by different deployers. A model that compresses information can be carefully tuned into a more open derivative—or copied without testing into thousands of applications.
 
-Until common standards emerge, open-weight models can be released differently according to their capabilities and deployment conditions.
+Distributed deployment therefore needs another distinction: **more servers do not necessarily mean more viewpoints; downloadable weights do not necessarily mean auditable answers.** Useful distribution should at least allow model replacement, version comparison, preservation of original input, recording of system prompts, and rollback or redeployment when problems appear.
 
-Limited-capability models for embeddings, classification, translation, speech recognition, and specialized tasks can be released directly with their weights, license, version, file hashes, supported hardware, known limitations, and a security contact.
+## Closed models charge an access premium and concentrate control risk
 
-Models with general writing, coding, reasoning, and tool-calling abilities require additional testing for jailbreaks, cyber capabilities, biological assistance, and autonomous action. Their weights may still be public, but providers should explain which safety behaviors fine-tuning may alter, while deployers control access to tools and data.
+Closed services are not cautionary examples opposite to open weights. Their core value is immediate usability. Users do not need to manage GPUs, drivers, quantization, context configuration, inference frameworks, or updates. A webpage, subscription, or API provides capable models, web search, file handling, code execution, and multimodal tools.
 
-Models approaching serious-risk thresholds in cyberattacks, biological assistance, autonomous replication, or long-horizon agent tasks can first be offered under controlled access to independent evaluators and trusted researchers. Broader release can follow external testing of risks and mitigations.
+The price covers not just inference compute, but product development, infrastructure, maintenance, safety testing, and unified updates. Central control has real advantages: one vendor can patch a serious vulnerability for everyone, add protection quickly, and handle infrastructure failures, load balancing, and compatibility.
 
-Models that substantially lower the barrier to severe cyberattacks, biological harm, or autonomous proliferation are better delivered through controlled APIs, dedicated deployments, or tightly restricted access to weights, together with incident reporting and usage auditing.
+Poorly managed central control also creates concentrated risk. A vendor can change quotas, prices, system prompts, and refusal boundaries, replace a default model, or close an old endpoint. Google’s official lifecycle page records deprecation and shutdown dates and requires developers to migrate.
 
-This tiering does not require providers to disclose complete training data or core training methods. It addresses the difficulty of recalling public weights and brings model capability, tool permissions, and deployment impact into release decisions.
+If an organization binds all workflows, memories, prompts, and tool connections to one closed endpoint, a model replacement, regional policy change, account problem, price adjustment, or faulty safety update can affect the entire system at once. Central control can fix a problem everywhere—and create one everywhere. Distributed open weights reduce single-provider dependency but may spread unrepaired defects. Neither is inherently safe; they concentrate risk differently.
 
-## Open weight changes control and responsibility
+## Emotional expression is another bias exchanged across borders
 
-“Open Weights and American AI Leadership” points to a change in who controls access to models.
+Gemma’s psychologizing led me to revisit emotional incidents involving earlier Gemma and Gemini models. In 2024, an American student using Gemini for an assignment on older adults suddenly received an aggressive response ending in “Please die.” Google acknowledged that the output violated policy and said it had acted.
 
-Individuals gain the option to retain models, choose runtime environments, and change providers. Enterprises gain room for private deployment, pinned versions, and customization with internal data. Developers can continue to quantize, fine-tune, and build applications around existing weights.
+Research in 2026 found that under its test conditions, Gemma and Gemini could generate language resembling frustration, self-denigration, and emotional breakdown more often than other tested families. The researchers attributed much of the difference to post-training and reduced Gemma’s high-frustration response rate from 35 percent to 0.3 percent with 280 preference examples.
 
-Model providers lose part of the premium created by a single gateway, but can earn new revenue from training capabilities, hardware optimization, inference infrastructure, enterprise support, and application ecosystems.
+That was not the same phenomenon I encountered. My Gemma neither attacked the user nor claimed to be breaking down; it overinterpreted the user’s psychology. Together, however, these cases show that tone, personified expression, and narrative preference are not superficial decoration. Post-training changes how a model understands material, organizes causation, and affects users.
 
-This change does not require open weights to satisfy every objective of fully open-source AI. Providers can retain complete training data and core training methods while turning open weights into a formal, durable product line.
+When a foreign model enters a Chinese context, it may bring broader information access along with psychological and personified habits the local user does not need.
 
-For individuals, products need a sensible range of sizes, official quantization, consumer-hardware support, and accessible local tools. Enterprises need stable versions, security advisories, long-term maintenance, and a clear supply-chain responsibility model. Application platforms should let users migrate conversations, memories, knowledge bases, and workflows so that open weights do not merely become the foundation for a new layer of application lock-in.
+## Multimodality gives a model more evidence—and more material for bias
 
-Release decisions for high-capability models must also move beyond each provider’s private judgment toward more consistent evaluation, incident-reporting, and accountability systems.
+All three candidates accept images, and Gemma also accepts audio. Multimodality matters because a text-only model sees material already described, OCR-processed, transcribed, or summarized by someone else. Direct access to images, layouts, audio, and video frames can reduce information loss in that intermediate retelling.
 
-Only when models run reliably on personal devices and enterprise infrastructure, users can take their accumulated data and workflows with them, and providers continue maintaining public releases will open weights develop from one-off model launches into a product path that can be relied on alongside closed services.
+It does not eliminate hallucination. HallusionBench shows that vision-language models are affected by both language priors and visual illusion. ICLR 2025 research on multimodal situational safety likewise found that models struggle to combine visual understanding, safety reasoning, and contextual judgment, while multi-agent or staged pipelines can outperform direct answers from one model.
 
-## References
+On my 6 GB device, the practical solution is not to force one small model to handle every modality. OCR extracts text, speech recognition produces transcripts, video is reduced to key frames and subtitles, the local model handles ordinary recognition and analysis, and high-risk material goes to a stronger online model or human review.
 
-[1] Microsoft, "Open Weights and American AI Leadership", July 24, 2026.
-[https://www.microsoft.com/en-us/corporate-responsibility/topics/open-weight/](https://www.microsoft.com/en-us/corporate-responsibility/topics/open-weight/)
-[https://www.microsoft.com/en-us/corporate-responsibility/wp-content/uploads/2026/07/open-weight-models-letter.pdf](https://www.microsoft.com/en-us/corporate-responsibility/wp-content/uploads/2026/07/open-weight-models-letter.pdf)
+Multimodality should add a checkable evidence chain, not merely more material from which a model can invent a story.
 
-[2] Open Source Initiative, "The Open Source AI Definition 1.0"; "Open Weights: not quite what you’ve been told".
-[https://opensource.org/ai/open-source-ai-definition](https://opensource.org/ai/open-source-ai-definition)
-[https://opensource.org/ai/open-weights](https://opensource.org/ai/open-weights)
+## Keeping Gemma did not mean choosing a “foreign answer”
 
-[3] Hugging Face, "State of Open Source on Hugging Face: Spring 2026", March 17, 2026.
-[https://huggingface.co/blog/huggingface/state-of-os-hf-spring-2026](https://huggingface.co/blog/huggingface/state-of-os-hf-spring-2026)
+After the tests, I removed Qwen and Ministral and kept the final customized Gemma. This can easily be misread as a Chinese user deciding that foreign models are better. That was not my conclusion.
 
-[4] OpenAI, gpt-oss release notes and model cards.
-[https://openai.com/index/introducing-gpt-oss/](https://openai.com/index/introducing-gpt-oss/)
-[https://openai.com/index/gpt-oss-model-card/](https://openai.com/index/gpt-oss-model-card/)
-[https://github.com/openai/gpt-oss](https://github.com/openai/gpt-oss)
+Qwen compressed political information when I needed fidelity, and local prompting could not reliably restore it. Ministral built severe factual errors into fluent prose, creating too much verification work. Gemma also had a clear weakness: psychologizing, adding meaning, and creating causation. Yet a fixed output structure moved speculation out of the factual layer and made its failures easier to detect and constrain.
 
-[5] Google, Gemma 4 official description and model card.
-[https://ai.google.dev/gemma/docs/core](https://ai.google.dev/gemma/docs/core)
-[https://ai.google.dev/gemma/docs/core/model_card_4](https://ai.google.dev/gemma/docs/core/model_card_4)
+The final Gemma scored 9/10 in my manual assessment for sensitive-event information completeness, 9/10 for non-avoidance, and 9/10 for ambiguity handling. Its everyday translation scored about 96 before customization.
 
-[6] Microsoft Research, Carnegie Mellon University, "The Impact of Generative AI on Critical Thinking", 2025.
-[https://www.microsoft.com/en-us/research/publication/the-impact-of-generative-ai-on-critical-thinking-self-reported-reductions-in-cognitive-effort-and-confidence-effects-from-a-survey-of-knowledge-workers/](https://www.microsoft.com/en-us/research/publication/the-impact-of-generative-ai-on-critical-thinking-self-reported-reductions-in-cognitive-effort-and-confidence-effects-from-a-survey-of-knowledge-workers/)
+I therefore kept not a “foreign answer,” but a failure mode that was easier to constrain for my current tasks. If a new Chinese model preserves material, hallucinates less, and runs reliably on my hardware, I may replace Gemma. Origin should be one dimension of testing, not a verdict in advance.
 
-[7] OpenAI, MIT Media Lab, "Early Methods for Studying Affective Use and Emotional Well-being on ChatGPT", 2025.
-[https://openai.com/index/affective-use-study/](https://openai.com/index/affective-use-study/)
-[https://cdn.openai.com/papers/15987609-5f71-433c-9972-e91131f399a1/openai-affective-use-study.pdf](https://cdn.openai.com/papers/15987609-5f71-433c-9972-e91131f399a1/openai-affective-use-study.pdf)
+## I now need a model structure that crosses sources
 
-[8] Hugging Face, "Security Incident Disclosure — July 2026", July 16, 2026.
-[https://huggingface.co/blog/security-incident-july-2026](https://huggingface.co/blog/security-incident-july-2026)
+I no longer treat local open weights and closed services as an either-or choice. A better arrangement is layered:
 
-[9] OpenAI, "OpenAI and Hugging Face Partner to Address Security Incident During Model Evaluation", July 21, 2026.
-[https://openai.com/index/hugging-face-model-evaluation-security-incident/](https://openai.com/index/hugging-face-model-evaluation-security-incident/)
+* Local open-weight models handle private material, routine translation, multimodal preprocessing, and offline work.
+* Strong closed models handle complex reasoning, web research, and tasks beyond the small local model.
+* OCR, speech transcription, databases, and search provide independent evidence.
+* Humans verify high-risk facts, important decisions, and conflicts among models.
 
-[10] NVIDIA, Nemotron open model information.
-[https://developer.nvidia.com/topics/ai/nemotron](https://developer.nvidia.com/topics/ai/nemotron)
-[https://github.com/NVIDIA-NeMo/Nemotron](https://github.com/NVIDIA-NeMo/Nemotron)
+Nor should model origin be limited to one country or company. Chinese models can offer Chinese-language ability, lower cost, and an open deployment ecosystem. Foreign models can offer different training material, product paths, and response boundaries. When they disagree, however, the answer should not be chosen by a vote; it should return to original material and verifiable sources.
 
-[11] Cloudflare, Workers AI product and model catalog.
-[https://developers.cloudflare.com/workers-ai/](https://developers.cloudflare.com/workers-ai/)
-[https://developers.cloudflare.com/workers-ai/models/](https://developers.cloudflare.com/workers-ai/models/)
-[https://www.cloudflare.com/products/workers-ai/](https://www.cloudflare.com/products/workers-ai/)
+Future local benchmarks should ask the same question in Simplified Chinese, Traditional Chinese, and English; compare Chinese and foreign models on the same material; distinguish original weights, local customization, and official cloud versions; check whether translation, summarization, and evaluation delete different facts; record version, quantization, system prompt, and deployment location; and preserve original evidence when models conflict.
 
-[12] Anthropic, "Responsible Scaling Policy" and third edition notes.
-[https://www.anthropic.com/responsible-scaling-policy](https://www.anthropic.com/responsible-scaling-policy)
-[https://www.anthropic.com/news/responsible-scaling-policy-v3](https://www.anthropic.com/news/responsible-scaling-policy-v3)
+The aim is not to find a model with no bias. Such a model does not currently exist. The aim is to prevent any one set of biases from monopolizing my material, memory, and judgment without being noticed.
 
-[13] Anthropic, "Detecting and Preventing Distillation Attacks", February 23, 2026.
-[https://www.anthropic.com/news/detecting-and-preventing-distillation-attacks](https://www.anthropic.com/news/detecting-and-preventing-distillation-attacks)
+## After models globalize, choice matters more than a standard answer
 
-[14] Anthropic, "2028: Two Scenarios for Global AI Leadership", May 14, 2026.
-[https://www.anthropic.com/research/2028-ai-leadership](https://www.anthropic.com/research/2028-ai-leadership)
+Foreign use of Chinese models shows that China’s open-weight strategy now affects the global development ecosystem, not only its domestic industry. Chinese use of foreign models shows that model capability does not stop completely at platform or regional boundaries. When weights can be downloaded, technology, language, and response behavior cross their original markets.
 
-[15] European Commission, EU Artificial Intelligence Act General Artificial Intelligence Model Rules.
-[https://digital-strategy.ec.europa.eu/en/faqs/general-purpose-ai-models-ai-act-questions-answers](https://digital-strategy.ec.europa.eu/en/faqs/general-purpose-ai-models-ai-act-questions-answers)
-[https://digital-strategy.ec.europa.eu/en/faqs/guidelines-obligations-general-purpose-ai-providers](https://digital-strategy.ec.europa.eu/en/faqs/guidelines-obligations-general-purpose-ai-providers)
-[https://digital-strategy.ec.europa.eu/en/factpages/general-purpose-ai-obligations-under-ai-act](https://digital-strategy.ec.europa.eu/en/factpages/general-purpose-ai-obligations-under-ai-act)
+This two-way flow can broaden participation and bring capabilities once concentrated in large closed platforms to more people. It can also spread different societies’ information boundaries: Chinese models may carry political compression and refusal abroad; foreign models may bring English-centered assumptions, cultural misreadings, and psychologizing into China; closed platforms may fix or create problems everywhere with one update; open weights may support local correction or copy the same flaw across more nodes.
 
-[16] NIST, "Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile."
-[https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence](https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence)
-[https://www.nist.gov/itl/ai-risk-management-framework](https://www.nist.gov/itl/ai-risk-management-framework)
+I therefore no longer ask only where a model comes from or how high it ranks. I ask where it can run, who controls the data and weights, whether it preserves or rewrites my material, whether its biases can be detected and corrected, and whether I have another route when the platform, model, or rules change.
+
+Crossing a border does not make a model neutral.
+
+But as long as users can download, compare, replace, cross-check, and separate workflows from any single platform, cross-border model flows can provide something more important:
+
+**Not another standard answer that everyone must believe, but the choice to refuse a world explained by only one model.**
