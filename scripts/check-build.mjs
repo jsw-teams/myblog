@@ -10,11 +10,12 @@ const publicAssetsDir = path.join(publicDir, "assets");
 const contentAssetsDir = path.join(rootDir, "content", "assets");
 const themeConfigFile = path.join(rootDir, "theme", "config.json");
 const themeSupportStylesFile = path.join(rootDir, "theme", "styles", "support-card.css");
+const wranglerConfigFile = path.join(rootDir, "wrangler.toml");
 const locales = ["zh-TW", "en"];
 
-const simplifiedPostSources = await fg("content/posts/*/index.zh-CN.md", { cwd: rootDir, onlyFiles: true });
-if (simplifiedPostSources.length) {
-  throw new Error(`Simplified Chinese post sources must be retired: ${simplifiedPostSources.join(", ")}`);
+const simplifiedContentSources = await fg("content/**/*.zh-CN.md", { cwd: rootDir, onlyFiles: true });
+if (simplifiedContentSources.length) {
+  throw new Error(`Simplified Chinese content sources must be retired: ${simplifiedContentSources.join(", ")}`);
 }
 
 const postDirectories = await fg("content/posts/*", { cwd: rootDir, onlyDirectories: true });
@@ -26,6 +27,14 @@ for (const directory of postDirectories) {
 
 if (!fsSync.existsSync(themeConfigFile) || !fsSync.existsSync(themeSupportStylesFile)) {
   throw new Error("Ko-fi configuration and styles must be loaded from the theme directory");
+}
+
+if (!fsSync.existsSync(wranglerConfigFile)) {
+  throw new Error("wrangler.toml is required for Cloudflare Pages deployment");
+}
+const wranglerConfig = await fs.readFile(wranglerConfigFile, "utf8");
+if (!/^pages_build_output_dir\s*=\s*["']\.\/public["']\s*$/m.test(wranglerConfig)) {
+  throw new Error("wrangler.toml must publish the Astro output directory ./public");
 }
 
 function hasHeaderBlock(headers, pathPattern, headerPattern) {
