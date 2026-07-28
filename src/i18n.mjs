@@ -1,6 +1,6 @@
-export const LOCALES = ["zh-CN", "zh-TW", "en"];
+export const LOCALES = ["zh-TW", "en"];
 export const RESERVED_LOCALES = ["ja"];
-export const DEFAULT_LOCALE = "zh-CN";
+export const DEFAULT_LOCALE = "zh-TW";
 
 export const localeMeta = {
   "zh-CN": {

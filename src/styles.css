@@ -882,11 +882,6 @@ h3 {
   display: none;
 }
 
-html[data-preferred-locale="zh-TW"] .not-found-panel[data-i18n-panel="zh-CN"],
-html[data-preferred-locale="en"] .not-found-panel[data-i18n-panel="zh-CN"] {
-  display: none;
-}
-
 html[data-preferred-locale="zh-TW"] .not-found-panel[data-i18n-panel="zh-TW"],
 html[data-preferred-locale="en"] .not-found-panel[data-i18n-panel="en"] {
   display: grid;

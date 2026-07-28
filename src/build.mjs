@@ -623,9 +623,9 @@ async function writeCloudflareFiles() {
   Content-Type: text/plain; charset=utf-8
   Content-Signal: ai-train=no, search=yes, ai-input=yes
 `;
-  const redirects = `/zh /zh-CN/ 302
-/cn /zh-CN/ 302
-/zh-cn /zh-CN/ 302
+  const redirects = `/zh /zh-TW/ 302
+/cn /zh-TW/ 302
+/zh-cn /zh-TW/ 302
 /en-us /en/ 302
 /english /en/ 302
 `;
@@ -667,7 +667,7 @@ async function build() {
 
     await writeHtml(`/${locale}/archive/`, renderArchivePage({ site, locale, groups: archiveGroups(posts, locale) }), {
       updated: localePosts[0]?.updated ?? today,
-      alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/archive/` })).concat({ hreflang: "x-default", url: "/zh-CN/archive/" })
+      alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/archive/` })).concat({ hreflang: "x-default", url: "/zh-TW/archive/" })
     });
 
     await writeHtml(`/${locale}/categories/`, renderTermIndexPage({
@@ -696,7 +696,7 @@ async function build() {
 
     await writeHtml(`/${locale}/search/`, renderSearchPage({ site, locale }), {
       updated: localePosts[0]?.updated ?? today,
-      alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/search/` })).concat({ hreflang: "x-default", url: "/zh-CN/search/" })
+      alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/search/` })).concat({ hreflang: "x-default", url: "/zh-TW/search/" })
     });
 
     for (const term of categoryMap.values()) {

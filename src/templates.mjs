@@ -84,7 +84,7 @@ function imageType(imageUrl = "") {
 
 function localizedValue(value, locale, fallback = "") {
   if (typeof value === "string") return value;
-  return value?.[locale] ?? value?.["zh-CN"] ?? value?.en ?? fallback;
+  return value?.[locale] ?? value?.["zh-TW"] ?? value?.en ?? fallback;
 }
 
 function renderSupportCard(site, locale) {
@@ -121,7 +121,7 @@ function renderNav(site, locale, current) {
   return `<header class="site-header">
     <a class="brand" href="${withBase(`/${locale}/`)}" data-locale-choice="${locale}">
       <span class="brand-mark" aria-hidden="true">JS</span>
-      <span>${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</span>
+      <span>${escapeHtml(site.siteName[locale] ?? site.siteName["zh-TW"])}</span>
     </a>
     <nav class="site-nav" aria-label="${escapeHtml(t(locale, "home"))}">
       ${navItems.map(([key, href]) => {
@@ -140,7 +140,7 @@ function renderNav(site, locale, current) {
 
 function renderFooter(site, locale) {
   return `<footer class="site-footer">
-    <p class="footer-brand">&copy; ${new Date().getUTCFullYear()} ${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</p>
+    <p class="footer-brand">&copy; ${new Date().getUTCFullYear()} ${escapeHtml(site.siteName[locale] ?? site.siteName["zh-TW"])}</p>
     <nav class="footer-links" aria-label="${escapeHtml(t(locale, "sitemap"))}">
       <a href="${withBase(`/${locale}/feed.xml`)}">${escapeHtml(t(locale, "feed"))}</a>
       <a href="${withBase(`/${locale}/about/`)}">${escapeHtml(t(locale, "privacy"))}</a>
@@ -151,7 +151,7 @@ function renderFooter(site, locale) {
 }
 
 export function baseJsonLd(site, locale) {
-  const siteName = site.siteName[locale] ?? site.siteName["zh-CN"];
+  const siteName = site.siteName[locale] ?? site.siteName["zh-TW"];
   return [
     {
       "@context": "https://schema.org",
@@ -165,7 +165,7 @@ export function baseJsonLd(site, locale) {
       "@type": "Blog",
       name: siteName,
       url: absoluteUrl(site, `/${locale}/`),
-      description: site.description[locale] ?? site.description["zh-CN"],
+      description: site.description[locale] ?? site.description["zh-TW"],
       inLanguage: locale
     }
   ];
@@ -204,7 +204,7 @@ export function renderLayout({
   bodyAttrs = {},
   robots = "index,follow"
 }) {
-  const siteName = site.siteName[locale] ?? site.siteName["zh-CN"];
+  const siteName = site.siteName[locale] ?? site.siteName["zh-TW"];
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
   const canonical = absoluteUrl(site, url);
   const imageUrl = absoluteUrl(site, ogImage);
@@ -378,13 +378,13 @@ function renderPostList(posts, locale) {
 }
 
 export function renderHomePage({ site, locale, posts }) {
-  const description = site.description[locale] ?? site.description["zh-CN"];
+  const description = site.description[locale] ?? site.description["zh-TW"];
   const [featuredPost, ...recentPosts] = posts;
   const main = `<main id="main" class="page-main home-main">
     <section class="home-hero" aria-labelledby="home-title">
       <div class="home-hero-copy">
         <p class="home-kicker">Ideas · Technology · Life</p>
-        <h1 id="home-title">${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])}</h1>
+        <h1 id="home-title">${escapeHtml(site.siteName[locale] ?? site.siteName["zh-TW"])}</h1>
         <p class="lead">${escapeHtml(t(locale, "siteIntro"))}</p>
       </div>
       <img class="hero-mascot pixel-art" src="/assets/mascot-laptop.png" alt="" width="280" height="301">
@@ -401,7 +401,7 @@ export function renderHomePage({ site, locale, posts }) {
   return renderLayout({
     site,
     locale,
-    title: site.siteName[locale] ?? site.siteName["zh-CN"],
+    title: site.siteName[locale] ?? site.siteName["zh-TW"],
     description,
     url: `/${locale}/`,
     current: "home",
@@ -412,8 +412,8 @@ export function renderHomePage({ site, locale, posts }) {
 }
 
 export function renderRootPage({ site }) {
-  const locale = LOCALES.includes(site.defaultLocale) ? site.defaultLocale : "zh-CN";
-  const description = "选择语言入口开始阅读。選擇語言入口開始閱讀。 Choose a language to start reading.";
+  const locale = LOCALES.includes(site.defaultLocale) ? site.defaultLocale : "zh-TW";
+  const description = "選擇語言入口開始閱讀。 Choose a language to start reading.";
   const languageButtons = LOCALES.map((entryLocale, index) => {
     const className = index === 0 ? "button-link" : "button-link button-link-secondary";
     return `<a class="${className}" href="/${entryLocale}/" data-locale-choice="${entryLocale}">${escapeHtml(localeLabel(entryLocale))}</a>`;
@@ -422,7 +422,7 @@ export function renderRootPage({ site }) {
     <section class="language-choice" aria-labelledby="root-title">
       <img src="/assets/mascot-reading.png" alt="" width="230" height="345">
       <div>
-        <h1 id="root-title">${escapeHtml(site.siteName[locale] ?? site.siteName["zh-CN"])} / ${escapeHtml(site.siteName.en)}</h1>
+        <h1 id="root-title">${escapeHtml(site.siteName[locale] ?? site.siteName["zh-TW"])} / ${escapeHtml(site.siteName.en)}</h1>
         <p class="lead">${escapeHtml(description)}</p>
         <div class="language-choice-links">${languageButtons}</div>
       </div>
@@ -431,7 +431,7 @@ export function renderRootPage({ site }) {
   return renderLayout({
     site,
     locale,
-    title: `${site.siteName[locale] ?? site.siteName["zh-CN"]} / ${site.siteName.en}`,
+    title: `${site.siteName[locale] ?? site.siteName["zh-TW"]} / ${site.siteName.en}`,
     description,
     url: "/",
     main,
@@ -459,7 +459,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
     inLanguage: locale,
     author: {
       "@type": "Person",
-      name: site.author?.[locale] ?? site.author?.["zh-CN"] ?? site.siteName[locale]
+      name: site.author?.[locale] ?? site.author?.["zh-TW"] ?? site.siteName[locale]
     },
     mainEntityOfPage: absoluteUrl(site, post.url),
     image: absoluteUrl(site, post.ogImage),
@@ -510,7 +510,7 @@ export function renderPostPage({ site, locale, post, translations, previousPost,
   </main>`;
   const alternates = translations
     .map((entry) => ({ hreflang: entry.locale, url: entry.url }))
-    .concat({ hreflang: "x-default", url: translations.find((entry) => entry.locale === "zh-CN")?.url ?? translations[0].url });
+    .concat({ hreflang: "x-default", url: translations.find((entry) => entry.locale === "zh-TW")?.url ?? translations[0].url });
   return renderLayout({
     site,
     locale,
@@ -547,7 +547,7 @@ export function renderTermIndexPage({ site, locale, titleKey, descriptionKey, te
     url,
     current,
     main,
-    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/${current}/` })).concat({ hreflang: "x-default", url: `/zh-CN/${current}/` }),
+    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/${current}/` })).concat({ hreflang: "x-default", url: `/zh-TW/${current}/` }),
     robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
@@ -579,7 +579,7 @@ export function renderSearchPage({ site, locale }) {
     url: `/${locale}/search/`,
     current: "search",
     main,
-    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/search/` })).concat({ hreflang: "x-default", url: "/zh-CN/search/" }),
+    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/search/` })).concat({ hreflang: "x-default", url: "/zh-TW/search/" }),
     robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
@@ -636,7 +636,7 @@ export function renderArchivePage({ site, locale, groups }) {
     url: `/${locale}/archive/`,
     current: "archive",
     main,
-    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/archive/` })).concat({ hreflang: "x-default", url: "/zh-CN/archive/" }),
+    alternates: LOCALES.map((entryLocale) => ({ hreflang: entryLocale, url: `/${entryLocale}/archive/` })).concat({ hreflang: "x-default", url: "/zh-TW/archive/" }),
     robots: "noindex,follow",
     jsonLd: [baseJsonLd(site, locale), breadcrumbJsonLd(site, [
       { name: t(locale, "home"), url: `/${locale}/` },
@@ -659,7 +659,7 @@ export function renderAboutPage({ site, locale, page, translations }) {
   </main>`;
   const alternates = translations
     .map((entry) => ({ hreflang: entry.locale, url: entry.url }))
-    .concat({ hreflang: "x-default", url: translations.find((entry) => entry.locale === "zh-CN")?.url ?? translations[0].url });
+    .concat({ hreflang: "x-default", url: translations.find((entry) => entry.locale === "zh-TW")?.url ?? translations[0].url });
   return renderLayout({
     site,
     locale,
@@ -677,22 +677,9 @@ export function renderAboutPage({ site, locale, page, translations }) {
 }
 
 export function renderNotFoundPage({ site }) {
-  const locale = "zh-CN";
-  const description = "页面不存在。頁面不存在。 This page was not found.";
+  const locale = "zh-TW";
+  const description = "頁面不存在。 This page was not found.";
   const main = `<main id="main" class="page-main not-found-main">
-    <section class="not-found-panel" data-i18n-panel="zh-CN" aria-labelledby="not-found-zh">
-      <img src="/assets/mascot-404.png" alt="" width="300" height="450">
-      <div>
-        <h1 id="not-found-zh">404：页面不存在</h1>
-        <p class="lead">这个页面可能已经移动，或从未存在。</p>
-        <div class="hero-links">
-          <a class="button-link" href="/zh-CN/">返回首页</a>
-          <a class="button-link button-link-secondary" href="/zh-CN/archive/">查看归档</a>
-          <a href="/zh-TW/" data-locale-choice="zh-TW">繁體中文</a>
-          <a href="/en/" data-locale-choice="en">English</a>
-        </div>
-      </div>
-    </section>
     <section class="not-found-panel" data-i18n-panel="zh-TW" aria-labelledby="not-found-zh-tw">
       <img src="/assets/mascot-404.png" alt="" width="300" height="450">
       <div>
@@ -701,7 +688,6 @@ export function renderNotFoundPage({ site }) {
         <div class="hero-links">
           <a class="button-link" href="/zh-TW/">返回首頁</a>
           <a class="button-link button-link-secondary" href="/zh-TW/archive/">查看歸檔</a>
-          <a href="/zh-CN/" data-locale-choice="zh-CN">简体中文</a>
           <a href="/en/" data-locale-choice="en">English</a>
         </div>
       </div>
@@ -714,7 +700,6 @@ export function renderNotFoundPage({ site }) {
         <div class="hero-links">
           <a class="button-link" href="/en/">Back home</a>
           <a class="button-link button-link-secondary" href="/en/archive/">View archive</a>
-          <a href="/zh-CN/" data-locale-choice="zh-CN">简体中文</a>
           <a href="/zh-TW/" data-locale-choice="zh-TW">繁體中文</a>
         </div>
       </div>

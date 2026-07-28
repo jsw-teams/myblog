@@ -22,7 +22,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["zh-CN", "zh-TW", "en"]
+              "enum": ["zh-TW", "en"]
             }
           }
         ],

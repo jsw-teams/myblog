@@ -10,7 +10,19 @@ const publicAssetsDir = path.join(publicDir, "assets");
 const contentAssetsDir = path.join(rootDir, "content", "assets");
 const themeConfigFile = path.join(rootDir, "theme", "config.json");
 const themeSupportStylesFile = path.join(rootDir, "theme", "styles", "support-card.css");
-const locales = ["zh-CN", "zh-TW", "en"];
+const locales = ["zh-TW", "en"];
+
+const simplifiedPostSources = await fg("content/posts/*/index.zh-CN.md", { cwd: rootDir, onlyFiles: true });
+if (simplifiedPostSources.length) {
+  throw new Error(`Simplified Chinese post sources must be retired: ${simplifiedPostSources.join(", ")}`);
+}
+
+const postDirectories = await fg("content/posts/*", { cwd: rootDir, onlyDirectories: true });
+for (const directory of postDirectories) {
+  if (!fsSync.existsSync(path.join(rootDir, directory, "index.zh-TW.md"))) {
+    throw new Error(`${directory} is missing its Traditional Chinese article`);
+  }
+}
 
 if (!fsSync.existsSync(themeConfigFile) || !fsSync.existsSync(themeSupportStylesFile)) {
   throw new Error("Ko-fi configuration and styles must be loaded from the theme directory");
@@ -61,6 +73,9 @@ const redirects = await fs.readFile(path.join(publicDir, "_redirects"), "utf8");
 if (/\/\*\s+\/index\.html\s+200/.test(redirects)) {
   throw new Error("_redirects contains a SPA fallback");
 }
+if (/\/zh-CN\/|\/md\/zh-CN\//.test(redirects)) {
+  throw new Error("Retired Simplified Chinese paths must return 404 instead of redirecting");
+}
 
 const leakTerms = ["README", "部署说明", "技术栈", "Cloudflare Pages 构建"];
 const htmlFiles = await fg("**/*.html", { cwd: publicDir, onlyFiles: true });
@@ -106,6 +121,10 @@ for (const locale of locales) {
   if (!html.includes('class="katex"') || !html.includes("10^{25}")) {
     throw new Error(`${articleFile} is missing the server-rendered FLOP formula`);
   }
+}
+
+if (fsSync.existsSync(path.join(publicDir, "zh-CN"))) {
+  throw new Error("The retired zh-CN locale must not be generated");
 }
 
 if (!(await fg("fonts/KaTeX_*.woff2", { cwd: publicAssetsDir, onlyFiles: true })).length) {
