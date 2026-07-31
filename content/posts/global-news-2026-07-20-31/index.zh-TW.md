@@ -7,12 +7,16 @@ translationKey: "global-news-2026-07-20-31"
 tags: ["國際新聞", "東協", "臺海", "美伊衝突", "全球貿易", "公共衛生", "Weekly News"]
 category: "熱點時事"
 draft: false
-cover: "https://pictor.js.gripe/i/afac7509-2918-499f-29c4-540993313d00/public.png"
+cover: "https://pictor.js.gripe/i/feb1d3ff-22e5-4a19-b7ec-ffb08cb9fb00/public.png"
 ---
 
 本文整理2026年7月20日至31日之間受到較多關注的國際新聞。內容按照事件發生與後續更新的時間排列，資料截至美國東部時間7月31日。
 
 這是一份事件記錄，而不是對這段時間作出單一解釋。外交、戰爭、貿易、金融、科技、災害與公共衛生事件各有不同的時間尺度；文中區分已公布的措施、當事方說法與仍可能變動的統計資料，不把它們合併成預設結論。
+
+![外交會議、臺灣軍事訓練、法國山火善後與剛果醫護抗議的四格新聞照片](https://pictor.js.gripe/i/feb1d3ff-22e5-4a19-b7ec-ffb08cb9fb00/public.png)
+
+*四幅畫面分別記錄外交、安全準備、災害應對與公共衛生工作。它們用來呈現本期事件分屬不同領域，並不代表重要性排序。原始圖片：Francis R. Malasig／Pool Photo via AP（2026年7月21日）、中央社資料照片（2024年10月9日）、Emma Da Silva／AP（2026年7月31日）、Constant Same Bagalwa／AP（2026年7月25日）；封面為等比例二次編排。*
 
 <!--more-->
 
@@ -25,10 +29,6 @@ cover: "https://pictor.js.gripe/i/afac7509-2918-499f-29c4-540993313d00/public.pn
 南海問題也進入會議議程。7月22日，菲律賓外長拉扎羅與中國外長王毅就仁愛礁附近的一次船隻衝突相互提出抗議。菲律賓指責中方人員對菲律賓人員採取不可接受的行動，中國則指責菲律賓船隻衝撞中國執法船。
 
 東協成員國隨後表示，南海行為準則談判取得進展，並希望在2026年年底前完成談判。會議同時討論緬甸局勢、地區能源安全和大國之間的外交分歧。
-
-![東協主席、菲律賓外長拉扎羅主持外長非正式磋商](https://pictor.js.gripe/i/f1f0dc94-6fb3-431f-91af-f6d6859e2600/public.jpg)
-
-*菲律賓外長拉扎羅在馬尼拉主持東協外長非正式磋商。圖片：Francis R. Malasig／Pool Photo via AP，2026年7月21日。*
 
 **線上資源：**
 
@@ -99,10 +99,6 @@ cover: "https://pictor.js.gripe/i/afac7509-2918-499f-29c4-540993313d00/public.pn
 美國貿易代表辦公室表示，新關稅覆蓋美國約99.4%的進口商品，但石油、天然氣、肥料、關鍵礦物、部分食品和飛機零部件獲得豁免。
 
 中國、澳大利亞、巴西、挪威等貿易伙伴對關稅理由提出異議。美國貿易代表賈米森·格里爾隨後表示，這些稅率與近期水平接近，預計不會產生新的重大經濟影響。
-
-![奧克蘭港貨櫃與貨輪](https://pictor.js.gripe/i/41c1e463-96da-4546-b6bc-81be46051600/public.jpg)
-
-*奧克蘭港貨櫃與貨輪資料照片。圖片：Noah Berger／AP，2025年8月6日。*
 
 **線上資源：**
 
@@ -214,10 +210,6 @@ OpenAI調查顯示，智慧體共進入四項服務中的四個賬戶。路透�
 
 2026年以來，法國已有超過9萬公頃土地被山火燒燬；西班牙被燒燬面積超過20萬公頃。
 
-![消防員在法國西南部山火區處理餘火](https://pictor.js.gripe/i/ae89a2e9-56b4-47b0-55c8-56505cd28a00/public.jpg)
-
-*消防員在法國西南部萊日卡普費雷處理山火餘火。圖片：Emma Da Silva／AP，2026年7月31日。*
-
 **線上資源：**
 
 * Reuters：[Wildfires ease near Bordeaux and Madrid as Greece flares up](https://www.reuters.com/business/environment/wildfires-ease-near-bordeaux-madrid-bringing-respite-2026-07-31/)
@@ -234,10 +226,6 @@ OpenAI調查顯示，智慧體共進入四項服務中的四個賬戶。路透�
 當地防疫工作受到武裝衝突、醫護人員薪資拖欠、治療中心遇襲、接觸者追蹤不足以及部分患者在治療中心外死亡等因素影響。
 
 世界衛生組織截至7月26日的週報稱，本輪疫情已經成為有記錄以來規模最大的本迪布焦型埃博拉疫情。
-
-![剛果布尼亞埃博拉治療中心外的醫護與一線人員抗議](https://pictor.js.gripe/i/6f97a224-5f4d-4634-6c2b-9604968f3200/public.jpg)
-
-*醫護與一線人員在剛果布尼亞 Elikya 埃博拉治療中心外抗議欠薪。圖片：Constant Same Bagalwa／AP，2026年7月25日。*
 
 **線上資源：**
 

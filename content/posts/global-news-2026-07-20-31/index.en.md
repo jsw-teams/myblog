@@ -7,12 +7,16 @@ translationKey: "global-news-2026-07-20-31"
 tags: ["International News", "ASEAN", "Taiwan Strait", "US-Iran Conflict", "Global Trade", "Public Health", "Weekly News"]
 category: "Current Affairs"
 draft: false
-cover: "https://pictor.js.gripe/i/afac7509-2918-499f-29c4-540993313d00/public.png"
+cover: "https://pictor.js.gripe/i/feb1d3ff-22e5-4a19-b7ec-ffb08cb9fb00/public.png"
 ---
 
 This article records widely followed international news between July 20 and July 31, 2026. Events are arranged by when they occurred and when material updates became available. Information is current through July 31, U.S. Eastern Time.
 
 It is an event record, not a single interpretation of the period. Diplomacy, war, trade, finance, technology, disasters, and public health move on different timescales. The text distinguishes announced measures, claims made by the parties involved, and statistics that may still change rather than combining them into a predetermined conclusion.
+
+![A four-panel news montage showing a diplomatic meeting, military training in Taiwan, wildfire recovery in France, and a health-worker protest in Congo](https://pictor.js.gripe/i/feb1d3ff-22e5-4a19-b7ec-ffb08cb9fb00/public.png)
+
+*The four scenes document diplomacy, security preparedness, disaster response, and public-health work. They show that the events in this record belong to different fields; their placement is not a ranking of importance. Source images: Francis R. Malasig/Pool Photo via AP (July 21, 2026), CNA file photo (October 9, 2024), Emma Da Silva/AP (July 31, 2026), and Constant Same Bagalwa/AP (July 25, 2026). The cover is an equal-panel editorial composite.*
 
 <!--more-->
 
@@ -25,10 +29,6 @@ ASEAN ministers expressed serious concern over renewed fighting between the Unit
 The South China Sea was also on the agenda. On July 22, Philippine Foreign Secretary Theresa Lazaro and Chinese Foreign Minister Wang Yi exchanged protests over a vessel confrontation near Second Thomas Shoal. The Philippines accused Chinese personnel of unacceptable actions against Filipino personnel; China accused Philippine vessels of ramming Chinese law-enforcement ships.
 
 ASEAN members later reported progress in negotiations on a South China Sea code of conduct and said they hoped to conclude the talks by the end of 2026. The meetings also addressed Myanmar, regional energy security, and disagreements among major powers.
-
-![Philippine Foreign Secretary Theresa Lazaro chairs an informal consultation with ASEAN foreign ministers](https://pictor.js.gripe/i/f1f0dc94-6fb3-431f-91af-f6d6859e2600/public.jpg)
-
-*Philippine Foreign Secretary Theresa Lazaro chairs an informal consultation in Manila. Photo: Francis R. Malasig/Pool Photo via AP, July 21, 2026.*
 
 Sources: [AP](https://apnews.com/article/asean-philippines-south-china-sea-iran-war-788ceac7b1a80b74881bd5c69e334558), [Reuters](https://www.reuters.com/world/china/philippine-chinese-foreign-ministers-trade-protests-over-south-china-sea-2026-07-22/), [CNA](https://www.channelnewsasia.com/asia/asean-foreign-ministers-meeting-manila-south-china-sea-code-year-end-6276111).
 
@@ -73,10 +73,6 @@ The United States introduced tariffs of 10% or 12.5% on goods from 60 trading pa
 The administration used Section 301 of the Trade Act of 1974, arguing that the trading partners had not effectively blocked forced-labor goods from their supply chains. The measure replaced a temporary 10% worldwide tariff that expired the same day.
 
 The Office of the U.S. Trade Representative said the new duties covered about 99.4% of U.S. imports. Oil, natural gas, fertilizer, critical minerals, some foods, and aircraft parts were exempt. China, Australia, Brazil, Norway, and other partners disputed the stated justification. U.S. Trade Representative Jamieson Greer said the rates were close to recent levels and were not expected to create another major economic shock.
-
-![Cargo containers and a ship at the Port of Oakland](https://pictor.js.gripe/i/41c1e463-96da-4546-b6bc-81be46051600/public.jpg)
-
-*Cargo containers and a ship at the Port of Oakland, file photo. Photo: Noah Berger/AP, August 6, 2025.*
 
 Sources: [Reuters](https://www.reuters.com/world/us/trump-imposes-forced-labor-duties-60-trading-partners-as-10-us-tariffs-expire-2026-07-24/), [AP](https://apnews.com/article/trump-tariffs-forced-labor-8ea8114c6893a6062cf1addc3518660b), [Reuters on China's response](https://www.reuters.com/world/china/china-opposes-us-forced-labour-tariffs-calls-them-be-cancelled-2026-07-27/).
 
@@ -146,10 +142,6 @@ By July 31, the main fire near Bordeaux had largely stabilized, and about 144,00
 
 More than 90,000 hectares had burned in France during 2026, while the burned area in Spain exceeded 200,000 hectares.
 
-![A firefighter works on hot spots in the southwest France wildfire zone](https://pictor.js.gripe/i/ae89a2e9-56b4-47b0-55c8-56505cd28a00/public.jpg)
-
-*A firefighter works on wildfire hot spots near Lège-Cap-Ferret in southwestern France. Photo: Emma Da Silva/AP, July 31, 2026.*
-
 Sources: [AP](https://apnews.com/article/france-spain-greece-wildfires-heat-climate-change-e9d86be61ca9538b910a78e5cd87553e), [Reuters](https://www.reuters.com/business/environment/wildfires-ease-near-bordeaux-madrid-bringing-respite-2026-07-31/), [Reuters data overview](https://www.reuters.com/business/environment/stark-scale-europes-wildfires-2026-07-31/).
 
 ## 14. Ebola cases continue to rise in the Democratic Republic of the Congo
@@ -159,10 +151,6 @@ The Associated Press reported on July 28 that confirmed cases in the Democratic 
 The outbreak is concentrated in Ituri province and is caused by Bundibugyo ebolavirus. There is currently no approved vaccine or specific treatment for that strain. Armed conflict, unpaid health workers, attacks on treatment centers, incomplete contact tracing, and patients dying outside treatment facilities have complicated the response.
 
 The World Health Organization's report through July 26 described it as the largest recorded Bundibugyo Ebola outbreak.
-
-![Health and frontline workers protest outside an Ebola treatment center in Bunia](https://pictor.js.gripe/i/6f97a224-5f4d-4634-6c2b-9604968f3200/public.jpg)
-
-*Health and frontline workers protest unpaid compensation outside the Elikya Ebola Treatment Center in Bunia, Congo. Photo: Constant Same Bagalwa/AP, July 25, 2026.*
 
 Sources: [AP on 3,262 cases](https://apnews.com/article/congo-ebola-995a582d3eab3766610f3925165144ce), [AP on the death toll](https://apnews.com/article/congo-ebola-death-toll-bundibugyo-virus-response-treatment-269eac4d8a93be912459486428ef2f94), [WHO](https://www.who.int/emergencies/situations/ebola-outbreak---drc-2026), [WHO Africa weekly report](https://www.afro.who.int/countries/democratic-republic-of-congo/publication/ebola-bundibugyo-virus-disease-outbreak-3).
 
