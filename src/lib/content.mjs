@@ -369,7 +369,7 @@ export async function buildHtmlPages() {
 
     for (const term of categoryMap.values()) {
       const title = `${t(locale, "postsInCategory")}: ${term.name}`;
-      const description = locale === "zh-CN"
+      const description = locale === "zh-CN" || locale === "zh-SG"
         ? `查看「${term.name}」分类下的文章。`
         : locale === "zh-TW"
           ? `查看「${term.name}」分類下的文章。`
@@ -379,7 +379,7 @@ export async function buildHtmlPages() {
 
     for (const term of tagMap.values()) {
       const title = `${t(locale, "postsWithTag")}: ${term.name}`;
-      const description = locale === "zh-CN"
+      const description = locale === "zh-CN" || locale === "zh-SG"
         ? `查看带有「${term.name}」标签的文章。`
         : locale === "zh-TW"
           ? `查看帶有「${term.name}」標籤的文章。`

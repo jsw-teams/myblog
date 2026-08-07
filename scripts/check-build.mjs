@@ -11,7 +11,7 @@ const contentAssetsDir = path.join(rootDir, "content", "assets");
 const themeConfigFile = path.join(rootDir, "theme", "config.json");
 const themeSupportStylesFile = path.join(rootDir, "theme", "styles", "support-card.css");
 const wranglerConfigFile = path.join(rootDir, "wrangler.toml");
-const locales = ["zh-TW", "en"];
+const locales = ["zh-TW", "zh-SG", "en"];
 
 const simplifiedContentSources = await fg("content/**/*.zh-CN.md", { cwd: rootDir, onlyFiles: true });
 if (simplifiedContentSources.length) {
@@ -22,6 +22,9 @@ const postDirectories = await fg("content/posts/*", { cwd: rootDir, onlyDirector
 for (const directory of postDirectories) {
   if (!fsSync.existsSync(path.join(rootDir, directory, "index.zh-TW.md"))) {
     throw new Error(`${directory} is missing its Traditional Chinese article`);
+  }
+  if (!fsSync.existsSync(path.join(rootDir, directory, "index.zh-SG.md"))) {
+    throw new Error(`${directory} is missing its Singapore Simplified Chinese article`);
   }
 }
 

@@ -1,20 +1,23 @@
 {
   "siteUrl": "https://blog.js.gripe",
   "defaultLocale": "zh-TW",
-  "activeLocales": ["zh-TW", "en"],
+  "activeLocales": ["zh-TW", "zh-SG", "en"],
   "reservedLocales": ["ja"],
   "siteName": {
     "en": "Blog.js.gripe",
+    "zh-SG": "技诉 Blog",
     "zh-TW": "技訴 Blog",
     "ja": "技訴 Blog"
   },
   "description": {
     "en": "Notes on technical practice, web services, writing, and observation.",
+    "zh-SG": "记录技术实践、网络服务、写作与观察。",
     "zh-TW": "記錄技術實踐、網路服務、寫作與觀察。",
     "ja": "技術実践、ネットワークサービス、執筆、観察の記録。"
   },
   "author": {
     "zh-TW": "技訴",
+    "zh-SG": "技诉",
     "en": "js.gripe"
   }
 }

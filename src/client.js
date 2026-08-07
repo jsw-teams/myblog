@@ -1,5 +1,5 @@
 (function () {
-  var supported = ["zh-TW", "en"];
+  var supported = ["zh-TW", "zh-SG", "en"];
   var storageKey = "blog.js.gripe.locale";
   var basePath = String(window.JSGripeBasePath || "").replace(/\/$/, "");
 
@@ -30,6 +30,7 @@
     var languages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
     for (var index = 0; index < languages.length; index += 1) {
       var language = String(languages[index]).toLowerCase();
+      if (language === "zh-sg") return "zh-SG";
       if (language === "zh-tw" || language === "zh-hk" || language === "zh-mo" || language.indexOf("zh-hant") === 0) return "zh-TW";
       if (language === "zh-cn" || language.indexOf("zh-hans") === 0 || language === "zh") return "zh-TW";
       if (language.indexOf("en") === 0) return "en";

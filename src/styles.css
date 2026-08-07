@@ -878,11 +878,13 @@ h3 {
 }
 
 .not-found-panel[data-i18n-panel="zh-TW"],
+.not-found-panel[data-i18n-panel="zh-SG"],
 .not-found-panel[data-i18n-panel="en"] {
   display: none;
 }
 
 html[data-preferred-locale="zh-TW"] .not-found-panel[data-i18n-panel="zh-TW"],
+html[data-preferred-locale="zh-SG"] .not-found-panel[data-i18n-panel="zh-SG"],
 html[data-preferred-locale="en"] .not-found-panel[data-i18n-panel="en"] {
   display: grid;
 }

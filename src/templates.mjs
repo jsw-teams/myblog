@@ -704,6 +704,19 @@ export function renderNotFoundPage({ site }) {
         </div>
       </div>
     </section>
+    <section class="not-found-panel" data-i18n-panel="zh-SG" aria-labelledby="not-found-zh-sg">
+      <img src="/assets/mascot-404.png" alt="" width="300" height="450">
+      <div>
+        <h1 id="not-found-zh-sg">404：页面不存在</h1>
+        <p class="lead">这个页面可能已经移动，或从未存在。</p>
+        <div class="hero-links">
+          <a class="button-link" href="/zh-SG/">返回首页</a>
+          <a class="button-link button-link-secondary" href="/zh-SG/archive/">查看归档</a>
+          <a href="/zh-TW/" data-locale-choice="zh-TW">繁體中文</a>
+          <a href="/en/" data-locale-choice="en">English</a>
+        </div>
+      </div>
+    </section>
   </main>`;
   return renderLayout({
     site,

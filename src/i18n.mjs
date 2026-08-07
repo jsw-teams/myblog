@@ -1,4 +1,4 @@
-export const LOCALES = ["zh-TW", "en"];
+export const LOCALES = ["zh-TW", "zh-SG", "en"];
 export const RESERVED_LOCALES = ["ja"];
 export const DEFAULT_LOCALE = "zh-TW";
 
@@ -17,6 +17,11 @@ export const localeMeta = {
     label: "繁體中文",
     htmlLang: "zh-TW",
     dateLocale: "zh-TW"
+  },
+  "zh-SG": {
+    label: "简体中文（新加坡）",
+    htmlLang: "zh-SG",
+    dateLocale: "zh-SG"
   },
   ja: {
     label: "日本語",
@@ -179,6 +184,11 @@ const dictionaries = {
     siteIntro: "Notes on technical practice, web services, writing, and observation.",
     feed: "Feed"
   }
+};
+
+dictionaries["zh-SG"] = {
+  ...dictionaries["zh-CN"],
+  siteIntro: "记录技术实践、网络服务、写作与观察。"
 };
 
 export function normalizeLocale(locale) {

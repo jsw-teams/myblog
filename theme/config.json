@@ -4,16 +4,19 @@
     "url": "https://ko-fi.com/jsgripe",
     "title": {
       "zh-CN": "喜欢这篇文章？请我喝杯咖啡",
+      "zh-SG": "喜欢这篇文章？请我喝杯咖啡",
       "zh-TW": "喜歡這篇文章？請我喝杯咖啡",
       "en": "Enjoyed this article? Buy me a coffee"
     },
     "description": {
       "zh-CN": "你的支持会帮助我继续维护网站并写下新的技术实践与观察。",
+      "zh-SG": "你的支持会帮助我继续维护网站并写下新的技术实践与观察。",
       "zh-TW": "你的支持會幫助我繼續維護網站並寫下新的技術實踐與觀察。",
       "en": "Your support helps me maintain the site and keep writing about technology and the world around it."
     },
     "cta": {
       "zh-CN": "前往 Ko-fi 支持",
+      "zh-SG": "前往 Ko-fi 支持",
       "zh-TW": "前往 Ko-fi 支持",
       "en": "Support on Ko-fi"
     }

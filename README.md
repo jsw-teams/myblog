@@ -4,7 +4,7 @@
 
 ## 繁體中文
 
-這是一個以 Markdown 管理內容的靜態博客。網站使用 Astro 建置，輸出目錄為 `public/`，目前只提供繁體中文（`zh-TW`）與英文（`en`）。
+這是一個以 Markdown 管理內容的靜態博客。網站使用 Astro 建置，輸出目錄為 `public/`，目前提供繁體中文（`zh-TW`）、新加坡簡體中文（`zh-SG`）與英文（`en`）。
 
 ### 本機寫作
 
@@ -36,7 +36,7 @@ cover: ""
 ---
 ```
 
-每篇文章必須提供 `index.zh-TW.md`；需要英文版本時，再加入 `index.en.md`。`draft: true` 的文章不會出現在公開頁面、sitemap、feed 或 llms 檔案中。
+每篇文章必須同時提供 `index.zh-TW.md` 與 `index.zh-SG.md`；需要英文版本時，再加入 `index.en.md`。`draft: true` 的文章不會出現在公開頁面、sitemap、feed 或 llms 檔案中。
 
 ### 建置與檢查
 
@@ -88,7 +88,7 @@ npm run serve
 
 ## English
 
-This is a static Markdown-based blog built with Astro. The generated site is written to `public/` and currently supports only Traditional Chinese (`zh-TW`) and English (`en`).
+This is a static Markdown-based blog built with Astro. The generated site is written to `public/` and supports Traditional Chinese (`zh-TW`), Singapore Simplified Chinese (`zh-SG`), and English (`en`).
 
 ### Writing locally
 
@@ -120,7 +120,7 @@ cover: ""
 ---
 ```
 
-Every post must include `index.zh-TW.md`. Add `index.en.md` when an English version is available. Posts with `draft: true` are excluded from public pages, sitemaps, feeds, and llms files.
+Every post must include both `index.zh-TW.md` and `index.zh-SG.md`. Add `index.en.md` when an English version is available. Posts with `draft: true` are excluded from public pages, sitemaps, feeds, and llms files.
 
 ### Build and check
 
