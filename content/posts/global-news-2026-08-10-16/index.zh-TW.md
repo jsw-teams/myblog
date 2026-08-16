@@ -14,7 +14,7 @@ cover: "https://blog.js.gripe/assets/blog-media/global-news-2026-08-10-16-cover.
 
 ![2026年8月10日至16日全球新聞週報封面](https://blog.js.gripe/assets/blog-media/global-news-2026-08-10-16-cover.jpg)
 
-*封面由三張現實素材二次編排：中華民國總統府的2026年城鎮韌性演習現場照片（[來源與政府資料開放授權聲明](https://www.president.gov.tw/Page/18)）、Eentelijent 拍攝的新加坡 Marina Bay 實景（[Wikimedia Commons，CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Marina_Bay_Skyline.png)）、U.S. Central Command／U.S. Navy 的霍爾木茲海峽排雷任務照片（[Wikimedia Commons，Public Domain](https://commons.wikimedia.org/wiki/File:U_S_Forces_Start_Mine_Clearance_Mission_in_Strait_of_Hormuz_(9609002).jpg)）。本站僅進行裁切與拼版；封面衍生作品依 CC BY-SA 4.0 提供。*
+*封面由三張現實素材二次編排：中華民國總統府的2026年城鎮韌性演習現場照片（[原始照片](https://www.president.gov.tw/img/Image/8ad6f652-23d0-408d-8c3a-e27f85ec8c4b.jpg)；[政府資料開放授權聲明](https://www.president.gov.tw/Page/18)）、Eentelijent 拍攝的新加坡 Marina Bay 實景（[Wikimedia Commons，CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Marina_Bay_Skyline.png)）、U.S. Central Command／U.S. Navy 的霍爾木茲海峽排雷任務照片（[Wikimedia Commons，Public Domain](https://commons.wikimedia.org/wiki/File:U_S_Forces_Start_Mine_Clearance_Mission_in_Strait_of_Hormuz_(9609002).jpg)）。本站僅進行裁切與拼版；封面衍生作品依 CC BY-SA 4.0 提供。*
 
 8月10日至16日的新聞沒有集中在單一事件上。臺灣同時出現國防韌性、預算與AI出口三條主線；新加坡把AI資本支出轉化成更高的GDP與出口預測；美國的物價、消費與市場價格則出現明顯分化。中東航運、俄烏遠程打擊、東南亞地震、非洲疫情與歐美極端高溫，又把能源、物流和公共安全重新拉回同一週的新聞版面。
 
@@ -24,7 +24,7 @@ cover: "https://blog.js.gripe/assets/blog-media/global-news-2026-08-10-16-cover.
 
 8月10日與13日，臺灣先後在中部與北部執行行動通訊降速演練。北部演練把4G、5G行動網路降到約256 Kbps並持續30分鐘，高流量影音、圖片和即時串流明顯受限，文字訊息、警報與部分基本服務仍可運作。這是臺灣第一次刻意讓大量一般使用者在演習期間直接感受到「頻寬不足」的日常效果，而不是只在軍方或電信業者內部測試備援設備。
 
-同一輪漢光42號實兵演習還納入地下醫療、捷運與交通管制、後備動員、海上反封鎖及軍民運輸協調。演習結束後，中國國防部公開批評相關操演，賴清德則表示國防與社會韌性工作不會因演習落幕而停止。這些科目把臺灣的防衛準備從「部隊能不能打」推進到「通訊、醫療、交通與政府服務在受攻擊後能不能繼續運轉」。真正被測試的是整個社會在低頻寬、交通受限與資訊混亂狀態下的持續運作能力。
+同一輪漢光42號實兵演習還納入地下醫療、捷運與交通管制、後備動員、海上反封鎖及軍民運輸協調。演習結束後，中國國防部公開批評相關操演，賴清德則表示國防與社會韌性工作不會因演習落幕而停止。這些科目把臺灣防衛準備的評估範圍，從部隊作戰能力擴大到受攻擊後通訊、醫療、交通與政府服務的持續運轉能力；整個社會在低頻寬、交通受限與資訊混亂狀態下的連續運作，已經成為正式演練項目。
 
 **線上資源：** [Reuters：Taiwan simulates repelling Chinese assault, slows mobile internet in annual war games](https://www.reuters.com/business/aerospace-defense/taiwan-simulates-repelling-chinese-assault-slow-mobile-internet-annual-war-games-2026-08-10/)；[AP：Taiwan slows mobile internet during civil defense drill](https://apnews.com/article/0d1d2fdd870aee3eb141fab385e88cb1)；[臺灣全民防衛動員署：2026城鎮韌性演習行動通訊調整說明](https://adma.mnd.gov.tw/uniten/100003/8167)
 

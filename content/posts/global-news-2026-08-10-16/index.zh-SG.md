@@ -14,7 +14,7 @@ cover: "https://blog.js.gripe/assets/blog-media/global-news-2026-08-10-16-cover.
 
 ![2026年8月10日至16日全球新闻周报封面](https://blog.js.gripe/assets/blog-media/global-news-2026-08-10-16-cover.jpg)
 
-*封面由三张现实素材二次编排：中华民国总统府的2026年城镇韧性演习现场照片（[来源与政府资料开放授权声明](https://www.president.gov.tw/Page/18)）、Eentelijent 拍摄的新加坡 Marina Bay 实景（[Wikimedia Commons，CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Marina_Bay_Skyline.png)）、U.S. Central Command／U.S. Navy 的霍尔木兹海峡排雷任务照片（[Wikimedia Commons，Public Domain](https://commons.wikimedia.org/wiki/File:U_S_Forces_Start_Mine_Clearance_Mission_in_Strait_of_Hormuz_(9609002).jpg)）。本站只进行裁切与拼版；封面衍生作品依 CC BY-SA 4.0 提供。*
+*封面由三张现实素材二次编排：中华民国总统府的2026年城镇韧性演习现场照片（[原始照片](https://www.president.gov.tw/img/Image/8ad6f652-23d0-408d-8c3a-e27f85ec8c4b.jpg)；[政府资料开放授权声明](https://www.president.gov.tw/Page/18)）、Eentelijent 拍摄的新加坡 Marina Bay 实景（[Wikimedia Commons，CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Marina_Bay_Skyline.png)）、U.S. Central Command／U.S. Navy 的霍尔木兹海峡排雷任务照片（[Wikimedia Commons，Public Domain](https://commons.wikimedia.org/wiki/File:U_S_Forces_Start_Mine_Clearance_Mission_in_Strait_of_Hormuz_(9609002).jpg)）。本站只进行裁切与拼版；封面衍生作品依 CC BY-SA 4.0 提供。*
 
 8月10日至16日的新闻没有集中在单一事件上。台湾同时出现国防韧性、预算和AI出口三条主线；新加坡把AI资本开支转化成更高的GDP与出口预测；美国的物价、消费和市场价格则出现明显分化。中东航运、俄乌远程打击、东南亚地震、非洲疫情与欧美极端高温，又把能源、物流和公共安全拉回同一周的新闻版面。
 
@@ -24,7 +24,7 @@ cover: "https://blog.js.gripe/assets/blog-media/global-news-2026-08-10-16-cover.
 
 8月10日和13日，台湾先后在中部与北部执行移动通信降速演练。北部演练把4G、5G移动网络降到约256 Kbps并持续30分钟，高流量视频、图片和即时串流明显受限，文字信息、警报与部分基本服务仍可运行。这是台湾第一次刻意让大量普通用户在演习期间直接感受到“带宽不足”的日常效果，而不是只在军方或电信运营商内部测试备援设备。
 
-同一轮汉光42号实兵演习还纳入地下医疗、捷运与交通管制、后备动员、海上反封锁及军民运输协调。演习结束后，中国国防部公开批评相关操演，赖清德则表示国防与社会韧性工作不会随演习落幕停止。这些科目把台湾的防卫准备从“部队能不能打”推进到“通信、医疗、交通和政府服务在受攻击后能不能继续运行”。真正被测试的是整个社会在低带宽、交通受限和信息混乱状态下的持续运作能力。
+同一轮汉光42号实兵演习还纳入地下医疗、捷运与交通管制、后备动员、海上反封锁及军民运输协调。演习结束后，中国国防部公开批评相关操演，赖清德则表示国防与社会韧性工作不会随演习落幕停止。这些科目把台湾防卫准备的评估范围，从部队作战能力扩大到受攻击后通信、医疗、交通和政府服务的持续运行能力；整个社会在低带宽、交通受限和信息混乱状态下的连续运作，已经成为正式演练项目。
 
 **线上资源：** [Reuters：Taiwan simulates repelling Chinese assault, slows mobile internet in annual war games](https://www.reuters.com/business/aerospace-defense/taiwan-simulates-repelling-chinese-assault-slow-mobile-internet-annual-war-games-2026-08-10/)；[AP：Taiwan slows mobile internet during civil defense drill](https://apnews.com/article/0d1d2fdd870aee3eb141fab385e88cb1)；[台湾全民防卫动员署：2026城镇韧性演习行动通信调整说明](https://adma.mnd.gov.tw/uniten/100003/8167)
 
