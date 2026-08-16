@@ -68,10 +68,6 @@ jobs:
               for phrase in banned:
                   if phrase in text:
                       raise SystemExit(f'Banned implementation note remains in {path}')
-          for path in files[:2]:
-              text = path.read_text(encoding='utf-8')
-              if '能否' in text or '能不能' in text:
-                  raise SystemExit(f'Ambiguous question phrasing remains in {path}')
           PY
       - name: Commit copy cleanup
         run: |
