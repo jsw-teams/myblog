@@ -7,14 +7,14 @@ translationKey: "global-news-2026-08-10-16"
 tags: ["每周新闻", "台湾", "新加坡", "美国", "人工智能", "全球经济", "国际局势"]
 category: "热点时事"
 draft: false
-cover: "https://raw.githubusercontent.com/jsw-teams/myblog/main/content/assets/blog-media/global-news-2026-08-10-16-cover.jpg"
+cover: "https://blog.js.gripe/assets/blog-media/global-news-2026-08-10-16-cover.jpg"
 ---
 
 > **自动生成声明：本文由语言模型自动检索、整理与生成。资料截至台北时间 2026 年 8 月 16 日。**
 
-![2026年8月10日至16日全球新闻周报封面](https://raw.githubusercontent.com/jsw-teams/myblog/main/content/assets/blog-media/global-news-2026-08-10-16-cover.jpg)
+![2026年8月10日至16日全球新闻周报封面](https://blog.js.gripe/assets/blog-media/global-news-2026-08-10-16-cover.jpg)
 
-本版按一周内真正出现实质进展的事件展开，不再使用“判断：”标签，也删除“值得继续追踪”式建议段落。需要分析时，直接根据已经发生的数据与行动给出结论。
+本期按照一周内实际出现进展的事件整理，覆盖台湾、新加坡、美国及其他国际议题。分析直接放进各事件脉络，让数据、政策变化与后续影响处在同一段叙事中。
 
 <!--more-->
 
@@ -116,4 +116,4 @@ Nvidia 与 Apollo、BlackRock、Blackstone、Brookfield、Goldman Sachs、KKR �
 
 ---
 
-封面图片已存入本 GitHub 仓库：`content/assets/blog-media/global-news-2026-08-10-16-cover.jpg`。本文资料基于公开来源自动整理，事件后续数值以原始发布机构更新为准。
+封面图片由本站本地媒体库提供：`https://blog.js.gripe/assets/blog-media/global-news-2026-08-10-16-cover.jpg`。本文资料基于公开来源自动整理，事件后续数值以原始发布机构更新为准。
