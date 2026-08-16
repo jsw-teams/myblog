@@ -14,65 +14,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Replace ambiguous phrasing and clarify image attribution
+      - name: Replace remaining ambiguous conditional phrasing
         run: |
           python - <<'PY'
           from pathlib import Path
 
-          files = [
-              Path('content/posts/global-news-2026-08-10-16/index.zh-TW.md'),
-              Path('content/posts/global-news-2026-08-10-16/index.zh-SG.md'),
-              Path('content/posts/global-news-2026-08-10-16/index.en.md'),
-          ]
-
           replacements = {
-              files[0]: [
-                  (
-                      '中華民國總統府的2026年城鎮韌性演習現場照片（[來源與政府資料開放授權聲明](https://www.president.gov.tw/Page/18)）',
-                      '中華民國總統府的2026年城鎮韌性演習現場照片（[原始照片](https://www.president.gov.tw/img/Image/8ad6f652-23d0-408d-8c3a-e27f85ec8c4b.jpg)；[政府資料開放授權聲明](https://www.president.gov.tw/Page/18)）'
-                  ),
-                  (
-                      '這些科目把臺灣的防衛準備從「部隊能不能打」推進到「通訊、醫療、交通與政府服務在受攻擊後能不能繼續運轉」。真正被測試的是整個社會在低頻寬、交通受限與資訊混亂狀態下的持續運作能力。',
-                      '這些科目把臺灣防衛準備的評估範圍，從部隊作戰能力擴大到受攻擊後通訊、醫療、交通與政府服務的持續運轉能力；整個社會在低頻寬、交通受限與資訊混亂狀態下的連續運作，已經成為正式演練項目。'
-                  ),
-              ],
-              files[1]: [
-                  (
-                      '中华民国总统府的2026年城镇韧性演习现场照片（[来源与政府资料开放授权声明](https://www.president.gov.tw/Page/18)）',
-                      '中华民国总统府的2026年城镇韧性演习现场照片（[原始照片](https://www.president.gov.tw/img/Image/8ad6f652-23d0-408d-8c3a-e27f85ec8c4b.jpg)；[政府资料开放授权声明](https://www.president.gov.tw/Page/18)）'
-                  ),
-                  (
-                      '这些科目把台湾的防卫准备从“部队能不能打”推进到“通信、医疗、交通和政府服务在受攻击后能不能继续运行”。真正被测试的是整个社会在低带宽、交通受限和信息混乱状态下的持续运作能力。',
-                      '这些科目把台湾防卫准备的评估范围，从部队作战能力扩大到受攻击后通信、医疗、交通和政府服务的持续运行能力；整个社会在低带宽、交通受限和信息混乱状态下的连续运作，已经成为正式演练项目。'
-                  ),
-              ],
-              files[2]: [
-                  (
-                      'a 2026 Taiwan urban-resilience exercise photograph from the Office of the President ([source and Taiwan Open Government Data License notice](https://www.president.gov.tw/Page/18))',
-                      'a 2026 Taiwan urban-resilience exercise photograph from the Office of the President ([original photograph](https://www.president.gov.tw/img/Image/8ad6f652-23d0-408d-8c3a-e27f85ec8c4b.jpg); [Taiwan Open Government Data License notice](https://www.president.gov.tw/Page/18))'
-                  ),
-              ],
+              Path('content/posts/global-news-2026-08-10-16/index.zh-TW.md'): (
+                  '這次地震發生在Flores back-arc thrust相關構造帶，印尼本來就處在高地震風險區，但真正決定死亡與恢復速度的不是震級單一數字，而是道路、港口、醫療與通訊能否保持可達。',
+                  '這次地震發生在Flores back-arc thrust相關構造帶，印尼本來就處在高地震風險區。死亡與恢復速度更直接取決於道路、港口、醫療與通訊的可達程度，單一震級數字無法概括救援條件。'
+              ),
+              Path('content/posts/global-news-2026-08-10-16/index.zh-SG.md'): (
+                  '这次地震发生在Flores back-arc thrust相关构造带。印度尼西亚本来就处于高地震风险区，但真正决定死亡与恢复速度的不是震级单一数字，而是道路、港口、医疗与通信是否保持可达。',
+                  '这次地震发生在Flores back-arc thrust相关构造带，印度尼西亚本来就处于高地震风险区。死亡与恢复速度更直接取决于道路、港口、医疗与通信的可达程度，单一震级数字无法概括救援条件。'
+              ),
+              Path('content/posts/global-news-2026-08-10-16/index.en.md'): (
+                  "Indonesia's underlying seismic risk is familiar, but casualty and recovery outcomes are determined less by the magnitude number alone than by whether roads, ports, hospitals and communications remain reachable.",
+                  "Indonesia's underlying seismic risk is familiar. Casualty and recovery outcomes depend heavily on the accessibility of roads, ports, hospitals and communications; the magnitude number alone does not capture relief conditions."
+              ),
           }
 
-          for path in files:
+          for path, (old, new) in replacements.items():
               text = path.read_text(encoding='utf-8')
-              for old, new in replacements[path]:
-                  if old not in text:
-                      raise SystemExit(f'Expected text not found in {path}: {old[:80]}')
-                  text = text.replace(old, new)
-              path.write_text(text, encoding='utf-8')
+              if old not in text:
+                  raise SystemExit(f'Expected text not found in {path}')
+              path.write_text(text.replace(old, new), encoding='utf-8')
 
-          banned = ['封面圖片由本站本地媒體庫提供', '封面图片由本站本地媒体库提供']
-          for path in files:
+          for path in list(replacements)[:2]:
               text = path.read_text(encoding='utf-8')
-              for phrase in banned:
+              for phrase in ('能否', '能不能', '或許', '或许'):
                   if phrase in text:
-                      raise SystemExit(f'Banned implementation note remains in {path}')
+                      raise SystemExit(f'Ambiguous phrase {phrase} remains in {path}')
           PY
-      - name: Commit copy cleanup
+      - name: Commit final copy cleanup
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add content/posts/global-news-2026-08-10-16/
-          git commit -m "清理周报模糊问句与封面来源标注"
+          git commit -m "移除周报最后的模糊条件句"
           git push
