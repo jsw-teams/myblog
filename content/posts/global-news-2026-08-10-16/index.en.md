@@ -128,7 +128,7 @@ The exchange reinforces the central feature of the 2026 summer campaign. Ground 
 
 A magnitude-7.7 earthquake struck near East Nusa Tenggara on August 15. By August 16, authorities reported at least 53 deaths, more than 130 injuries and roughly 5,000 evacuees. Nearly 1,000 aftershocks had been recorded. The government deployed about 3,500 military and police personnel, while landslides, damaged roads and island geography continued to slow access and relief distribution in some areas.
 
-The quake occurred on or near the Flores back-arc thrust system. Indonesia's underlying seismic risk is familiar, but casualty and recovery outcomes are determined less by the magnitude number alone than by whether roads, ports, hospitals and communications remain reachable. In Southeast Asia, disasters of this scale also move quickly beyond the local level: flight schedules, tourism, regional logistics and emergency resources are all reallocated, creating indirect pressure on hubs such as Singapore.
+The quake occurred on or near the Flores back-arc thrust system. Indonesia's underlying seismic risk is familiar. Casualty and recovery outcomes depend heavily on the accessibility of roads, ports, hospitals and communications; the magnitude number alone does not capture relief conditions. In Southeast Asia, disasters of this scale also move quickly beyond the local level: flight schedules, tourism, regional logistics and emergency resources are all reallocated, creating indirect pressure on hubs such as Singapore.
 
 **Source:** [Reuters: Thousands evacuate after Indonesia quake kills at least 53](https://www.reuters.com/business/environment/thousands-evacuate-after-indonesia-quake-kills-51-cuts-roads-2026-08-16/)
 
