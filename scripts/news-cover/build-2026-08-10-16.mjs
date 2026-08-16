@@ -14,9 +14,9 @@ const outputPath = path.join(
 const sources = [
   {
     key: "taiwan",
-    url: "https://www.president.gov.tw/img/Image/c872467a-5c1e-41c4-a03c-c7013677fd7a.jpg",
+    url: "https://www.president.gov.tw/img/Image/8ad6f652-23d0-408d-8c3a-e27f85ec8c4b.jpg",
     sourcePage: "https://www.president.gov.tw/News/40217",
-    credit: "中華民國總統府",
+    credit: "中華民國總統府（2026-08-13 城鎮韌性演習相關現場照片）",
     license: "政府資料開放授權條款第1版"
   },
   {
