@@ -5,9 +5,12 @@ function firstHeader(value) {
   return String(value || "").split(",")[0].trim();
 }
 
-function safeOrigin(req) {
-  const host = firstHeader(req.headers["x-forwarded-host"] || req.headers.host);
-  const proto = firstHeader(req.headers["x-forwarded-proto"]) || (host.startsWith("localhost") ? "http" : "https");
+function safePublicOrigin(req) {
+  // Prefer the actual Host header. Reverse proxies may rewrite x-forwarded-host
+  // to an upstream/origin hostname, while Host is the hostname the visitor used.
+  const host = firstHeader(req.headers.host || req.headers["x-forwarded-host"]);
+  const forwardedProto = firstHeader(req.headers["x-forwarded-proto"]);
+  const proto = forwardedProto || (host.startsWith("localhost") ? "http" : "https");
 
   if (!/^[A-Za-z0-9.-]+(?::\d{1,5})?$/.test(host)) {
     throw new Error("Invalid Host header");
@@ -16,6 +19,16 @@ function safeOrigin(req) {
     throw new Error("Invalid forwarded protocol");
   }
   return `${proto}://${host}`;
+}
+
+function deploymentOrigin(req) {
+  // Fetch immutable build templates from this exact Vercel deployment instead
+  // of fetching through the visitor hostname, which may be proxied or rewritten.
+  const deploymentHost = String(process.env.VERCEL_URL || "").trim();
+  if (/^[A-Za-z0-9.-]+(?::\d{1,5})?$/.test(deploymentHost)) {
+    return `https://${deploymentHost}`;
+  }
+  return safePublicOrigin(req);
 }
 
 function normalizeRequestedPath(value) {
@@ -40,9 +53,10 @@ async function fetchTemplate(origin, pathname) {
   const url = new URL(`/__host_template${templatePath}`, origin);
   return fetch(url, {
     headers: {
-      "user-agent": "myblog-host-aware-runtime/1.0",
-      "accept": "text/html,application/xml,text/xml,text/plain;q=0.9,*/*;q=0.1"
-    }
+      "user-agent": "myblog-host-aware-runtime/2.0",
+      "accept": "text/html,application/rss+xml,application/xml,text/xml,text/markdown,text/plain,application/json;q=0.9,*/*;q=0.1"
+    },
+    redirect: "follow"
   });
 }
 
@@ -51,7 +65,7 @@ function cacheHeaders(res, contentType) {
   res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
   res.setHeader("Vercel-CDN-Cache-Control", "public, s-maxage=86400, stale-while-revalidate=604800");
   res.setHeader("Vary", "Host");
-  res.setHeader("X-Myblog-Host-Aware", "1");
+  res.setHeader("X-Myblog-Host-Aware", "2");
 }
 
 export default async function handler(req, res) {
@@ -60,9 +74,11 @@ export default async function handler(req, res) {
     return res.status(405).end();
   }
 
-  let origin;
+  let publicOrigin;
+  let templateOrigin;
   try {
-    origin = safeOrigin(req);
+    publicOrigin = safePublicOrigin(req);
+    templateOrigin = deploymentOrigin(req);
   } catch {
     return res.status(400).send("Bad Request");
   }
@@ -73,9 +89,9 @@ export default async function handler(req, res) {
   let upstream;
   let status = 200;
   try {
-    upstream = await fetchTemplate(origin, pathname);
+    upstream = await fetchTemplate(templateOrigin, pathname);
     if (!upstream.ok) {
-      upstream = await fetchTemplate(origin, "/404.html");
+      upstream = await fetchTemplate(templateOrigin, "/404.html");
       status = 404;
     }
   } catch (error) {
@@ -87,7 +103,7 @@ export default async function handler(req, res) {
     return res.status(status === 404 ? 404 : 502).send(status === 404 ? "Not Found" : "Bad Gateway");
   }
 
-  const body = (await upstream.text()).replaceAll(ORIGIN_TOKEN, origin);
+  const body = (await upstream.text()).replaceAll(ORIGIN_TOKEN, publicOrigin);
   cacheHeaders(res, upstream.headers.get("content-type"));
 
   if (req.method === "HEAD") return res.status(status).end();
