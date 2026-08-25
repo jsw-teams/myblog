@@ -33,6 +33,8 @@ const files = await fg([
 
 let templated = 0;
 let replacements = 0;
+let removedPublicCopies = 0;
+const hostSensitive = [];
 
 for (const relativePath of files) {
   const sourcePath = path.join(outputDir, relativePath);
@@ -47,14 +49,30 @@ for (const relativePath of files) {
   await fs.writeFile(targetPath, rewritten, "utf8");
   templated += 1;
   replacements += occurrences;
+
+  // If a generated document contains an absolute site origin, do not leave a
+  // static public copy beside its template. This prevents Vercel's filesystem
+  // handler from bypassing the Host-aware Function for feeds, sitemap or HTML.
+  if (occurrences > 0) {
+    await fs.rm(sourcePath, { force: true });
+    removedPublicCopies += 1;
+    hostSensitive.push(relativePath);
+  }
 }
 
 await fs.writeFile(
   path.join(templateDir, "manifest.json"),
-  `${JSON.stringify({ defaultOrigin, originToken, files: templated, replacements }, null, 2)}\n`,
+  `${JSON.stringify({
+    defaultOrigin,
+    originToken,
+    files: templated,
+    replacements,
+    removedPublicCopies,
+    hostSensitive
+  }, null, 2)}\n`,
   "utf8"
 );
 
 console.log(
-  `[postbuild] host-aware templates: ${templated} files, ${replacements} absolute-origin references replaced`
+  `[postbuild] host-aware templates: ${templated} files, ${replacements} origin references replaced, ${removedPublicCopies} host-sensitive public copies removed`
 );
