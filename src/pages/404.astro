@@ -1,6 +1,8 @@
 ---
-import { buildNotFoundHtml } from "../lib/content.mjs";
+import { readSiteConfig } from "../lib/content.mjs";
+import { renderNotFoundPage } from "../templates.mjs";
 
-const html = await buildNotFoundHtml();
+const site = await readSiteConfig();
+const html = renderNotFoundPage({ site });
 ---
 <Fragment set:html={html} />
