@@ -1,10 +1,10 @@
 {
-  "siteUrl": "https://blog.js.gripe",
+  "siteUrl": "https://blog.openjsu.com",
   "defaultLocale": "zh-TW",
   "activeLocales": ["zh-TW", "zh-SG", "en"],
   "reservedLocales": ["ja"],
   "siteName": {
-    "en": "Blog.js.gripe",
+    "en": "Blog.openjsu.com",
     "zh-SG": "技诉 Blog",
     "zh-TW": "技訴 Blog",
     "ja": "技訴 Blog"
@@ -18,6 +18,6 @@
   "author": {
     "zh-TW": "技訴",
     "zh-SG": "技诉",
-    "en": "js.gripe"
+    "en": "openjsu"
   }
 }
