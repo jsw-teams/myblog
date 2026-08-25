@@ -16,23 +16,5 @@
     { "source": "/zh-cn", "destination": "/zh-TW/", "permanent": false },
     { "source": "/en-us", "destination": "/en/", "permanent": false },
     { "source": "/english", "destination": "/en/", "permanent": false }
-  ],
-  "rewrites": [
-    { "source": "/", "destination": "/api/host-aware?path=/" },
-    { "source": "/sitemap.xml", "destination": "/api/host-aware?path=/sitemap.xml" },
-    { "source": "/feed.xml", "destination": "/api/host-aware?path=/feed.xml" },
-    { "source": "/robots.txt", "destination": "/api/host-aware?path=/robots.txt" },
-    { "source": "/llms.txt", "destination": "/api/host-aware?path=/llms.txt" },
-    { "source": "/llms-full.txt", "destination": "/api/host-aware?path=/llms-full.txt" },
-    { "source": "/404.html", "destination": "/api/host-aware?path=/404.html" },
-    { "source": "/sitemap", "destination": "/api/host-aware?path=/sitemap/" },
-    { "source": "/sitemap/", "destination": "/api/host-aware?path=/sitemap/" },
-    { "source": "/zh-TW", "destination": "/api/host-aware?path=/zh-TW/" },
-    { "source": "/zh-TW/:path*", "destination": "/api/host-aware?path=/zh-TW/:path*" },
-    { "source": "/zh-SG", "destination": "/api/host-aware?path=/zh-SG/" },
-    { "source": "/zh-SG/:path*", "destination": "/api/host-aware?path=/zh-SG/:path*" },
-    { "source": "/en", "destination": "/api/host-aware?path=/en/" },
-    { "source": "/en/:path*", "destination": "/api/host-aware?path=/en/:path*" },
-    { "source": "/md/:path*", "destination": "/api/host-aware?path=/md/:path*" }
   ]
 }
