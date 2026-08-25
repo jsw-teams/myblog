@@ -27,7 +27,7 @@
     "sharp": "^0.34.1"
   },
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "devDependencies": {
     "esbuild": "^0.27.7",
