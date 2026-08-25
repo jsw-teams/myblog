@@ -18,11 +18,17 @@ const originToken = "__MYBLOG_REQUEST_ORIGIN__";
 
 await fs.rm(templateDir, { recursive: true, force: true });
 
-const files = await fg(["**/*.html", "**/*.xml", "**/*.txt"], {
+const files = await fg([
+  "**/*.html",
+  "**/*.xml",
+  "**/*.txt",
+  "**/*.md",
+  "**/*.json"
+], {
   cwd: outputDir,
   onlyFiles: true,
   dot: true,
-  ignore: ["__host_template/**"]
+  ignore: ["__host_template/**", "assets/**", "api/**"]
 });
 
 let templated = 0;
