@@ -2,5 +2,19 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "astro",
   "buildCommand": "npm run build",
-  "outputDirectory": "public"
+  "outputDirectory": "public",
+  "redirects": [
+    { "source": "/posts/:slug", "destination": "/zh-TW/posts/:slug/", "permanent": false },
+    { "source": "/posts/:slug/", "destination": "/zh-TW/posts/:slug/", "permanent": false },
+    { "source": "/archive", "destination": "/zh-TW/archive/", "permanent": false },
+    { "source": "/categories", "destination": "/zh-TW/categories/", "permanent": false },
+    { "source": "/tags", "destination": "/zh-TW/tags/", "permanent": false },
+    { "source": "/search", "destination": "/zh-TW/search/", "permanent": false },
+    { "source": "/about", "destination": "/zh-TW/about/", "permanent": false },
+    { "source": "/zh", "destination": "/zh-TW/", "permanent": false },
+    { "source": "/cn", "destination": "/zh-TW/", "permanent": false },
+    { "source": "/zh-cn", "destination": "/zh-TW/", "permanent": false },
+    { "source": "/en-us", "destination": "/en/", "permanent": false },
+    { "source": "/english", "destination": "/en/", "permanent": false }
+  ]
 }
