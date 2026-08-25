@@ -4,87 +4,51 @@ import fg from "fast-glob";
 
 const rootDir = process.cwd();
 const outputDir = path.join(rootDir, "public");
-const siteConfigPath = path.join(rootDir, "content", "site.config.json");
+const templateDir = path.join(outputDir, "__host_template");
+const siteConfig = JSON.parse(
+  await fs.readFile(path.join(rootDir, "content", "site.config.json"), "utf8")
+);
 
-const siteConfig = JSON.parse(await fs.readFile(siteConfigPath, "utf8"));
-const defaultSiteUrl = siteConfig.siteUrl;
-
-if (!defaultSiteUrl) {
-  throw new Error("content/site.config.json must define siteUrl as the default absolute origin");
+if (!siteConfig.siteUrl) {
+  throw new Error("content/site.config.json must define siteUrl");
 }
 
-const defaultOrigin = new URL(defaultSiteUrl).origin;
+const defaultOrigin = new URL(siteConfig.siteUrl).origin;
+const originToken = "__MYBLOG_REQUEST_ORIGIN__";
 
-function getAttribute(tag, name) {
-  const match = tag.match(new RegExp(`\\b${name}=(['\"])(.*?)\\1`, "i"));
-  return match?.[2] ?? "";
-}
+await fs.rm(templateDir, { recursive: true, force: true });
 
-function rootRelativeIfDefaultOrigin(value) {
-  if (!value) return value;
-  try {
-    const parsed = new URL(value);
-    if (parsed.origin !== defaultOrigin) return value;
-    return `${parsed.pathname}${parsed.search}${parsed.hash}` || "/";
-  } catch {
-    return value;
-  }
-}
-
-function rewriteAttribute(tag, name) {
-  return tag.replace(
-    new RegExp(`\\b${name}=(['\"])(.*?)\\1`, "i"),
-    (match, quote, value) => `${name}=${quote}${rootRelativeIfDefaultOrigin(value)}${quote}`
-  );
-}
-
-function rewriteHostAwareMetadata(html) {
-  return html.replace(/<link\b[^>]*>/gi, (tag) => {
-    const rel = getAttribute(tag, "rel").toLowerCase();
-    if (rel === "canonical") {
-      return rewriteAttribute(tag, "href");
-    }
-    if (rel === "alternate" && getAttribute(tag, "hreflang")) {
-      return rewriteAttribute(tag, "href");
-    }
-    return tag;
-  });
-}
-
-const htmlFiles = await fg("**/*.html", {
+const files = await fg(["**/*.html", "**/*.xml", "**/*.txt"], {
   cwd: outputDir,
   onlyFiles: true,
-  dot: true
+  dot: true,
+  ignore: ["__host_template/**"]
 });
 
-let changedFiles = 0;
-let canonicalCount = 0;
-let hreflangCount = 0;
+let templated = 0;
+let replacements = 0;
 
-for (const relativePath of htmlFiles) {
-  const filePath = path.join(outputDir, relativePath);
-  const original = await fs.readFile(filePath, "utf8");
-  const rewritten = rewriteHostAwareMetadata(original);
+for (const relativePath of files) {
+  const sourcePath = path.join(outputDir, relativePath);
+  const targetPath = path.join(templateDir, relativePath);
+  const original = await fs.readFile(sourcePath, "utf8");
+  const occurrences = original.split(defaultOrigin).length - 1;
+  const rewritten = occurrences
+    ? original.replaceAll(defaultOrigin, originToken)
+    : original;
 
-  canonicalCount += (rewritten.match(/<link\b[^>]*\brel=(['\"])canonical\1[^>]*\bhref=(['\"])\//gi) ?? []).length;
-  hreflangCount += (rewritten.match(/<link\b[^>]*\brel=(['\"])alternate\1[^>]*\bhreflang=(['\"])[^'\"]+\2[^>]*\bhref=(['\"])\//gi) ?? []).length;
-
-  if (rewritten !== original) {
-    await fs.writeFile(filePath, rewritten, "utf8");
-    changedFiles += 1;
-  }
+  await fs.mkdir(path.dirname(targetPath), { recursive: true });
+  await fs.writeFile(targetPath, rewritten, "utf8");
+  templated += 1;
+  replacements += occurrences;
 }
 
-const remainingAbsoluteCanonical = [];
-for (const relativePath of htmlFiles) {
-  const html = await fs.readFile(path.join(outputDir, relativePath), "utf8");
-  if (new RegExp(`<link\\b[^>]*\\brel=(['\"])canonical\\1[^>]*\\bhref=(['\"])${defaultOrigin.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}`, "i").test(html)) {
-    remainingAbsoluteCanonical.push(relativePath);
-  }
-}
+await fs.writeFile(
+  path.join(templateDir, "manifest.json"),
+  `${JSON.stringify({ defaultOrigin, originToken, files: templated, replacements }, null, 2)}\n`,
+  "utf8"
+);
 
-if (remainingAbsoluteCanonical.length) {
-  throw new Error(`Host-aware metadata rewrite failed for: ${remainingAbsoluteCanonical.join(", ")}`);
-}
-
-console.log(`[postbuild] host-aware metadata: ${changedFiles} HTML files rewritten, ${canonicalCount} canonical and ${hreflangCount} hreflang links now resolve against the request Host`);
+console.log(
+  `[postbuild] host-aware templates: ${templated} files, ${replacements} absolute-origin references replaced`
+);
