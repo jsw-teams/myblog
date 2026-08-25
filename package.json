@@ -7,6 +7,7 @@
     "assets": "node src/assets.mjs",
     "prebuild": "node src/prebuild.mjs",
     "build": "astro build",
+    "postbuild": "node scripts/postbuild-static-cleanup.mjs",
     "deploy:local": "/opt/deploy-hooks/bin/deploy-myblog.sh",
     "deploy:local:blog-only": "SKIP_MYWEB_REBUILD=1 /opt/deploy-hooks/bin/deploy-myblog.sh",
     "news:mvp": "node scripts/news-mvp/generate-weekly-news.mjs",
