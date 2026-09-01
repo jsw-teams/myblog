@@ -38,7 +38,64 @@
 
 .support-card-link:hover { background: #e94745; color: #fff; transform: translateY(-1px); }
 
+/* Site-wide polish kept here because this stylesheet is concatenated after
+   src/styles.css during asset generation. */
+.brand-mark {
+  background-color: transparent;
+  background-image: url("/favicon-32x32.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  color: transparent;
+  flex: 0 0 auto;
+  font-size: 0;
+  overflow: hidden;
+  text-indent: -9999px;
+}
+
+.language-choice > div {
+  min-width: 0;
+}
+
+.language-choice h1 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 @media (max-width: 680px) {
   .support-card { grid-template-columns: auto minmax(0, 1fr); }
   .support-card-link { grid-column: 1 / -1; text-align: center; }
+
+  .root-picker {
+    padding-inline: 0.85rem;
+  }
+
+  .language-choice {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .language-choice img {
+    max-width: min(180px, 55vw);
+  }
+
+  .language-choice h1 {
+    font-size: clamp(1.85rem, 9.5vw, 2.7rem);
+    line-height: 1.08;
+  }
+
+  .language-choice .lead {
+    overflow-wrap: anywhere;
+  }
+
+  .language-choice-links {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .language-choice-links .button-link {
+    justify-content: center;
+    width: 100%;
+  }
 }
