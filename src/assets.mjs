@@ -190,8 +190,8 @@ async function writeFavicon() {
 
 async function writeManifest() {
   const manifest = {
-    name: "技诉 Blog",
-    short_name: "技诉",
+    name: "技述 Blog",
+    short_name: "技述",
     start_url: withBase("/"),
     display: "minimal-ui",
     background_color: "#f8f4ec",
