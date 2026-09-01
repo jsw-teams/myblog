@@ -5,9 +5,9 @@
   "reservedLocales": ["ja"],
   "siteName": {
     "en": "Blog.openjsu.com",
-    "zh-SG": "技诉 Blog",
-    "zh-TW": "技訴 Blog",
-    "ja": "技訴 Blog"
+    "zh-SG": "技述 Blog",
+    "zh-TW": "技述 Blog",
+    "ja": "技述 Blog"
   },
   "description": {
     "en": "Notes on technical practice, web services, writing, and observation.",
@@ -16,8 +16,8 @@
     "ja": "技術実践、ネットワークサービス、執筆、観察の記録。"
   },
   "author": {
-    "zh-TW": "技訴",
-    "zh-SG": "技诉",
+    "zh-TW": "技述",
+    "zh-SG": "技述",
     "en": "openjsu"
   }
 }
