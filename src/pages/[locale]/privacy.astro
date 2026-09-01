@@ -1,0 +1,67 @@
+---
+import { LOCALES, loadBlogData } from "../../lib/content.mjs";
+import {
+  baseJsonLd,
+  breadcrumbJsonLd,
+  escapeHtml,
+  renderLanguageAvailability,
+  renderLayout
+} from "../../templates.mjs";
+
+export async function getStaticPaths() {
+  const { site, pages } = await loadBlogData();
+  const privacyPages = pages.filter((page) => page.slug === "privacy");
+
+  return privacyPages.map((page) => {
+    const translations = LOCALES
+      .map((locale) => privacyPages.find((entry) => entry.locale === locale))
+      .filter(Boolean)
+      .map((entry) => ({ locale: entry.locale, url: entry.url, title: entry.title }));
+
+    const languageBlock = renderLanguageAvailability(page.locale, translations);
+    const main = `<main id="main" class="page-main article-main">
+      <article class="article-shell">
+        <header class="article-header">
+          <h1>${escapeHtml(page.title)}</h1>
+          <p class="lead">${escapeHtml(page.description)}</p>
+          ${languageBlock}
+        </header>
+        <div class="prose">${page.html}</div>
+      </article>
+    </main>`;
+
+    const alternates = translations
+      .map((entry) => ({ hreflang: entry.locale, url: entry.url }))
+      .concat({
+        hreflang: "x-default",
+        url: translations.find((entry) => entry.locale === "zh-TW")?.url ?? translations[0]?.url ?? page.url
+      });
+
+    const html = renderLayout({
+      site,
+      locale: page.locale,
+      title: page.title,
+      description: page.description,
+      url: page.url,
+      current: "",
+      main,
+      alternates,
+      jsonLd: [
+        baseJsonLd(site, page.locale),
+        breadcrumbJsonLd(site, [
+          { name: page.locale === "en" ? "Home" : page.locale === "zh-TW" ? "首頁" : "首页", url: `/${page.locale}/` },
+          { name: page.title, url: page.url }
+        ])
+      ]
+    });
+
+    return {
+      params: { locale: page.locale },
+      props: { html }
+    };
+  });
+}
+
+const { html } = Astro.props;
+---
+<Fragment set:html={html} />
